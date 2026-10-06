@@ -1,0 +1,179 @@
+@page
+@using Clinic.Domain.Entities
+@using Clinic.Application.Acupuncture
+@model Clinic.Web.Pages.Admin.Records.SessionModel
+@{
+    var title = Model.Id is null ? L["New treatment session"].Value : L["Treatment session"].Value;
+    ViewData["Title"] = title;
+    var header = new Clinic.Web.Pages.Admin.Records.RecordHeader(Model.Patient, title, Model.Id is null ? "session" : "");
+    var points = Clinic.Web.Clinical.BodyMapPoints.Parse(Model.Input.PointsJson) ?? [];
+    var library = Clinic.Web.Clinical.BodyMapPoints.LibraryJson(k => L[k]);
+}
+
+<partial name="_RecordHeader" model="header" />
+
+<form method="post" asp-route-patientId="@Model.Patient.Id" asp-route-id="@Model.Id" id="session-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <input type="hidden" asp-for="Input.PointsJson" id="points-json" />
+
+    <div class="row g-4">
+        <div class="col-xxl-7">
+            <section class="card card-soft">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h2 class="h5 mb-0"><i class="bi bi-person-arms-up me-2 text-success"></i>@L["Acupuncture points"]</h2>
+                        <span class="small text-muted">@L["Click the diagram to add a point of your own."]</span>
+                    </div>
+
+                    <div class="point-tools mb-3">
+                        <div class="input-group">
+                            <select class="form-select" id="point-select" aria-label="@L["Standard point"]">
+                                <option value="">@L["Add a standard point..."]</option>
+                                @foreach (var region in AcupointLibrary.Points.GroupBy(p => p.Region))
+                                {
+                                    <optgroup label="@L[region.Key.ToString()]">
+                                        @foreach (var p in region)
+                                        {
+                                            <option value="@p.Code" dir="ltr">@p.Label</option>
+                                        }
+                                    </optgroup>
+                                }
+                            </select>
+                            <select class="form-select flex-grow-0 w-auto" id="point-side" aria-label="@L["Side"]">
+                                <option value="Both">@L["Both sides"]</option>
+                                <option value="Right">@L["Right"]</option>
+                                <option value="Left">@L["Left"]</option>
+                            </select>
+                            <button type="button" class="btn btn-success" id="point-add"><i class="bi bi-plus-lg"></i><span class="visually-hidden">@L["Add"]</span></button>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="bi bi-collection me-1"></i>@L["Load a protocol"]</button>
+                                <ul class="dropdown-menu">
+                                    @foreach (var p in AcupointLibrary.Protocols)
+                                    {
+                                        <li><button type="button" class="dropdown-item" data-protocol="@p.Key">@L[p.Name]</button></li>
+                                    }
+                                </ul>
+                            </div>
+                            @if (Model.PreviousPointsJson is not null)
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-success" id="copy-previous"><i class="bi bi-copy me-1"></i>@L["Copy points from {0}", Fmt.Date(Model.PreviousDateUtc!.Value)]</button>
+                            }
+                            <button type="button" class="btn btn-sm btn-outline-danger ms-auto" id="points-clear"><i class="bi bi-eraser me-1"></i>@L["Clear all"]</button>
+                        </div>
+                    </div>
+
+                    <partial name="_BodyMap" model="new Clinic.Web.Clinical.BodyMap(points, true)" />
+                    <p class="small text-muted mt-2 mb-0"><i class="bi bi-info-circle me-1"></i>@L["Point positions on the diagram are approximate and meant for recording only."]</p>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-xxl-5">
+            <section class="card card-soft mb-4">
+                <div class="card-body">
+                    <h2 class="h6 text-muted mb-2">@L["Points in this session"] <span class="badge rounded-pill text-bg-light border" id="points-count">0</span></h2>
+                    <p class="small text-muted mb-2" id="points-empty">@L["No points yet."]</p>
+                    <ul class="list-unstyled point-list mb-0" id="point-list"></ul>
+                </div>
+            </section>
+
+            <section class="card card-soft mb-4">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label asp-for="Input.Date" class="form-label"></label>
+                            <input asp-for="Input.Date" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" autocomplete="off" />
+                            <span asp-validation-for="Input.Date" class="text-danger small"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="Input.Time" class="form-label"></label>
+                            <input asp-for="Input.Time" type="time" class="form-control" dir="ltr" />
+                            <span asp-validation-for="Input.Time" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.Type" class="form-label"></label>
+                            <select asp-for="Input.Type" class="form-select">
+                                @foreach (var t in Enum.GetValues<SessionType>())
+                                {
+                                    <option value="@t">@L[t.ToString()]</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="Input.WeightKg" class="form-label"></label>
+                            <input asp-for="Input.WeightKg" type="text" inputmode="decimal" value="@NumberBinder.Format(Model.Input.WeightKg)" class="form-control" dir="ltr" />
+                            <span asp-validation-for="Input.WeightKg" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="Input.WaistCm" class="form-label"></label>
+                            <input asp-for="Input.WaistCm" type="text" inputmode="decimal" value="@NumberBinder.Format(Model.Input.WaistCm)" class="form-control" dir="ltr" />
+                            <span asp-validation-for="Input.WaistCm" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="Input.PainScore" class="form-label"></label>
+                            <input asp-for="Input.PainScore" type="text" inputmode="numeric" value="@Model.Input.PainScore" class="form-control" dir="ltr" />
+                            <span asp-validation-for="Input.PainScore" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="Input.NeedleRetentionMinutes" class="form-label"></label>
+                            <input asp-for="Input.NeedleRetentionMinutes" type="text" inputmode="numeric" value="@Model.Input.NeedleRetentionMinutes" class="form-control" dir="ltr" />
+                            <span asp-validation-for="Input.NeedleRetentionMinutes" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.Complaint" class="form-label"></label>
+                            <textarea asp-for="Input.Complaint" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.Reactions" class="form-label"></label>
+                            <textarea asp-for="Input.Reactions" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.Notes" class="form-label"></label>
+                            <textarea asp-for="Input.Notes" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.NextPlan" class="form-label"></label>
+                            <textarea asp-for="Input.NextPlan" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success btn-lg flex-grow-1"><i class="bi bi-check-lg me-1"></i>@L["Save session"]</button>
+                @if (Model.Id is not null)
+                {
+                    <button type="submit" class="btn btn-outline-danger btn-lg" asp-page-handler="Delete" formnovalidate onclick="return confirm('@L["Delete this session?"]')"><i class="bi bi-trash"></i><span class="visually-hidden">@L["Delete"]</span></button>
+                }
+            </div>
+        </div>
+    </div>
+</form>
+
+<template id="point-row">
+    <li class="point-row">
+        <span class="point-dot"></span>
+        <div class="flex-grow-1">
+            <input class="form-control form-control-sm point-label" maxlength="100" aria-label="@L["Point name"]" dir="auto" />
+            <input class="form-control form-control-sm point-note mt-1" maxlength="200" placeholder="@L["Note (optional)"]" aria-label="@L["Note (optional)"]" dir="auto" />
+        </div>
+        <span class="point-side small text-muted"></span>
+        <button type="button" class="btn btn-sm btn-link text-danger point-remove" aria-label="@L["Remove"]"><i class="bi bi-x-lg"></i></button>
+    </li>
+</template>
+
+@section Scripts {
+    <script id="acupoint-library" type="application/json">@Html.Raw(library)</script>
+    @if (Model.PreviousPointsJson is not null)
+    {
+        <script id="previous-points" type="application/json">@Html.Raw(Model.PreviousPointsJson)</script>
+    }
+    <script id="body-map-text" type="application/json">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(new
+    {
+        Right = L["Right"].Value, Left = L["Left"].Value, Midline = L["Midline"].Value,
+        custom = L["Point {0}"].Value, replace = L["Replace the current points?"].Value, clear = L["Remove all points?"].Value,
+    }))</script>
+    <script src="~/js/bodymap.js" asp-append-version="true"></script>
+}

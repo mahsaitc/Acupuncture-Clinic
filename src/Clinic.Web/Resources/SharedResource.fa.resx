@@ -810,4 +810,493 @@
   <data name="{0} patients" xml:space="preserve">
     <value>{0} بیمار</value>
   </data>
+  <data name="Access log" xml:space="preserve">
+    <value>گزارش دسترسی</value>
+  </data>
+  <data name="Access log for this patient" xml:space="preserve">
+    <value>گزارش دسترسی به پرونده این بیمار</value>
+  </data>
+  <data name="Action" xml:space="preserve">
+    <value>عملیات</value>
+  </data>
+  <data name="Acupuncture" xml:space="preserve">
+    <value>طب سوزنی</value>
+  </data>
+  <data name="Acupuncture points" xml:space="preserve">
+    <value>نقاط طب سوزنی</value>
+  </data>
+  <data name="Add a standard point..." xml:space="preserve">
+    <value>افزودن نقطه استاندارد...</value>
+  </data>
+  <data name="Age" xml:space="preserve">
+    <value>سن</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>همه</value>
+  </data>
+  <data name="All files" xml:space="preserve">
+    <value>همه فایل‌ها</value>
+  </data>
+  <data name="Allergies" xml:space="preserve">
+    <value>حساسیت‌ها</value>
+  </data>
+  <data name="Arm" xml:space="preserve">
+    <value>دست</value>
+  </data>
+  <data name="AuricularTherapy" xml:space="preserve">
+    <value>گوش‌درمانی (اوریکولوتراپی)</value>
+  </data>
+  <data name="BMI" xml:space="preserve">
+    <value>شاخص توده بدنی (BMI)</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>پشت</value>
+  </data>
+  <data name="Birth date" xml:space="preserve">
+    <value>تاریخ تولد</value>
+  </data>
+  <data name="Blood pressure" xml:space="preserve">
+    <value>فشار خون</value>
+  </data>
+  <data name="Both sides" xml:space="preserve">
+    <value>هر دو طرف</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>دسته</value>
+  </data>
+  <data name="CatgutEmbedding" xml:space="preserve">
+    <value>کاشت نخ (کت‌گوت)</value>
+  </data>
+  <data name="Change since first measurement: {0} kg" xml:space="preserve">
+    <value>تغییر از اولین اندازه‌گیری: {0} کیلوگرم</value>
+  </data>
+  <data name="Chief complaint" xml:space="preserve">
+    <value>شکایت اصلی</value>
+  </data>
+  <data name="Choose a category." xml:space="preserve">
+    <value>یک دسته انتخاب کنید.</value>
+  </data>
+  <data name="Choose a file to upload." xml:space="preserve">
+    <value>فایلی برای بارگذاری انتخاب کنید.</value>
+  </data>
+  <data name="Clear all" xml:space="preserve">
+    <value>پاک کردن همه</value>
+  </data>
+  <data name="Click the diagram to add a point of your own." xml:space="preserve">
+    <value>برای افزودن نقطه دلخواه روی تصویر کلیک کنید.</value>
+  </data>
+  <data name="Complaint today" xml:space="preserve">
+    <value>شکایت امروز</value>
+  </data>
+  <data name="Consent signed" xml:space="preserve">
+    <value>رضایت‌نامه امضا شده</value>
+  </data>
+  <data name="Consultation" xml:space="preserve">
+    <value>مشاوره</value>
+  </data>
+  <data name="Copy points from {0}" xml:space="preserve">
+    <value>کپی نقاط جلسه {0}</value>
+  </data>
+  <data name="Create medical record" xml:space="preserve">
+    <value>ایجاد پرونده پزشکی</value>
+  </data>
+  <data name="CreateSession" xml:space="preserve">
+    <value>ثبت جلسه درمان</value>
+  </data>
+  <data name="Cupping" xml:space="preserve">
+    <value>حجامت و بادکش</value>
+  </data>
+  <data name="Current medications" xml:space="preserve">
+    <value>داروهای فعلی</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>تاریخ</value>
+  </data>
+  <data name="Date taken" xml:space="preserve">
+    <value>تاریخ انجام</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Delete this file?" xml:space="preserve">
+    <value>این فایل حذف شود؟</value>
+  </data>
+  <data name="Delete this session?" xml:space="preserve">
+    <value>این جلسه حذف شود؟</value>
+  </data>
+  <data name="DeleteFile" xml:space="preserve">
+    <value>حذف فایل</value>
+  </data>
+  <data name="DeleteSession" xml:space="preserve">
+    <value>حذف جلسه درمان</value>
+  </data>
+  <data name="Diagnosis" xml:space="preserve">
+    <value>تشخیص</value>
+  </data>
+  <data name="Diagnosis and plan" xml:space="preserve">
+    <value>تشخیص و برنامه درمان</value>
+  </data>
+  <data name="Digestion" xml:space="preserve">
+    <value>گوارش</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>دانلود</value>
+  </data>
+  <data name="Edit medical record" xml:space="preserve">
+    <value>ویرایش پرونده پزشکی</value>
+  </data>
+  <data name="Electroacupuncture" xml:space="preserve">
+    <value>الکتروآکوپانکچر</value>
+  </data>
+  <data name="Enter the date like {0}." xml:space="preserve">
+    <value>تاریخ را به شکل {0} وارد کنید.</value>
+  </data>
+  <data name="Every opening and change of medical records and patient files." xml:space="preserve">
+    <value>هر بار مشاهده و تغییر پرونده‌های پزشکی و فایل‌های بیماران.</value>
+  </data>
+  <data name="Family history" xml:space="preserve">
+    <value>سابقه خانوادگی</value>
+  </data>
+  <data name="Female" xml:space="preserve">
+    <value>زن</value>
+  </data>
+  <data name="Files are kept outside the public site. Only doctors and, if you allow it, the patient can open them, and every opening is logged." xml:space="preserve">
+    <value>فایل‌ها بیرون از بخش عمومی سایت نگهداری می‌شوند. فقط پزشک و در صورت اجازه شما خود بیمار می‌توانند آن‌ها را باز کنند و هر بار باز شدن ثبت می‌شود.</value>
+  </data>
+  <data name="First visit measurements" xml:space="preserve">
+    <value>اندازه‌گیری‌های جلسه اول</value>
+  </data>
+  <data name="From the clinic" xml:space="preserve">
+    <value>از طرف کلینیک</value>
+  </data>
+  <data name="Front" xml:space="preserve">
+    <value>جلو</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>جنسیت</value>
+  </data>
+  <data name="Head" xml:space="preserve">
+    <value>سر و صورت</value>
+  </data>
+  <data name="Headache" xml:space="preserve">
+    <value>سردرد</value>
+  </data>
+  <data name="Heart rate" xml:space="preserve">
+    <value>ضربان قلب</value>
+  </data>
+  <data name="Height (cm)" xml:space="preserve">
+    <value>قد (سانتی‌متر)</value>
+  </data>
+  <data name="Hidden from patient" xml:space="preserve">
+    <value>مخفی از بیمار</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>سوابق</value>
+  </data>
+  <data name="ICD-10 code" xml:space="preserve">
+    <value>کد ICD-10</value>
+  </data>
+  <data name="IP address" xml:space="preserve">
+    <value>آدرس IP</value>
+  </data>
+  <data name="Images and files" xml:space="preserve">
+    <value>تصاویر و فایل‌ها</value>
+  </data>
+  <data name="Insomnia and anxiety" xml:space="preserve">
+    <value>بی‌خوابی و اضطراب</value>
+  </data>
+  <data name="JPG, PNG, WebP, PDF or DICOM, at most 50 MB." xml:space="preserve">
+    <value>JPG، PNG، WebP، PDF یا DICOM، حداکثر ۵۰ مگابایت.</value>
+  </data>
+  <data name="Lab" xml:space="preserve">
+    <value>آزمایش</value>
+  </data>
+  <data name="Last session" xml:space="preserve">
+    <value>آخرین جلسه</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>چپ</value>
+  </data>
+  <data name="Leg" xml:space="preserve">
+    <value>پا</value>
+  </data>
+  <data name="Load a protocol" xml:space="preserve">
+    <value>بارگذاری پروتکل</value>
+  </data>
+  <data name="Low back pain" xml:space="preserve">
+    <value>کمردرد</value>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>مرد</value>
+  </data>
+  <data name="Medical record" xml:space="preserve">
+    <value>پرونده پزشکی</value>
+  </data>
+  <data name="Midline" xml:space="preserve">
+    <value>خط وسط</value>
+  </data>
+  <data name="My files" xml:space="preserve">
+    <value>فایل‌های من</value>
+  </data>
+  <data name="National code" xml:space="preserve">
+    <value>کد ملی</value>
+  </data>
+  <data name="Needle retention (minutes)" xml:space="preserve">
+    <value>مدت ماندن سوزن (دقیقه)</value>
+  </data>
+  <data name="New session" xml:space="preserve">
+    <value>جلسه جدید</value>
+  </data>
+  <data name="New treatment session" xml:space="preserve">
+    <value>جلسه درمان جدید</value>
+  </data>
+  <data name="No files yet." xml:space="preserve">
+    <value>هنوز فایلی ثبت نشده است.</value>
+  </data>
+  <data name="No points yet." xml:space="preserve">
+    <value>هنوز نقطه‌ای ثبت نشده است.</value>
+  </data>
+  <data name="No signed consent" xml:space="preserve">
+    <value>رضایت‌نامه امضا نشده</value>
+  </data>
+  <data name="No treatment sessions yet." xml:space="preserve">
+    <value>هنوز جلسه درمانی ثبت نشده است.</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>یادداشت</value>
+  </data>
+  <data name="Note (optional)" xml:space="preserve">
+    <value>یادداشت (اختیاری)</value>
+  </data>
+  <data name="Note for the doctor" xml:space="preserve">
+    <value>یادداشت برای پزشک</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>یادداشت‌ها</value>
+  </data>
+  <data name="Nothing recorded yet." xml:space="preserve">
+    <value>هنوز چیزی ثبت نشده است.</value>
+  </data>
+  <data name="Occupation" xml:space="preserve">
+    <value>شغل</value>
+  </data>
+  <data name="Open medical record" xml:space="preserve">
+    <value>باز کردن پرونده پزشکی</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>سایر</value>
+  </data>
+  <data name="Pain" xml:space="preserve">
+    <value>درد</value>
+  </data>
+  <data name="Pain score (0 to 10)" xml:space="preserve">
+    <value>شدت درد (۰ تا ۱۰)</value>
+  </data>
+  <data name="Past medical history" xml:space="preserve">
+    <value>سابقه بیماری‌ها</value>
+  </data>
+  <data name="Patient can see" xml:space="preserve">
+    <value>قابل مشاهده برای بیمار</value>
+  </data>
+  <data name="Patient: {0}" xml:space="preserve">
+    <value>بیمار: {0}</value>
+  </data>
+  <data name="Personal details" xml:space="preserve">
+    <value>مشخصات فردی</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>عکس</value>
+  </data>
+  <data name="Plan for next session" xml:space="preserve">
+    <value>برنامه جلسه بعد</value>
+  </data>
+  <data name="Point name" xml:space="preserve">
+    <value>نام نقطه</value>
+  </data>
+  <data name="Point positions on the diagram are approximate and meant for recording only." xml:space="preserve">
+    <value>جای نقاط روی تصویر تقریبی است و فقط برای ثبت در پرونده است.</value>
+  </data>
+  <data name="Point {0}" xml:space="preserve">
+    <value>نقطه {0}</value>
+  </data>
+  <data name="Points in this session" xml:space="preserve">
+    <value>نقاط این جلسه</value>
+  </data>
+  <data name="Pulse diagnosis" xml:space="preserve">
+    <value>تشخیص نبض</value>
+  </data>
+  <data name="Radiology" xml:space="preserve">
+    <value>رادیولوژی و تصویربرداری</value>
+  </data>
+  <data name="Reactions and side effects" xml:space="preserve">
+    <value>واکنش‌ها و عوارض</value>
+  </data>
+  <data name="Referred by" xml:space="preserve">
+    <value>معرف</value>
+  </data>
+  <data name="Remove all points?" xml:space="preserve">
+    <value>همه نقاط پاک شوند؟</value>
+  </data>
+  <data name="Replace the current points?" xml:space="preserve">
+    <value>نقاط فعلی جایگزین شوند؟</value>
+  </data>
+  <data name="Right" xml:space="preserve">
+    <value>راست</value>
+  </data>
+  <data name="Save session" xml:space="preserve">
+    <value>ذخیره جلسه</value>
+  </data>
+  <data name="Send a result to the doctor" xml:space="preserve">
+    <value>ارسال جواب آزمایش یا تصویر برای پزشک</value>
+  </data>
+  <data name="Sent by you" xml:space="preserve">
+    <value>ارسال‌شده توسط شما</value>
+  </data>
+  <data name="Show all" xml:space="preserve">
+    <value>نمایش همه</value>
+  </data>
+  <data name="Show to the patient" xml:space="preserve">
+    <value>نمایش به بیمار</value>
+  </data>
+  <data name="Side" xml:space="preserve">
+    <value>طرف</value>
+  </data>
+  <data name="Standard point" xml:space="preserve">
+    <value>نقطه استاندارد</value>
+  </data>
+  <data name="Stored encrypted." xml:space="preserve">
+    <value>به صورت رمزنگاری‌شده ذخیره می‌شود.</value>
+  </data>
+  <data name="Summary" xml:space="preserve">
+    <value>خلاصه</value>
+  </data>
+  <data name="Surgeries" xml:space="preserve">
+    <value>جراحی‌ها</value>
+  </data>
+  <data name="TCM pattern" xml:space="preserve">
+    <value>الگوی طب سنتی چینی</value>
+  </data>
+  <data name="The file must be a JPG, PNG, WebP, PDF or DICOM file of at most 50 MB." xml:space="preserve">
+    <value>فایل باید JPG، PNG، WebP، PDF یا DICOM و حداکثر ۵۰ مگابایت باشد.</value>
+  </data>
+  <data name="The file was deleted." xml:space="preserve">
+    <value>فایل حذف شد.</value>
+  </data>
+  <data name="The file was uploaded." xml:space="preserve">
+    <value>فایل بارگذاری شد.</value>
+  </data>
+  <data name="The file was uploaded. The doctor will see it in your record." xml:space="preserve">
+    <value>فایل بارگذاری شد. پزشک آن را در پرونده شما می‌بیند.</value>
+  </data>
+  <data name="The medical record was saved." xml:space="preserve">
+    <value>پرونده پزشکی ذخیره شد.</value>
+  </data>
+  <data name="The national code has 10 digits." xml:space="preserve">
+    <value>کد ملی ۱۰ رقم است.</value>
+  </data>
+  <data name="The patient signed the treatment consent form" xml:space="preserve">
+    <value>بیمار فرم رضایت درمان را امضا کرده است</value>
+  </data>
+  <data name="The points on the diagram could not be read. Please try again." xml:space="preserve">
+    <value>نقاط روی تصویر خوانده نشد. لطفاً دوباره تلاش کنید.</value>
+  </data>
+  <data name="The session was deleted." xml:space="preserve">
+    <value>جلسه حذف شد.</value>
+  </data>
+  <data name="The session was saved." xml:space="preserve">
+    <value>جلسه ذخیره شد.</value>
+  </data>
+  <data name="This patient has no medical record yet." xml:space="preserve">
+    <value>این بیمار هنوز پرونده پزشکی ندارد.</value>
+  </data>
+  <data name="Tongue diagnosis" xml:space="preserve">
+    <value>تشخیص زبان</value>
+  </data>
+  <data name="Traditional assessment" xml:space="preserve">
+    <value>ارزیابی طب سنتی چینی</value>
+  </data>
+  <data name="Treatment plan" xml:space="preserve">
+    <value>برنامه درمان</value>
+  </data>
+  <data name="Treatment session" xml:space="preserve">
+    <value>جلسه درمان</value>
+  </data>
+  <data name="Treatment sessions" xml:space="preserve">
+    <value>جلسات درمان</value>
+  </data>
+  <data name="Treatment type" xml:space="preserve">
+    <value>نوع درمان</value>
+  </data>
+  <data name="Trunk" xml:space="preserve">
+    <value>قفسه سینه و شکم</value>
+  </data>
+  <data name="UpdateFile" xml:space="preserve">
+    <value>تغییر دسترسی فایل</value>
+  </data>
+  <data name="UpdateRecord" xml:space="preserve">
+    <value>ویرایش پرونده</value>
+  </data>
+  <data name="UpdateSession" xml:space="preserve">
+    <value>ویرایش جلسه درمان</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>بارگذاری</value>
+  </data>
+  <data name="Upload a file" xml:space="preserve">
+    <value>بارگذاری فایل</value>
+  </data>
+  <data name="UploadFile" xml:space="preserve">
+    <value>بارگذاری فایل</value>
+  </data>
+  <data name="Uploaded by the patient" xml:space="preserve">
+    <value>ارسال‌شده توسط بیمار</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>کاربر</value>
+  </data>
+  <data name="ViewFile" xml:space="preserve">
+    <value>مشاهده فایل</value>
+  </data>
+  <data name="ViewRecord" xml:space="preserve">
+    <value>مشاهده پرونده</value>
+  </data>
+  <data name="Waist (cm)" xml:space="preserve">
+    <value>دور کمر (سانتی‌متر)</value>
+  </data>
+  <data name="Weight (kg)" xml:space="preserve">
+    <value>وزن (کیلوگرم)</value>
+  </data>
+  <data name="Weight loss" xml:space="preserve">
+    <value>کاهش وزن</value>
+  </data>
+  <data name="Weight over time" xml:space="preserve">
+    <value>روند وزن</value>
+  </data>
+  <data name="Write blood pressure like 120/80." xml:space="preserve">
+    <value>فشار خون را به شکل 120/80 بنویسید.</value>
+  </data>
+  <data name="Write the time like 14:30." xml:space="preserve">
+    <value>ساعت را به شکل 14:30 بنویسید.</value>
+  </data>
+  <data name="Your test results and images, kept private between you and your doctor." xml:space="preserve">
+    <value>جواب آزمایش‌ها و تصاویر شما، محرمانه بین شما و پزشک.</value>
+  </data>
+  <data name="cm" xml:space="preserve">
+    <value>سانتی‌متر</value>
+  </data>
+  <data name="e.g. Blood test" xml:space="preserve">
+    <value>مثلاً آزمایش خون</value>
+  </data>
+  <data name="e.g. Lumbar MRI" xml:space="preserve">
+    <value>مثلاً MRI کمر</value>
+  </data>
+  <data name="files" xml:space="preserve">
+    <value>فایل</value>
+  </data>
+  <data name="kg" xml:space="preserve">
+    <value>کیلوگرم</value>
+  </data>
+  <data name="sessions" xml:space="preserve">
+    <value>جلسه</value>
+  </data>
 </root>

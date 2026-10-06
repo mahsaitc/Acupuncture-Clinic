@@ -1,0 +1,63 @@
+@page
+@model Clinic.Web.Pages.Admin.AuditModel
+@{
+    ViewData["Title"] = L["Access log"];
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="h3">@L["Access log"]</h1>
+        <div class="text-muted">
+            @if (Model.PatientName is { } name)
+            {
+                @L["Patient: {0}", name] <a class="ms-2 small" asp-page="./Audit">@L["Show all"]</a>
+            }
+            else
+            {
+                @L["Every opening and change of medical records and patient files."]
+            }
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover bg-white align-middle small">
+        <thead>
+            <tr>
+                <th>@L["Time"]</th>
+                <th>@L["User"]</th>
+                <th>@L["Action"]</th>
+                <th>@L["Patient"]</th>
+                <th>@L["IP address"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model.Entries)
+            {
+                <tr>
+                    <td class="text-nowrap">@Fmt.DateTime(a.TimestampUtc)</td>
+                    <td>@(Model.Names.GetValueOrDefault(a.UserId) ?? a.UserId)</td>
+                    <td>@L[a.Action.ToString()]@if (a.EntityId is { } eid) { <span class="text-muted ms-1" dir="ltr">#@eid</span> }</td>
+                    <td><a asp-route-patientId="@a.PatientUserId">@(Model.Names.GetValueOrDefault(a.PatientUserId) ?? a.PatientUserId)</a></td>
+                    <td dir="ltr" class="text-nowrap">@a.Ip</td>
+                </tr>
+            }
+            @if (Model.Entries.Count == 0)
+            {
+                <tr><td colspan="5" class="text-muted">@L["Nothing recorded yet."]</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.PageCount > 1)
+{
+    <nav class="mt-3">
+        <ul class="pagination flex-wrap">
+            @for (var i = Math.Max(1, Model.PageNumber - 5); i <= Math.Min(Model.PageCount, Model.PageNumber + 5); i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")"><a class="page-link" asp-route-p="@i" asp-route-patientId="@Model.PatientId">@Fmt.Number(i)</a></li>
+            }
+        </ul>
+    </nav>
+}

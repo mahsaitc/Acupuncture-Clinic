@@ -66,6 +66,7 @@
                     <div class="admin-nav-group">@L["Settings"]</div>
                     <a class="@Active("/Admin/Users")" asp-page="/Admin/Users"><i class="bi bi-person-gear"></i>@L["Users"]@if (pendingDoctors > 0) { <span class="badge rounded-pill bg-warning text-dark ms-auto">@Fmt.Number(pendingDoctors)</span> }</a>
                     <a class="@Active("/Admin/Services")" asp-page="/Admin/Services"><i class="bi bi-grid"></i>@L["Services"]</a>
+                    <a class="@Active("/Admin/Audit")" asp-page="/Admin/Audit"><i class="bi bi-shield-check"></i>@L["Access log"]</a>
                 }
             </nav>
         </aside>

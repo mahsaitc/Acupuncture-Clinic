@@ -1,0 +1,25 @@
+@using Clinic.Domain.Entities
+@model Clinic.Web.Clinical.BodyMap
+@{
+    static string F(double v) => v.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+}
+<div class="body-map @(Model.Editable ? "editable" : "")" dir="ltr">
+    @foreach (var view in new[] { BodyView.Front, BodyView.Back })
+    {
+        var front = view == BodyView.Front;
+        <figure class="body-view">
+            <svg viewBox="0 0 200 480" data-view="@view" role="img" aria-label="@(front ? L["Front"] : L["Back"])">
+                <partial name="_BodyFigure" model="view" />
+                <text x="8" y="476" class="side-label">@(front ? L["Right"] : L["Left"])</text>
+                <text x="192" y="476" class="side-label" text-anchor="end">@(front ? L["Left"] : L["Right"])</text>
+                <g class="markers">
+                    @foreach (var p in Model.Points.Where(p => p.View == view))
+                    {
+                        <g class="marker"><circle cx="@F(p.X)" cy="@F(p.Y)" r="4.2" /><text x="@F(p.X < 100 ? p.X - 6 : p.X + 6)" y="@F(p.Y + 2.5)" text-anchor="@(p.X < 100 ? "end" : "start")">@(p.Code ?? p.Label)</text><title>@p.Label@(p.Note is null ? "" : " - " + p.Note)</title></g>
+                    }
+                </g>
+            </svg>
+            <figcaption>@(front ? L["Front"] : L["Back"])</figcaption>
+        </figure>
+    }
+</div>

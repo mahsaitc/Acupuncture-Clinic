@@ -1,0 +1,178 @@
+@page
+@using Clinic.Domain.Entities
+@model Clinic.Web.Pages.Admin.Records.EditModel
+@{
+    var title = Model.IsNew ? L["Create medical record"].Value : L["Edit medical record"].Value;
+    ViewData["Title"] = title;
+    var header = new Clinic.Web.Pages.Admin.Records.RecordHeader(Model.Patient, title, "record");
+}
+
+<partial name="_RecordHeader" model="header" />
+
+<form method="post" asp-route-patientId="@Model.Patient.Id" class="record-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="row g-4">
+        <div class="col-xl-6">
+            <section class="card card-soft mb-4">
+                <div class="card-body">
+                    <h2 class="h5 mb-3"><i class="bi bi-person-vcard me-2 text-success"></i>@L["Personal details"]</h2>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label asp-for="Input.NationalCode" class="form-label"></label>
+                            <input asp-for="Input.NationalCode" class="form-control" dir="ltr" inputmode="numeric" autocomplete="off" />
+                            <span asp-validation-for="Input.NationalCode" class="text-danger small"></span>
+                            <div class="form-text"><i class="bi bi-lock me-1"></i>@L["Stored encrypted."]</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="Input.BirthDate" class="form-label"></label>
+                            <input asp-for="Input.BirthDate" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" autocomplete="off" />
+                            <span asp-validation-for="Input.BirthDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="Input.Gender" class="form-label"></label>
+                            <select asp-for="Input.Gender" class="form-select">
+                                <option value="">-</option>
+                                @foreach (var g in Enum.GetValues<Gender>())
+                                {
+                                    <option value="@g">@L[g.ToString()]</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="Input.Occupation" class="form-label"></label>
+                            <input asp-for="Input.Occupation" class="form-control" />
+                        </div>
+                        <div class="col-sm-8">
+                            <label asp-for="Input.Address" class="form-label"></label>
+                            <input asp-for="Input.Address" class="form-control" />
+                        </div>
+                        <div class="col-sm-4">
+                            <label asp-for="Input.ReferralSource" class="form-label"></label>
+                            <input asp-for="Input.ReferralSource" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card card-soft mb-4">
+                <div class="card-body">
+                    <h2 class="h5 mb-3"><i class="bi bi-journal-medical me-2 text-success"></i>@L["History"]</h2>
+                    <div class="mb-3">
+                        <label asp-for="Input.ChiefComplaint" class="form-label"></label>
+                        <textarea asp-for="Input.ChiefComplaint" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.PastMedicalHistory" class="form-label"></label>
+                        <textarea asp-for="Input.PastMedicalHistory" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label asp-for="Input.Surgeries" class="form-label"></label>
+                            <textarea asp-for="Input.Surgeries" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="Input.Medications" class="form-label"></label>
+                            <textarea asp-for="Input.Medications" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="Input.Allergies" class="form-label text-danger"></label>
+                            <textarea asp-for="Input.Allergies" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="Input.FamilyHistory" class="form-label"></label>
+                            <textarea asp-for="Input.FamilyHistory" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-xl-6">
+            <section class="card card-soft mb-4">
+                <div class="card-body">
+                    <h2 class="h5 mb-3"><i class="bi bi-heart-pulse me-2 text-success"></i>@L["First visit measurements"]</h2>
+                    <div class="row g-3">
+                        <div class="col-6 col-md-4">
+                            <label asp-for="Input.HeightCm" class="form-label"></label>
+                            <input asp-for="Input.HeightCm" type="text" inputmode="decimal" value="@NumberBinder.Format(Model.Input.HeightCm)" class="form-control" dir="ltr" />
+                            <span asp-validation-for="Input.HeightCm" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label asp-for="Input.WeightKg" class="form-label"></label>
+                            <input asp-for="Input.WeightKg" type="text" inputmode="decimal" value="@NumberBinder.Format(Model.Input.WeightKg)" class="form-control" dir="ltr" />
+                            <span asp-validation-for="Input.WeightKg" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label asp-for="Input.WaistCm" class="form-label"></label>
+                            <input asp-for="Input.WaistCm" type="text" inputmode="decimal" value="@NumberBinder.Format(Model.Input.WaistCm)" class="form-control" dir="ltr" />
+                            <span asp-validation-for="Input.WaistCm" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label asp-for="Input.BloodPressure" class="form-label"></label>
+                            <input asp-for="Input.BloodPressure" class="form-control" dir="ltr" placeholder="120/80" />
+                            <span asp-validation-for="Input.BloodPressure" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label asp-for="Input.Pulse" class="form-label"></label>
+                            <input asp-for="Input.Pulse" type="text" inputmode="numeric" value="@Model.Input.Pulse" class="form-control" dir="ltr" />
+                            <span asp-validation-for="Input.Pulse" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card card-soft mb-4">
+                <div class="card-body">
+                    <h2 class="h5 mb-3"><i class="bi bi-yin-yang me-2 text-success"></i>@L["Traditional assessment"]</h2>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label asp-for="Input.PulseDiagnosis" class="form-label"></label>
+                            <input asp-for="Input.PulseDiagnosis" class="form-control" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="Input.TongueDiagnosis" class="form-label"></label>
+                            <input asp-for="Input.TongueDiagnosis" class="form-control" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.TcmPattern" class="form-label"></label>
+                            <input asp-for="Input.TcmPattern" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card card-soft mb-4">
+                <div class="card-body">
+                    <h2 class="h5 mb-3"><i class="bi bi-clipboard2-check me-2 text-success"></i>@L["Diagnosis and plan"]</h2>
+                    <div class="row g-3">
+                        <div class="col-sm-8">
+                            <label asp-for="Input.Diagnosis" class="form-label"></label>
+                            <textarea asp-for="Input.Diagnosis" class="form-control" rows="2"></textarea>
+                            <div class="form-text"><i class="bi bi-lock me-1"></i>@L["Stored encrypted."]</div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label asp-for="Input.Icd10" class="form-label"></label>
+                            <input asp-for="Input.Icd10" class="form-control" dir="ltr" placeholder="E66.9" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.TreatmentPlan" class="form-label"></label>
+                            <textarea asp-for="Input.TreatmentPlan" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input asp-for="Input.ConsentSigned" class="form-check-input" />
+                                <label asp-for="Input.ConsentSigned" class="form-check-label"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="sticky-actions">
+        <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-check-lg me-1"></i>@L["Save"]</button>
+        <a class="btn btn-light btn-lg" asp-page="./Index" asp-route-patientId="@Model.Patient.Id">@L["Cancel"]</a>
+    </div>
+</form>

@@ -1,0 +1,110 @@
+@page
+@using Clinic.Domain.Entities
+@model Clinic.Web.Pages.Admin.Records.FilesModel
+@{
+    ViewData["Title"] = L["Images and files"];
+    var header = new Clinic.Web.Pages.Admin.Records.RecordHeader(Model.Patient, L["Images and files"], "files");
+}
+
+<partial name="_RecordHeader" model="header" />
+
+<div class="row g-4">
+    <div class="col-xl-4">
+        <form method="post" enctype="multipart/form-data" asp-page-handler="Upload" asp-route-patientId="@Model.Patient.Id" class="card card-soft">
+            <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-cloud-arrow-up me-2 text-success"></i>@L["Upload a file"]</h2>
+                <div asp-validation-summary="All" class="text-danger small mb-2"></div>
+                <div class="mb-3">
+                    <input class="form-control" type="file" name="file" accept="@Clinic.Web.Clinical.PrivateFileStore.Accept" required />
+                    <div class="form-text">@L["JPG, PNG, WebP, PDF or DICOM, at most 50 MB."]</div>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Upload.Category" class="form-label"></label>
+                    <select asp-for="Upload.Category" class="form-select">
+                        @foreach (var c in Enum.GetValues<FileCategory>())
+                        {
+                            <option value="@c">@L[c.ToString()]</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Upload.Title" class="form-label"></label>
+                    <input asp-for="Upload.Title" class="form-control" placeholder="@L["e.g. Lumbar MRI"]" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Upload.TakenOn" class="form-label"></label>
+                    <input asp-for="Upload.TakenOn" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" autocomplete="off" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Upload.Note" class="form-label"></label>
+                    <textarea asp-for="Upload.Note" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-check mb-3">
+                    <input asp-for="Upload.VisibleToPatient" class="form-check-input" />
+                    <label asp-for="Upload.VisibleToPatient" class="form-check-label"></label>
+                </div>
+                <button type="submit" class="btn btn-success w-100"><i class="bi bi-upload me-1"></i>@L["Upload"]</button>
+                <p class="small text-muted mt-3 mb-0"><i class="bi bi-shield-lock me-1"></i>@L["Files are kept outside the public site. Only doctors and, if you allow it, the patient can open them, and every opening is logged."]</p>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-xl-8">
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <a class="btn btn-sm @(Model.Category is null ? "btn-success" : "btn-outline-success")" asp-route-patientId="@Model.Patient.Id">@L["All"]</a>
+            @foreach (var c in Enum.GetValues<FileCategory>())
+            {
+                <a class="btn btn-sm @(Model.Category == c ? "btn-success" : "btn-outline-success")" asp-route-patientId="@Model.Patient.Id" asp-route-category="@c">@L[c.ToString()]</a>
+            }
+        </div>
+
+        @if (Model.Files.Count == 0)
+        {
+            <div class="card card-soft"><div class="card-body text-muted">@L["No files yet."]</div></div>
+        }
+        else
+        {
+            <div class="file-grid">
+                @foreach (var f in Model.Files)
+                {
+                    <div class="file-card">
+                        <a class="file-preview" asp-page="./File" asp-route-id="@f.Id" target="_blank">
+                            @if (f.IsImage)
+                            {
+                                <img src="@Url.Page("./File", new { id = f.Id, thumb = true })" alt="@f.Title" loading="lazy" />
+                            }
+                            else
+                            {
+                                <i class="bi @(f.ContentType == "application/pdf" ? "bi-file-earmark-pdf" : "bi-file-earmark-medical")"></i>
+                                @if (f.ContentType == "application/dicom") { <span class="small">DICOM</span> }
+                            }
+                        </a>
+                        <div class="file-body">
+                            <div class="d-flex justify-content-between gap-2">
+                                <strong class="text-truncate" title="@f.Title">@f.Title</strong>
+                                <span class="badge text-bg-light border">@L[f.Category.ToString()]</span>
+                            </div>
+                            <div class="small text-muted">
+                                @(f.TakenOn is DateOnly d ? Fmt.Day(d) : Fmt.Date(f.UploadedUtc))
+                                · @(Model.UploaderNames.GetValueOrDefault(f.UploadedByUserId) ?? "")
+                                @if (f.UploadedByUserId == f.PatientUserId) { <span class="badge text-bg-warning-subtle text-warning-emphasis ms-1">@L["Uploaded by the patient"]</span> }
+                            </div>
+                            @if (f.Note is { } note) { <div class="small mt-1">@note</div> }
+                            <div class="d-flex flex-wrap align-items-center gap-1 mt-2">
+                                <form method="post" asp-page-handler="Visibility" asp-route-patientId="@Model.Patient.Id" asp-route-id="@f.Id" asp-route-category="@Model.Category">
+                                    <button class="btn btn-sm text-nowrap @(f.VisibleToPatient ? "btn-outline-success" : "btn-outline-secondary")" title="@L["Show to the patient"]">
+                                        <i class="bi @(f.VisibleToPatient ? "bi-eye" : "bi-eye-slash") me-1"></i>@(f.VisibleToPatient ? L["Patient can see"] : L["Hidden from patient"])
+                                    </button>
+                                </form>
+                                <a class="btn btn-sm btn-light" asp-page="./File" asp-route-id="@f.Id" asp-route-download="true" title="@L["Download"]"><i class="bi bi-download"></i></a>
+                                <form method="post" asp-page-handler="Delete" asp-route-patientId="@Model.Patient.Id" asp-route-id="@f.Id" asp-route-category="@Model.Category" class="ms-auto" onsubmit="return confirm('@L["Delete this file?"]')">
+                                    <button class="btn btn-sm btn-link text-danger" title="@L["Delete"]"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

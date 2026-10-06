@@ -25,7 +25,7 @@ public sealed class BookingServiceTests : IDisposable
     public BookingServiceTests()
     {
         _connection.Open();
-        _db = new ClinicDbContext(new DbContextOptionsBuilder<ClinicDbContext>().UseSqlite(_connection).Options);
+        _db = new ClinicDbContext(new DbContextOptionsBuilder<ClinicDbContext>().UseSqlite(_connection).Options, new Microsoft.AspNetCore.DataProtection.EphemeralDataProtectionProvider());
         _db.Database.EnsureCreated();
 
         _db.Users.AddRange(

@@ -55,6 +55,24 @@ namespace Clinic.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AuditEntries",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TimestampUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", maxLength: 450, nullable: false),
+                    Action = table.Column<int>(type: "INTEGER", nullable: false),
+                    PatientUserId = table.Column<string>(type: "TEXT", maxLength: 450, nullable: false),
+                    EntityId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    Ip = table.Column<string>(type: "TEXT", maxLength: 64, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuditEntries", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ContactMessages",
                 columns: table => new
                 {
@@ -253,6 +271,86 @@ namespace Clinic.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MedicalFiles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PatientUserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Category = table.Column<int>(type: "INTEGER", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Note = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
+                    StoredName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    ContentType = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    SizeBytes = table.Column<long>(type: "INTEGER", nullable: false),
+                    TakenOn = table.Column<DateOnly>(type: "TEXT", nullable: true),
+                    UploadedByUserId = table.Column<string>(type: "TEXT", nullable: false),
+                    UploadedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    VisibleToPatient = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalFiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MedicalFiles_AspNetUsers_PatientUserId",
+                        column: x => x.PatientUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MedicalFiles_AspNetUsers_UploadedByUserId",
+                        column: x => x.UploadedByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalRecords",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PatientUserId = table.Column<string>(type: "TEXT", nullable: false),
+                    NationalCode = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    BirthDate = table.Column<DateOnly>(type: "TEXT", nullable: true),
+                    Gender = table.Column<int>(type: "INTEGER", nullable: true),
+                    Occupation = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Address = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
+                    ReferralSource = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    ChiefComplaint = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    PastMedicalHistory = table.Column<string>(type: "TEXT", maxLength: 4000, nullable: true),
+                    Surgeries = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    Medications = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    Allergies = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
+                    FamilyHistory = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    HeightCm = table.Column<double>(type: "REAL", nullable: true),
+                    WeightKg = table.Column<double>(type: "REAL", nullable: true),
+                    WaistCm = table.Column<double>(type: "REAL", nullable: true),
+                    BloodPressure = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    Pulse = table.Column<int>(type: "INTEGER", nullable: true),
+                    PulseDiagnosis = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    TongueDiagnosis = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    TcmPattern = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    Icd10 = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    Diagnosis = table.Column<string>(type: "TEXT", maxLength: 8000, nullable: true),
+                    TreatmentPlan = table.Column<string>(type: "TEXT", maxLength: 4000, nullable: true),
+                    ConsentSignedUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CreatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecords", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MedicalRecords_AspNetUsers_PatientUserId",
+                        column: x => x.PatientUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
                 {
@@ -280,6 +378,44 @@ namespace Clinic.Infrastructure.Data.Migrations
                     table.ForeignKey(
                         name: "FK_Posts_AspNetUsers_AuthorUserId",
                         column: x => x.AuthorUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TreatmentSessions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PatientUserId = table.Column<string>(type: "TEXT", nullable: false),
+                    DoctorUserId = table.Column<string>(type: "TEXT", nullable: false),
+                    DateUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    WeightKg = table.Column<double>(type: "REAL", nullable: true),
+                    WaistCm = table.Column<double>(type: "REAL", nullable: true),
+                    PainScore = table.Column<int>(type: "INTEGER", nullable: true),
+                    NeedleRetentionMinutes = table.Column<int>(type: "INTEGER", nullable: true),
+                    Complaint = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    Reactions = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", maxLength: 4000, nullable: true),
+                    NextPlan = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    CreatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TreatmentSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TreatmentSessions_AspNetUsers_DoctorUserId",
+                        column: x => x.DoctorUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TreatmentSessions_AspNetUsers_PatientUserId",
+                        column: x => x.PatientUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -345,6 +481,32 @@ namespace Clinic.Infrastructure.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "SessionPoints",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TreatmentSessionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    Label = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    View = table.Column<int>(type: "INTEGER", nullable: false),
+                    Side = table.Column<int>(type: "INTEGER", nullable: false),
+                    X = table.Column<double>(type: "REAL", nullable: false),
+                    Y = table.Column<double>(type: "REAL", nullable: false),
+                    Note = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SessionPoints", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SessionPoints_TreatmentSessions_TreatmentSessionId",
+                        column: x => x.TreatmentSessionId,
+                        principalTable: "TreatmentSessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_ClinicServiceId",
                 table: "Appointments",
@@ -398,6 +560,16 @@ namespace Clinic.Infrastructure.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_AuditEntries_PatientUserId_TimestampUtc",
+                table: "AuditEntries",
+                columns: new[] { "PatientUserId", "TimestampUtc" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditEntries_TimestampUtc",
+                table: "AuditEntries",
+                column: "TimestampUtc");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ContactMessages_IsArchived_CreatedUtc",
                 table: "ContactMessages",
                 columns: new[] { "IsArchived", "CreatedUtc" });
@@ -406,6 +578,28 @@ namespace Clinic.Infrastructure.Data.Migrations
                 name: "IX_Doctors_UserId",
                 table: "Doctors",
                 column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalFiles_PatientUserId_UploadedUtc",
+                table: "MedicalFiles",
+                columns: new[] { "PatientUserId", "UploadedUtc" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalFiles_StoredName",
+                table: "MedicalFiles",
+                column: "StoredName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalFiles_UploadedByUserId",
+                table: "MedicalFiles",
+                column: "UploadedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalRecords_PatientUserId",
+                table: "MedicalRecords",
+                column: "PatientUserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -423,6 +617,21 @@ namespace Clinic.Infrastructure.Data.Migrations
                 table: "Posts",
                 columns: new[] { "Kind", "Slug" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SessionPoints_TreatmentSessionId",
+                table: "SessionPoints",
+                column: "TreatmentSessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TreatmentSessions_DoctorUserId",
+                table: "TreatmentSessions",
+                column: "DoctorUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TreatmentSessions_PatientUserId_DateUtc",
+                table: "TreatmentSessions",
+                columns: new[] { "PatientUserId", "DateUtc" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkingHours_DoctorProfileId",
@@ -452,10 +661,22 @@ namespace Clinic.Infrastructure.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "AuditEntries");
+
+            migrationBuilder.DropTable(
                 name: "ContactMessages");
 
             migrationBuilder.DropTable(
+                name: "MedicalFiles");
+
+            migrationBuilder.DropTable(
+                name: "MedicalRecords");
+
+            migrationBuilder.DropTable(
                 name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "SessionPoints");
 
             migrationBuilder.DropTable(
                 name: "SiteContent");
@@ -468,6 +689,9 @@ namespace Clinic.Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "TreatmentSessions");
 
             migrationBuilder.DropTable(
                 name: "Doctors");

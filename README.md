@@ -30,9 +30,32 @@ The seed admin also gets the Doctor role. Open the management panel at `/Admin`,
 | Dashboard, appointments, patients, messages | yes | yes | yes |
 | Working hours | if also a doctor | yes | no |
 | Blog and medical articles | yes | yes | no |
-| Home page and contact, users, services | yes | no | no |
+| Medical records, sessions, patient files | if also a doctor | yes | no |
+| Home page and contact, users, services, access log | yes | no | no |
 
 Blog posts and articles are written in Markdown. Raw HTML is not allowed and the output is sanitized.
+
+## Medical records and patient files
+
+Doctors open a patient's record from **Patients → patient → Open medical record**. Receptionists never see clinical data.
+
+- **Record**: history, medications, allergies, first-visit measurements, pulse and tongue diagnosis, TCM pattern, ICD-10 diagnosis, plan and consent.
+  The national code and the diagnosis are encrypted in the database.
+- **Treatment sessions**: date, type (acupuncture, catgut embedding, electroacupuncture, cupping, auricular, consultation), weight, waist, pain score
+  and the points used, marked on a front and back body diagram. Pick standard points from the list, load a protocol, copy the last session,
+  or click the diagram for a point of your own. Diagram positions are approximate.
+- **Files**: radiology, lab results and photos (JPG, PNG, WebP, PDF, DICOM, up to 50 MB). The doctor chooses which ones the patient can see;
+  patients can send their own results from **My files**.
+- **Access log** (admin): every opening and change of a record or file, with user, time and IP.
+
+### Back up these folders with the database
+
+| Setting | Default | Holds |
+| --- | --- | --- |
+| `DataProtection:KeysPath` | `keys/` | Encryption keys. **Without them the encrypted fields and login cookies cannot be read.** |
+| `PrivateFiles:Root` | `private-files/` | Patient files. Never put this folder under `wwwroot` or `media`. |
+
+Keep both outside the web root on the server and include them in every backup.
 
 ## Tests
 

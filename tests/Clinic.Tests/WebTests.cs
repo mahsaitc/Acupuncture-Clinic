@@ -10,11 +10,17 @@ namespace Clinic.Tests;
 public sealed class ClinicWebFactory : WebApplicationFactory<Program>
 {
     private readonly string _dbPath = Path.Combine(Path.GetTempPath(), $"clinic-test-{Guid.NewGuid():N}.db");
+    private readonly string _dataDir = Path.Combine(Path.GetTempPath(), $"clinic-test-{Guid.NewGuid():N}");
+
+    public string PrivateFilesRoot => Path.Combine(_dataDir, "private");
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Development");
         builder.UseSetting("ConnectionStrings:Clinic", $"Data Source={_dbPath}");
+        builder.UseSetting("DataProtection:KeysPath", Path.Combine(_dataDir, "keys"));
+        builder.UseSetting("PrivateFiles:Root", PrivateFilesRoot);
+        builder.UseSetting("Media:Root", Path.Combine(_dataDir, "media"));
     }
 
     protected override void Dispose(bool disposing)
@@ -22,6 +28,10 @@ public sealed class ClinicWebFactory : WebApplicationFactory<Program>
         base.Dispose(disposing);
         Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
         File.Delete(_dbPath);
+        if (Directory.Exists(_dataDir))
+        {
+            Directory.Delete(_dataDir, recursive: true);
+        }
     }
 }
 
@@ -195,6 +205,10 @@ public class WebTests(ClinicWebFactory factory) : IClassFixture<ClinicWebFactory
     [InlineData("/Admin/Messages", "/Account/Login")]
     [InlineData("/Admin/Posts?kind=Blog", "/Account/Login")]
     [InlineData("/en/Admin/Posts/Edit?kind=Article", "/en/Account/Login")]
+    [InlineData("/Admin/Records?patientId=x", "/Account/Login")]
+    [InlineData("/Admin/Records/File?id=1", "/Account/Login")]
+    [InlineData("/Admin/Audit", "/Account/Login")]
+    [InlineData("/Files", "/Account/Login")]
     public async Task Protected_pages_redirect_anonymous_users_to_login(string path, string login)
     {
         var response = await Client().GetAsync(path);

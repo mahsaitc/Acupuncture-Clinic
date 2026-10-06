@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddClinicInfrastructure(builder.Configuration);
+builder.Services.AddClinicInfrastructure(builder.Configuration, builder.Environment.ContentRootPath);
 // Emit Persian text as-is instead of &#x...; entities.
 builder.Services.Configure<Microsoft.Extensions.WebEncoders.WebEncoderOptions>(o =>
     o.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All));
@@ -26,15 +26,22 @@ builder.Services.AddSingleton<Clinic.Web.Content.ContactThrottle>();
 // Allow the hero video upload through the form reader; the page itself enforces the real limit.
 builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(o => o.MultipartBodyLengthLimit = MediaStore.MaxVideoBytes + MediaStore.MaxImageBytes + 1024 * 1024);
 builder.Services.AddScoped<IdentityErrorDescriber, LocalizedIdentityErrorDescriber>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<Clinic.Web.Clinical.PrivateFileStore>();
+builder.Services.AddScoped<Clinic.Web.Clinical.AuditLog>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddRazorPages(options =>
     {
         // The whole management panel needs a staff role; pages narrow it further with [Authorize(Policy = ...)].
         options.Conventions.AuthorizeFolder("/Admin", Policies.Staff);
+        // Medical records are for doctors only, never receptionists.
+        options.Conventions.AuthorizeFolder("/Admin/Records", Policies.Doctor);
+        options.Conventions.AuthorizeFolder("/Files");
         options.Conventions.AuthorizeFolder("/Appointments");
         options.Conventions.AuthorizeFolder("/Booking");
     })
+    .AddMvcOptions(o => o.ModelBinderProviders.Insert(0, new NumberBinder.Provider()))
     .AddViewLocalization()
     .AddDataAnnotationsLocalization(options =>
         options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));

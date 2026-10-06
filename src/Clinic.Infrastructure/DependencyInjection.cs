@@ -3,6 +3,7 @@ using Clinic.Application.Scheduling;
 using Clinic.Infrastructure.Data;
 using Clinic.Infrastructure.Identity;
 using Clinic.Infrastructure.Scheduling;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,8 +13,15 @@ namespace Clinic.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddClinicInfrastructure(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddClinicInfrastructure(this IServiceCollection services, IConfiguration config, string contentRoot)
     {
+        // These keys encrypt login cookies and the encrypted medical record fields.
+        // Losing them makes those fields unreadable, so the folder must be backed up with the database.
+        var keys = Path.GetFullPath(config["DataProtection:KeysPath"] ?? Path.Combine(contentRoot, "keys"));
+        services.AddDataProtection()
+            .SetApplicationName("AcupunctureClinic")
+            .PersistKeysToFileSystem(new DirectoryInfo(keys));
+
         var connection = config.GetConnectionString("Clinic")
                          ?? throw new InvalidOperationException("Connection string 'Clinic' is missing.");
 

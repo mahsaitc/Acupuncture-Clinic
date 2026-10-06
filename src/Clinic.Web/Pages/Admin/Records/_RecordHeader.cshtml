@@ -1,0 +1,15 @@
+@model Clinic.Web.Pages.Admin.Records.RecordHeader
+@{
+    var english = CulturePath.IsEnglish;
+}
+<div class="page-head">
+    <div>
+        <a class="small" asp-page="/Admin/Patients/Details" asp-route-id="@Model.Patient.Id"><i class="bi @(english ? "bi-arrow-left" : "bi-arrow-right") me-1"></i>@Model.Patient.FullName</a>
+        <h1 class="h3 mt-1">@Model.Title</h1>
+    </div>
+    <nav class="btn-group record-tabs" aria-label="@L["Medical record"]">
+        <a class="btn btn-outline-success @(Model.Tab == "record" ? "active" : "")" asp-page="/Admin/Records/Index" asp-route-patientId="@Model.Patient.Id"><i class="bi bi-clipboard2-pulse me-1"></i>@L["Medical record"]</a>
+        <a class="btn btn-outline-success @(Model.Tab == "session" ? "active" : "")" asp-page="/Admin/Records/Session" asp-route-patientId="@Model.Patient.Id"><i class="bi bi-plus-lg me-1"></i>@L["New session"]</a>
+        <a class="btn btn-outline-success @(Model.Tab == "files" ? "active" : "")" asp-page="/Admin/Records/Files" asp-route-patientId="@Model.Patient.Id"><i class="bi bi-images me-1"></i>@L["Images and files"]</a>
+    </nav>
+</div>

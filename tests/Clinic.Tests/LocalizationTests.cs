@@ -26,6 +26,14 @@ public partial class LocalizationTests
         used.UnionWith(Enum.GetNames<Domain.Entities.AppointmentStatus>());
         used.UnionWith(Enum.GetNames<DayOfWeek>());
         used.UnionWith(Domain.Roles.All);
+        used.UnionWith(Enum.GetNames<Domain.Entities.Gender>());
+        used.UnionWith(Enum.GetNames<Domain.Entities.SessionType>());
+        used.UnionWith(Enum.GetNames<Domain.Entities.FileCategory>());
+        used.UnionWith(Enum.GetNames<Domain.Entities.AuditAction>());
+        used.UnionWith(Enum.GetNames<Domain.Entities.BodyView>());
+        used.UnionWith(Enum.GetNames<Domain.Entities.PointSide>());
+        used.UnionWith(Enum.GetNames<Application.Acupuncture.BodyRegion>());
+        used.UnionWith(Application.Acupuncture.AcupointLibrary.Protocols.Select(p => p.Name));
 
         Assert.Empty(used.Except(translated).Order());
     }

@@ -520,3 +520,49 @@ h1, h2, h3, .h1, .h2, .h3 {
     transition: none;
   }
 }
+
+/* Patient files (shared by the patient page and the management panel) */
+.file-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.file-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, .06);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(40, 50, 20, .06);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+a.file-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(40, 50, 20, .1);
+}
+
+.file-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  background: var(--olive-50);
+  color: var(--olive-600);
+  font-size: 2.5rem;
+  text-decoration: none;
+}
+
+.file-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.file-body {
+  padding: .75rem .9rem;
+  min-width: 0;
+}

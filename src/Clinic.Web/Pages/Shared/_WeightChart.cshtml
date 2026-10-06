@@ -1,0 +1,47 @@
+@model List<(DateTime Utc, double Kg)>
+@{
+    // A small server-drawn line chart; no chart library needed.
+    const double W = 640, H = 220, Left = 44, Right = 16, Top = 16, Bottom = 34;
+    var points = Model;
+    // Whole-kilogram grid lines.
+    var min = Math.Floor(points.Min(p => p.Kg) - 1);
+    var step = Math.Max(1, Math.Ceiling((Math.Ceiling(points.Max(p => p.Kg) + 1) - min) / 4));
+    var max = min + step * 4;
+    var t0 = points[0].Utc.Ticks;
+    var span = Math.Max(1, points[^1].Utc.Ticks - t0);
+    const double Pad = 16;
+    double Px(DateTime utc) => points.Count == 1 ? (Left + W - Right) / 2 : Left + Pad + (utc.Ticks - t0) / (double)span * (W - Left - Right - 2 * Pad);
+    double Py(double kg) => Top + (max - kg) / (max - min) * (H - Top - Bottom);
+    // SVG numbers must use a dot whatever the page language.
+    static string F(double v) => v.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+    var line = string.Join(" ", points.Select(p => $"{F(Px(p.Utc))},{F(Py(p.Kg))}"));
+    var change = points[^1].Kg - points[0].Kg;
+    var english = CulturePath.IsEnglish;
+}
+<div class="weight-chart">
+    <svg viewBox="0 0 @F(W) @F(H)" role="img" aria-label="@L["Weight over time"]" dir="ltr">
+        @for (var i = 0; i <= 4; i++)
+        {
+            var kg = min + step * i;
+            var y = Py(kg);
+            <g><line x1="@F(Left)" x2="@F(W - Right)" y1="@F(y)" y2="@F(y)" class="grid" /><text x="@F(Left - 6)" y="@F(y + 4)" text-anchor="end">@Fmt.Number(kg)</text></g>
+        }
+        <polyline points="@line" class="line" />
+        @foreach (var p in points)
+        {
+            <circle cx="@F(Px(p.Utc))" cy="@F(Py(p.Kg))" r="4" class="dot"><title>@Fmt.Date(p.Utc): @Fmt.Number(p.Kg)</title></circle>
+        }
+        <text x="@F(Left + 34)" y="@F(H - 10)" text-anchor="middle">@Fmt.ShortDate(points[0].Utc)</text>
+        @if (points.Count > 1)
+        {
+            <g><text x="@F(W - Right - 34)" y="@F(H - 10)" text-anchor="middle">@Fmt.ShortDate(points[^1].Utc)</text></g>
+        }
+    </svg>
+    @if (points.Count > 1)
+    {
+        <div class="small mt-2 @(change < 0 ? "text-success" : change > 0 ? "text-danger" : "text-muted")">
+            <i class="bi @(change <= 0 ? "bi-arrow-down-right" : "bi-arrow-up-right") me-1"></i>
+            @L["Change since first measurement: {0} kg", Fmt.Number((change > 0 ? "+" : "") + F(change))]
+        </div>
+    }
+</div>

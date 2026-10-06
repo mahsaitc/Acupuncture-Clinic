@@ -488,3 +488,7 @@ $RECYCLE.BIN/
 
 # Uploaded site media (hero video and poster)
 src/Clinic.Web/media/
+
+# Encryption keys and private patient files. Back these up; never commit them.
+src/Clinic.Web/keys/
+src/Clinic.Web/private-files/

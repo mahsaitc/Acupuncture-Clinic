@@ -1,0 +1,159 @@
+@page
+@using Clinic.Domain.Entities
+@model Clinic.Web.Pages.Admin.Records.IndexModel
+@{
+    ViewData["Title"] = L["Medical record"];
+    var header = new Clinic.Web.Pages.Admin.Records.RecordHeader(Model.Patient, L["Medical record"], "record");
+    var r = Model.Record;
+    int? age = r?.BirthDate is DateOnly b ? (int)((DateTime.Today - b.ToDateTime(TimeOnly.MinValue)).TotalDays / 365.25) : null;
+}
+
+<partial name="_RecordHeader" model="header" />
+
+<div class="row g-4">
+    <div class="col-xl-4">
+        <div class="card card-soft mb-4">
+            <div class="card-body">
+                @if (r is null)
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-clipboard2-plus display-6 text-success"></i>
+                        <p class="mt-2">@L["This patient has no medical record yet."]</p>
+                        <a class="btn btn-success" asp-page="./Edit" asp-route-patientId="@Model.Patient.Id"><i class="bi bi-plus-lg me-1"></i>@L["Create medical record"]</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h5 mb-0">@L["Summary"]</h2>
+                        <a class="btn btn-sm btn-outline-success" asp-page="./Edit" asp-route-patientId="@Model.Patient.Id"><i class="bi bi-pencil me-1"></i>@L["Edit"]</a>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(r.Allergies))
+                    {
+                        <div class="alert alert-danger py-2 small"><i class="bi bi-exclamation-triangle me-1"></i><strong>@L["Allergies"]:</strong> @r.Allergies</div>
+                    }
+                    <div class="record-vitals">
+                        <div><span>@L["Age"]</span><strong>@(age is int a ? Fmt.Number(a) : "-")</strong></div>
+                        <div><span>@L["Gender"]</span><strong>@(r.Gender is Gender g ? L[g.ToString()] : "-")</strong></div>
+                        <div><span>@L["Height (cm)"]</span><strong>@(r.HeightCm is double h ? Fmt.Number(h) : "-")</strong></div>
+                        <div><span>@L["Weight (kg)"]</span><strong>@(r.WeightKg is double w ? Fmt.Number(w) : "-")</strong></div>
+                        <div><span>@L["BMI"]</span><strong>@(r.Bmi is double bmi ? Fmt.Number(bmi) : "-")</strong></div>
+                        <div><span>@L["Blood pressure"]</span><strong dir="ltr">@(r.BloodPressure is { } bp ? Fmt.Number(bp) : "-")</strong></div>
+                    </div>
+                    <dl class="record-dl mt-3 mb-0">
+                        @if (r.ChiefComplaint is { } cc) { <dt>@L["Chief complaint"]</dt><dd>@cc</dd> }
+                        @if (r.Diagnosis is { } dx) { <dt>@L["Diagnosis"]</dt><dd>@dx @if (r.Icd10 is { } icd) { <span class="badge text-bg-light border" dir="ltr">@icd</span> }</dd> }
+                        @if (r.TcmPattern is { } tcm) { <dt>@L["TCM pattern"]</dt><dd>@tcm</dd> }
+                        @if (r.Medications is { } meds) { <dt>@L["Current medications"]</dt><dd>@meds</dd> }
+                        @if (r.TreatmentPlan is { } plan) { <dt>@L["Treatment plan"]</dt><dd style="white-space: pre-line">@plan</dd> }
+                    </dl>
+                    <div class="small text-muted mt-3">
+                        @L["Last updated"]: @Fmt.Date(r.UpdatedUtc)
+                        @if (r.ConsentSignedUtc is DateTime consent)
+                        {
+                            <span class="ms-2"><i class="bi bi-check2-circle text-success"></i> @L["Consent signed"] @Fmt.Date(consent)</span>
+                        }
+                        else
+                        {
+                            <span class="ms-2 text-warning-emphasis"><i class="bi bi-exclamation-circle"></i> @L["No signed consent"]</span>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card card-soft">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">@L["Images and files"]</h2>
+                    <a class="small" asp-page="./Files" asp-route-patientId="@Model.Patient.Id">@L["All files"]</a>
+                </div>
+                @if (Model.Files.Count == 0)
+                {
+                    <p class="text-muted small mb-0">@L["No files yet."]</p>
+                }
+                else
+                {
+                    <div class="file-thumbs">
+                        @foreach (var f in Model.Files)
+                        {
+                            <a class="file-thumb" asp-page="./File" asp-route-id="@f.Id" target="_blank" title="@f.Title">
+                                @if (f.IsImage)
+                                {
+                                    <img src="@Url.Page("./File", new { id = f.Id, thumb = true })" alt="@f.Title" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <i class="bi @(f.ContentType == "application/pdf" ? "bi-file-earmark-pdf" : "bi-file-earmark-medical")"></i>
+                                }
+                                <span>@f.Title</span>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-8">
+        @if (Model.Weights.Count > 0)
+        {
+            <div class="card card-soft mb-4">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">@L["Weight over time"]</h2>
+                    <partial name="_WeightChart" model="Model.Weights" />
+                </div>
+            </div>
+        }
+
+        <div class="card card-soft">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">@L["Treatment sessions"] <span class="badge rounded-pill text-bg-light border">@Fmt.Number(Model.Sessions.Count)</span></h2>
+                    <a class="btn btn-sm btn-success" asp-page="./Session" asp-route-patientId="@Model.Patient.Id"><i class="bi bi-plus-lg me-1"></i>@L["New session"]</a>
+                </div>
+                @if (Model.Sessions.Count == 0)
+                {
+                    <p class="text-muted mb-0">@L["No treatment sessions yet."]</p>
+                }
+                else
+                {
+                    <ol class="session-timeline">
+                        @foreach (var s in Model.Sessions)
+                        {
+                            <li>
+                                <a class="session-item" asp-page="./Session" asp-route-patientId="@Model.Patient.Id" asp-route-id="@s.Id">
+                                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                                        <strong>@L[s.Type.ToString()]</strong>
+                                        <span class="small text-muted">@Fmt.DateTime(s.DateUtc)</span>
+                                    </div>
+                                    <div class="small text-muted">@DoctorName(s.DoctorUserId)</div>
+                                    @if (s.Points.Count > 0)
+                                    {
+                                        <div class="point-chips mt-2">
+                                            @foreach (var label in s.Points.Select(p => p.Code ?? p.Label).Distinct().Take(14))
+                                            {
+                                                <span class="point-chip" dir="ltr">@label</span>
+                                            }
+                                            @if (s.Points.Select(p => p.Code ?? p.Label).Distinct().Count() > 14) { <span class="point-chip">…</span> }
+                                        </div>
+                                    }
+                                    <div class="small mt-2 d-flex flex-wrap gap-3">
+                                        @if (s.WeightKg is double sw) { <span><i class="bi bi-speedometer me-1"></i>@Fmt.Number(sw) @L["kg"]</span> }
+                                        @if (s.WaistCm is double waist) { <span><i class="bi bi-rulers me-1"></i>@Fmt.Number(waist) @L["cm"]</span> }
+                                        @if (s.PainScore is int pain) { <span><i class="bi bi-activity me-1"></i>@L["Pain"] @Fmt.Number(pain)/@Fmt.Number(10)</span> }
+                                    </div>
+                                    @if (s.Notes is { } notes) { <div class="small mt-1 text-truncate">@notes</div> }
+                                </a>
+                            </li>
+                        }
+                    </ol>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string DoctorName(string id) => Model.DoctorNames.GetValueOrDefault(id) ?? "";
+}

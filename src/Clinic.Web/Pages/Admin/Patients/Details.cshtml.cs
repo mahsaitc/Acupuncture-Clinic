@@ -15,6 +15,11 @@ public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userM
     public List<Appointment> Appointments { get; private set; } = [];
     public List<ContactMessage> Messages { get; private set; } = [];
 
+    /// <summary>Counts only, and only for doctors; receptionists never see clinical data.</summary>
+    public ClinicalSummary? Clinical { get; private set; }
+
+    public sealed record ClinicalSummary(int Sessions, int Files, DateTime? LastSessionUtc);
+
     public async Task<IActionResult> OnGetAsync(string id)
     {
         var user = await userManager.FindByIdAsync(id);
@@ -36,6 +41,15 @@ public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userM
             .OrderByDescending(m => m.CreatedUtc)
             .Take(20)
             .ToListAsync();
+
+        if (User.IsInRole(Roles.Doctor))
+        {
+            var sessions = db.TreatmentSessions.Where(s => s.PatientUserId == id);
+            Clinical = new ClinicalSummary(
+                await sessions.CountAsync(),
+                await db.MedicalFiles.CountAsync(f => f.PatientUserId == id),
+                await sessions.MaxAsync(s => (DateTime?)s.DateUtc));
+        }
 
         return Page();
     }

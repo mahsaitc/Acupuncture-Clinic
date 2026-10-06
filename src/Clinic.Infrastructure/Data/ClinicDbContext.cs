@@ -1,12 +1,18 @@
 using Clinic.Domain.Entities;
 using Clinic.Infrastructure.Identity;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Clinic.Infrastructure.Data;
 
-public class ClinicDbContext(DbContextOptions<ClinicDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataProtectionProvider protection)
+    : IdentityDbContext<ApplicationUser>(options)
 {
+    /// <summary>Changing this makes existing encrypted values unreadable.</summary>
+    public const string ProtectionPurpose = "Clinic.MedicalRecord.v1";
+
     public DbSet<DoctorProfile> Doctors => Set<DoctorProfile>();
     public DbSet<WorkingHour> WorkingHours => Set<WorkingHour>();
     public DbSet<ClinicService> Services => Set<ClinicService>();
@@ -14,6 +20,11 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options) : Identi
     public DbSet<SiteContent> SiteContent => Set<SiteContent>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
     public DbSet<Post> Posts => Set<Post>();
+    public DbSet<MedicalRecord> MedicalRecords => Set<MedicalRecord>();
+    public DbSet<TreatmentSession> TreatmentSessions => Set<TreatmentSession>();
+    public DbSet<SessionPoint> SessionPoints => Set<SessionPoint>();
+    public DbSet<MedicalFile> MedicalFiles => Set<MedicalFile>();
+    public DbSet<AuditEntry> AuditEntries => Set<AuditEntry>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -95,6 +106,77 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options) : Identi
             e.Property(p => p.CoverImagePath).HasMaxLength(300);
             e.Property(p => p.References).HasMaxLength(4000);
             e.HasOne<ApplicationUser>().WithMany().HasForeignKey(p => p.AuthorUserId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // The model is built once per process, so the converter keeps the protector of the first context.
+        // The provider is an application singleton, so every context uses the same keys anyway.
+        var protector = protection.CreateProtector(ProtectionPurpose);
+        var encrypted = new ValueConverter<string?, string?>(
+            v => v == null ? null : protector.Protect(v),
+            v => v == null ? null : protector.Unprotect(v));
+
+        builder.Entity<MedicalRecord>(e =>
+        {
+            e.HasIndex(r => r.PatientUserId).IsUnique();
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(r => r.PatientUserId).OnDelete(DeleteBehavior.Restrict);
+            e.Property(r => r.NationalCode).HasConversion(encrypted).HasMaxLength(500);
+            e.Property(r => r.Diagnosis).HasConversion(encrypted).HasMaxLength(8000);
+            e.Property(r => r.Occupation).HasMaxLength(100);
+            e.Property(r => r.Address).HasMaxLength(300);
+            e.Property(r => r.ReferralSource).HasMaxLength(100);
+            e.Property(r => r.ChiefComplaint).HasMaxLength(2000);
+            e.Property(r => r.PastMedicalHistory).HasMaxLength(4000);
+            e.Property(r => r.Surgeries).HasMaxLength(2000);
+            e.Property(r => r.Medications).HasMaxLength(2000);
+            e.Property(r => r.Allergies).HasMaxLength(1000);
+            e.Property(r => r.FamilyHistory).HasMaxLength(2000);
+            e.Property(r => r.BloodPressure).HasMaxLength(20);
+            e.Property(r => r.PulseDiagnosis).HasMaxLength(500);
+            e.Property(r => r.TongueDiagnosis).HasMaxLength(500);
+            e.Property(r => r.TcmPattern).HasMaxLength(500);
+            e.Property(r => r.Icd10).HasMaxLength(50);
+            e.Property(r => r.TreatmentPlan).HasMaxLength(4000);
+        });
+
+        builder.Entity<TreatmentSession>(e =>
+        {
+            e.HasIndex(s => new { s.PatientUserId, s.DateUtc });
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(s => s.PatientUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(s => s.DoctorUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasMany(s => s.Points).WithOne().HasForeignKey(p => p.TreatmentSessionId).OnDelete(DeleteBehavior.Cascade);
+            e.Property(s => s.Complaint).HasMaxLength(2000);
+            e.Property(s => s.Reactions).HasMaxLength(2000);
+            e.Property(s => s.Notes).HasMaxLength(4000);
+            e.Property(s => s.NextPlan).HasMaxLength(2000);
+        });
+
+        builder.Entity<SessionPoint>(e =>
+        {
+            e.Property(p => p.Code).HasMaxLength(20);
+            e.Property(p => p.Label).HasMaxLength(100).IsRequired();
+            e.Property(p => p.Note).HasMaxLength(200);
+        });
+
+        builder.Entity<MedicalFile>(e =>
+        {
+            e.HasIndex(f => new { f.PatientUserId, f.UploadedUtc });
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(f => f.PatientUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(f => f.UploadedByUserId).OnDelete(DeleteBehavior.Restrict);
+            e.Property(f => f.Title).HasMaxLength(200).IsRequired();
+            e.Property(f => f.Note).HasMaxLength(1000);
+            e.Property(f => f.StoredName).HasMaxLength(100).IsRequired();
+            e.HasIndex(f => f.StoredName).IsUnique();
+            e.Property(f => f.ContentType).HasMaxLength(100).IsRequired();
+        });
+
+        builder.Entity<AuditEntry>(e =>
+        {
+            e.HasIndex(a => a.TimestampUtc);
+            e.HasIndex(a => new { a.PatientUserId, a.TimestampUtc });
+            e.Property(a => a.UserId).HasMaxLength(450).IsRequired();
+            e.Property(a => a.PatientUserId).HasMaxLength(450).IsRequired();
+            e.Property(a => a.EntityId).HasMaxLength(50);
+            e.Property(a => a.Ip).HasMaxLength(64);
         });
     }
 }
