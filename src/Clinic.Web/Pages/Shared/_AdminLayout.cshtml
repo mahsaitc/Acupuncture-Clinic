@@ -1,0 +1,98 @@
+@using Microsoft.EntityFrameworkCore
+@inject Clinic.Infrastructure.Data.ClinicDbContext Db
+@{
+    var english = CulturePath.IsEnglish;
+    var path = (ViewContext.RouteData.Values["page"] as string) ?? "";
+    var isAdmin = User.IsInRole(Roles.Admin);
+    var isDoctor = User.IsInRole(Roles.Doctor);
+    var unread = await Db.ContactMessages.CountAsync(m => m.ReadUtc == null && !m.IsArchived);
+    var pendingDoctors = isAdmin ? await Db.Doctors.CountAsync(d => !d.IsApproved) : 0;
+
+    string Active(string page) => path == page || path.StartsWith(page + "/") ? "active" : "";
+}
+<!DOCTYPE html>
+<html lang="@(english ? "en" : "fa")" dir="@(english ? "ltr" : "rtl")">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>@ViewData["Title"] - @L["Management panel"]</title>
+    <link rel="stylesheet" href="~/lib/vazirmatn/vazirmatn.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    @if (english)
+    {
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    }
+    else
+    {
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    }
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
+<body class="admin-body">
+    <div class="admin-shell">
+        <aside class="admin-sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="adminSidebar" aria-label="@L["Management panel"]">
+            <div class="admin-brand">
+                <span class="brand-mark"><i class="bi bi-flower1" aria-hidden="true"></i></span>
+                <div>
+                    <div class="fw-bold">@L["Acupuncture Clinic"]</div>
+                    <div class="small opacity-75">@L["Management panel"]</div>
+                </div>
+                <button type="button" class="btn-close btn-close-white ms-auto d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#adminSidebar" aria-label="@L["Close"]"></button>
+            </div>
+            <nav class="admin-nav">
+                <a class="@Active("/Admin/Index")" asp-page="/Admin/Index"><i class="bi bi-speedometer2"></i>@L["Dashboard"]</a>
+
+                <div class="admin-nav-group">@L["Clinic"]</div>
+                <a class="@Active("/Admin/Appointments")" asp-page="/Admin/Appointments"><i class="bi bi-calendar3"></i>@L["Appointments"]</a>
+                <a class="@Active("/Admin/Patients")" asp-page="/Admin/Patients/Index"><i class="bi bi-people"></i>@L["Patients"]</a>
+                <a class="@Active("/Admin/Messages")" asp-page="/Admin/Messages"><i class="bi bi-envelope"></i>@L["Messages"]@if (unread > 0) { <span class="badge rounded-pill bg-warning text-dark ms-auto">@Fmt.Number(unread)</span> }</a>
+                @if (isDoctor)
+                {
+                    <a class="@Active("/Admin/Schedule")" asp-page="/Admin/Schedule"><i class="bi bi-clock"></i>@L["Working hours"]</a>
+                }
+
+                @if (isAdmin || isDoctor)
+                {
+                    <div class="admin-nav-group">@L["Content"]</div>
+                    <a class="@(path.StartsWith("/Admin/Posts") && Context.Request.Query["kind"] != "Article" ? "active" : "")" asp-page="/Admin/Posts/Index" asp-route-kind="Blog"><i class="bi bi-journal-richtext"></i>@L["Blog"]</a>
+                    <a class="@(path.StartsWith("/Admin/Posts") && Context.Request.Query["kind"] == "Article" ? "active" : "")" asp-page="/Admin/Posts/Index" asp-route-kind="Article"><i class="bi bi-file-earmark-medical"></i>@L["Medical articles"]</a>
+                }
+                @if (isAdmin)
+                {
+                    <a class="@Active("/Admin/Site")" asp-page="/Admin/Site"><i class="bi bi-house-gear"></i>@L["Home page and contact"]</a>
+
+                    <div class="admin-nav-group">@L["Settings"]</div>
+                    <a class="@Active("/Admin/Users")" asp-page="/Admin/Users"><i class="bi bi-person-gear"></i>@L["Users"]@if (pendingDoctors > 0) { <span class="badge rounded-pill bg-warning text-dark ms-auto">@Fmt.Number(pendingDoctors)</span> }</a>
+                    <a class="@Active("/Admin/Services")" asp-page="/Admin/Services"><i class="bi bi-grid"></i>@L["Services"]</a>
+                }
+            </nav>
+        </aside>
+
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar" aria-controls="adminSidebar" aria-label="@L["Menu"]"><i class="bi bi-list"></i></button>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    <a class="btn btn-sm btn-light" asp-page="/Index" target="_blank"><i class="bi bi-box-arrow-up-right"></i><span class="d-none d-sm-inline ms-1">@L["View site"]</span></a>
+                    <a class="btn btn-sm btn-light" href="@CulturePath.SwitchUrl(Context.Request)">@(english ? "فارسی" : "English")</a>
+                    <form method="post" asp-page="/Account/Logout" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">@L["Log out"]</button>
+                    </form>
+                </div>
+            </header>
+            <main class="admin-content">
+                @if (TempData["Message"] is string message)
+                {
+                    <div class="alert alert-success">@message</div>
+                }
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

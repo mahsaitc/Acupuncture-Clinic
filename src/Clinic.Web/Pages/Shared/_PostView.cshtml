@@ -1,0 +1,74 @@
+@model Clinic.Web.Content.PostPageModel
+@inject Clinic.Web.Content.MarkdownRenderer Markdown
+@{
+    var english = CulturePath.IsEnglish;
+    var post = Model.Post;
+    var isArticle = Model.Kind == Clinic.Domain.Entities.PostKind.Article;
+    var listPage = isArticle ? "/Articles/Index" : "/Blog/Index";
+    var postPage = isArticle ? "/Articles/Post" : "/Blog/Post";
+    var references = post.References?.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? [];
+}
+
+<article class="post mx-auto">
+    <a class="small" asp-page="@listPage">@(isArticle ? L["Articles"] : L["Blog"])</a>
+    <h1 class="display-6 fw-bold mt-2 mb-3">@post.Title(english)</h1>
+    <div class="text-muted mb-4">
+        @Model.AuthorName
+        @if (post.PublishedUtc is DateTime d) { <span>· @Fmt.Date(d)</span> }
+    </div>
+    @if (post.CoverImagePath is not null)
+    {
+        <img class="post-cover mb-4" src="@post.CoverImagePath" alt="" />
+    }
+    @if (post.Summary(english) is string summary)
+    {
+        <p class="lead">@summary</p>
+    }
+    <div class="post-body">@Markdown.Render(post.Body(english))</div>
+
+    @if (references.Length > 0)
+    {
+        <section class="post-references mt-5">
+            <h2 class="h5">@L["References"]</h2>
+            <ol dir="ltr" class="small">
+                @foreach (var reference in references)
+                {
+                    <li>
+                        @if (Uri.TryCreate(reference, UriKind.Absolute, out var uri) && (uri.Scheme == "https" || uri.Scheme == "http"))
+                        {
+                            <a href="@uri" target="_blank" rel="noopener nofollow">@reference</a>
+                        }
+                        else
+                        {
+                            @reference
+                        }
+                    </li>
+                }
+            </ol>
+        </section>
+    }
+
+    <div class="cta-band d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mt-5">
+        <div>
+            <h2 class="h4 mb-1">@L["Have a question about your treatment?"]</h2>
+            <p class="mb-0 opacity-75">@L["Book a visit or send a message to the doctor."]</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-sand" asp-page="/Booking/Index">@L["Book an appointment"]</a>
+            <a class="btn btn-glass" asp-page="/Contact">@L["Contact us"]</a>
+        </div>
+    </div>
+</article>
+
+@if (Model.Related.Count > 0)
+{
+    <section class="mt-5">
+        <h2 class="h4 mb-4">@L["More to read"]</h2>
+        <div class="row g-4">
+            @foreach (var related in Model.Related)
+            {
+                <div class="col-md-4"><partial name="_PostCard" model="(related, postPage)" /></div>
+            }
+        </div>
+    </section>
+}

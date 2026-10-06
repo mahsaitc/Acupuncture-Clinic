@@ -1,0 +1,71 @@
+@page
+@using System.Globalization
+@using Clinic.Domain.Entities
+@model Clinic.Web.Pages.Admin.AppointmentsModel
+@{
+    ViewData["Title"] = L["Clinic calendar"];
+    var english = CulturePath.IsEnglish;
+    string Iso(DateOnly d) => d.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <h1 class="h3 mb-0">@L["Clinic calendar"]</h1>
+    <div class="btn-group" dir="ltr">
+        <a class="btn btn-outline-secondary" asp-route-Date="@Iso(Model.Day.AddDays(english ? -1 : 1))">@(english ? "‹" : "›")</a>
+        <span class="btn btn-light disabled">@Fmt.Day(Model.Day)</span>
+        <a class="btn btn-outline-secondary" asp-route-Date="@Iso(Model.Day.AddDays(english ? 1 : -1))">@(english ? "›" : "‹")</a>
+    </div>
+    <a class="btn btn-success" asp-page="/Booking/Index">@L["New appointment"]</a>
+</div>
+
+@if (Model.Rows.Count == 0)
+{
+    <p class="text-muted">@L["No appointments on this day."]</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white">
+            <thead>
+                <tr>
+                    <th>@L["Time"]</th>
+                    <th>@L["Patient"]</th>
+                    <th>@L["Service"]</th>
+                    <th>@L["Doctor"]</th>
+                    <th>@L["Status"]</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.Rows)
+                {
+                    <tr>
+                        <td class="text-nowrap">@Fmt.Time(r.StartUtc)</td>
+                        <td>
+                            @r.Patient
+                            @if (r.Phone is not null) { <div class="small text-muted" dir="ltr">@r.Phone</div> }
+                            @if (r.Note is not null) { <div class="small fst-italic">@r.Note</div> }
+                        </td>
+                        <td>@r.Service?.Name(english)</td>
+                        <td>@r.Doctor</td>
+                        <td><partial name="_StatusBadge" model="r.Status" /></td>
+                        <td class="text-nowrap">
+                            @if (r.Status != AppointmentStatus.Cancelled)
+                            {
+                                @foreach (var s in Clinic.Web.Pages.Admin.AppointmentsModel.SettableStatuses)
+                                {
+                                    <form method="post" asp-page-handler="Status" asp-route-id="@r.Id" asp-route-status="@s" asp-route-Date="@Model.Date" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary" disabled="@(r.Status == s)">@L[s.ToString()]</button>
+                                    </form>
+                                }
+                                <form method="post" asp-page-handler="Cancel" asp-route-id="@r.Id" asp-route-Date="@Model.Date" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">@L["Cancel"]</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

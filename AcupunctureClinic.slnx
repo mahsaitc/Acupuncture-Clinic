@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Clinic.Application/Clinic.Application.csproj" />
+    <Project Path="src/Clinic.Domain/Clinic.Domain.csproj" />
+    <Project Path="src/Clinic.Infrastructure/Clinic.Infrastructure.csproj" />
+    <Project Path="src/Clinic.Web/Clinic.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Clinic.Tests/Clinic.Tests.csproj" />
+  </Folder>
+</Solution>

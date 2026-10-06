@@ -1,0 +1,117 @@
+@page
+@model ContactModel
+@{
+    ViewData["Title"] = L["Contact us"];
+    var english = CulturePath.IsEnglish;
+    var site = Model.Site;
+}
+
+<div class="section-title mb-4">
+    <div class="kicker">@L["Contact us"]</div>
+    <h1 class="h2">@L["We are here to help"]</h1>
+    <p>@L["Send your question to the doctor, or call and visit the clinic."]</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card card-soft h-100">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-4">@L["Clinic details"]</h2>
+                <ul class="list-unstyled d-grid gap-3 mb-4">
+                    @if (site.Address(english) is string address)
+                    {
+                        <li class="d-flex gap-3"><span class="stat-icon"><i class="bi bi-geo-alt"></i></span><div><div class="fw-semibold">@L["Address"]</div><div class="text-muted">@address</div></div></li>
+                    }
+                    @if (site.Phone is not null)
+                    {
+                        <li class="d-flex gap-3"><span class="stat-icon"><i class="bi bi-telephone"></i></span><div><div class="fw-semibold">@L["Phone"]</div><a href="tel:@site.Phone" dir="ltr">@Fmt.Number(site.Phone)</a></div></li>
+                    }
+                    @if (site.Email is not null)
+                    {
+                        <li class="d-flex gap-3"><span class="stat-icon"><i class="bi bi-envelope"></i></span><div><div class="fw-semibold">@L["Email"]</div><a href="mailto:@site.Email" dir="ltr">@site.Email</a></div></li>
+                    }
+                    @if (site.OpeningHours(english) is string hours)
+                    {
+                        <li class="d-flex gap-3"><span class="stat-icon"><i class="bi bi-clock"></i></span><div><div class="fw-semibold">@L["Opening hours"]</div><div class="text-muted">@hours</div></div></li>
+                    }
+                </ul>
+
+                @if (site.HasSocialLinks)
+                {
+                    <h2 class="h6 mb-3">@L["Follow us"]</h2>
+                    <div class="d-flex flex-wrap gap-2">
+                        @if (site.InstagramUrl is not null) { <a class="btn btn-outline-success" href="@site.InstagramUrl" target="_blank" rel="noopener"><i class="bi bi-instagram me-1"></i>Instagram</a> }
+                        @if (site.WhatsAppUrl is not null) { <a class="btn btn-outline-success" href="@site.WhatsAppUrl" target="_blank" rel="noopener"><i class="bi bi-whatsapp me-1"></i>WhatsApp</a> }
+                        @if (site.TelegramUrl is not null) { <a class="btn btn-outline-success" href="@site.TelegramUrl" target="_blank" rel="noopener"><i class="bi bi-telegram me-1"></i>Telegram</a> }
+                        @if (site.YouTubeUrl is not null) { <a class="btn btn-outline-success" href="@site.YouTubeUrl" target="_blank" rel="noopener"><i class="bi bi-youtube me-1"></i>YouTube</a> }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card card-soft h-100">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-1">@L["Send a message to the doctor"]</h2>
+                <p class="text-muted small mb-4">@L["Do not use this form for emergencies. In an emergency call 115."]</p>
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="visually-hidden" aria-hidden="true">
+                        <label for="Website">Website</label>
+                        <input id="Website" name="Website" tabindex="-1" autocomplete="off" />
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Input.Name" class="form-label"></label>
+                            <input asp-for="Input.Name" class="form-control" autocomplete="name" />
+                            <span asp-validation-for="Input.Name" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Input.Phone" class="form-label"></label>
+                            <input asp-for="Input.Phone" class="form-control" autocomplete="tel" dir="ltr" />
+                            <span asp-validation-for="Input.Phone" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Input.Email" class="form-label"></label>
+                            <input asp-for="Input.Email" class="form-control" autocomplete="email" dir="ltr" />
+                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Input.Subject" class="form-label"></label>
+                            <input asp-for="Input.Subject" class="form-control" />
+                            <span asp-validation-for="Input.Subject" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.Body" class="form-label"></label>
+                            <textarea asp-for="Input.Body" class="form-control" rows="6"></textarea>
+                            <span asp-validation-for="Input.Body" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-send me-2"></i>@L["Send message"]</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (site.MapEmbedUrl is not null)
+{
+    <div class="card card-soft mt-4">
+        <div class="ratio ratio-21x9 map-frame">
+            <iframe src="@site.MapEmbedUrl" title="@L["Clinic location on the map"]" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+        </div>
+        @if (site.MapLinkUrl is not null)
+        {
+            <div class="card-body text-center">
+                <a class="btn btn-success" href="@site.MapLinkUrl" target="_blank" rel="noopener"><i class="bi bi-sign-turn-right me-1"></i>@L["Get directions"]</a>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,69 @@
+@page
+@using Clinic.Domain.Entities
+@model Clinic.Web.Pages.Admin.Posts.IndexModel
+@{
+    var isArticle = Model.Kind == PostKind.Article;
+    ViewData["Title"] = isArticle ? L["Medical articles"] : L["Blog"];
+    var publicPage = isArticle ? "/Articles/Post" : "/Blog/Post";
+}
+
+<div class="page-head">
+    <h1 class="h3">@ViewData["Title"]</h1>
+    <a class="btn btn-success" asp-page="./Edit" asp-route-kind="@Model.Kind"><i class="bi bi-plus-lg me-1"></i>@(isArticle ? L["New article"] : L["New post"])</a>
+</div>
+
+@if (Model.Rows.Count == 0)
+{
+    <div class="card card-soft"><div class="card-body text-center py-5 text-muted">@L["Nothing written yet."]</div></div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table bg-white align-middle">
+            <thead>
+                <tr>
+                    <th>@L["Title"]</th>
+                    <th>@L["Status"]</th>
+                    <th>@L["Languages"]</th>
+                    <th>@L["Last updated"]</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.Rows)
+                {
+                    <tr>
+                        <td>
+                            <a class="fw-semibold" asp-page="./Edit" asp-route-id="@r.Id" asp-route-kind="@Model.Kind">@r.TitleFa</a>
+                            <div class="small text-muted">@r.Author</div>
+                        </td>
+                        <td>
+                            @if (r.IsPublished)
+                            {
+                                <span class="badge bg-success">@L["Published"]</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@L["Draft"]</span>
+                            }
+                        </td>
+                        <td class="small">@(r.HasEnglish ? "فا · EN" : "فا")</td>
+                        <td class="small text-nowrap">@Fmt.Date(r.UpdatedUtc)</td>
+                        <td class="text-nowrap">
+                            @if (r.IsPublished)
+                            {
+                                <a class="btn btn-sm btn-light" asp-page="@publicPage" asp-route-slug="@r.Slug" target="_blank" title="@L["View"]"><i class="bi bi-eye"></i></a>
+                            }
+                            <form method="post" asp-page-handler="Publish" asp-route-id="@r.Id" asp-route-publish="@(!r.IsPublished)" asp-route-Kind="@Model.Kind" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-success">@(r.IsPublished ? L["Unpublish"] : L["Publish"])</button>
+                            </form>
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@r.Id" asp-route-Kind="@Model.Kind" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('@L["Delete this post permanently?"]')"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

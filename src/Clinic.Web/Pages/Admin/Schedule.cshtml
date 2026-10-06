@@ -1,0 +1,66 @@
+@page
+@model Clinic.Web.Pages.Admin.ScheduleModel
+@{
+    ViewData["Title"] = L["Working hours"];
+}
+
+<h1 class="h3 mb-3">@L["Working hours"]</h1>
+
+@if (Model.Profile is null)
+{
+    <p class="text-muted">@L["No doctor profile is linked to this account."]</p>
+    return;
+}
+
+<p class="text-muted">@L["Patients can book only inside these weekly blocks."]</p>
+
+<div class="table-responsive mb-4">
+    <table class="table bg-white align-middle">
+        <tbody>
+            @foreach (var day in Clinic.Web.Pages.Admin.ScheduleModel.WeekOrder)
+            {
+                var blocks = Model.Profile.WorkingHours.Where(w => w.DayOfWeek == day).OrderBy(w => w.Start).ToList();
+                <tr>
+                    <th class="text-nowrap" style="width: 10rem">@L[day.ToString()]</th>
+                    <td>
+                        @if (blocks.Count == 0)
+                        {
+                            <span class="text-muted">@L["Closed"]</span>
+                        }
+                        @foreach (var b in blocks)
+                        {
+                            <form method="post" asp-page-handler="Remove" asp-route-id="@b.Id" class="d-inline-block me-2 mb-1">
+                                <span class="badge bg-success-subtle text-success-emphasis fs-6">@L["{0} to {1}", Fmt.Number(b.Start.ToString("HH:mm")), Fmt.Number(b.End.ToString("HH:mm"))]</span>
+                                <button type="submit" class="btn btn-sm btn-link text-danger p-0" aria-label="@L["Remove"]">✕</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h2 class="h5">@L["Add a block"]</h2>
+<form method="post" asp-page-handler="Add" class="row g-2 align-items-end">
+    <div class="col-sm-4">
+        <label class="form-label" for="day">@L["Day"]</label>
+        <select class="form-select" id="day" name="day">
+            @foreach (var day in Clinic.Web.Pages.Admin.ScheduleModel.WeekOrder)
+            {
+                <option value="@day">@L[day.ToString()]</option>
+            }
+        </select>
+    </div>
+    <div class="col-sm-3">
+        <label class="form-label" for="start">@L["From"]</label>
+        <input class="form-control" type="time" id="start" name="start" value="09:00" step="900" required />
+    </div>
+    <div class="col-sm-3">
+        <label class="form-label" for="end">@L["To"]</label>
+        <input class="form-control" type="time" id="end" name="end" value="13:00" step="900" required />
+    </div>
+    <div class="col-sm-2">
+        <button type="submit" class="btn btn-success w-100">@L["Add"]</button>
+    </div>
+</form>

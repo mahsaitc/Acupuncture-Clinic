@@ -1,0 +1,145 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = L["Home"];
+    ViewData["FullWidth"] = true;
+    var english = CulturePath.IsEnglish;
+    var site = Model.Content;
+    const string BlogPostPage = "/Blog/Post";
+    string[] icons = ["bi-flower1", "bi-heart-pulse", "bi-clipboard2-pulse", "bi-droplet", "bi-activity", "bi-leaf"];
+}
+
+<section class="hero">
+    @if (site.HeroPosterPath is not null)
+    {
+        <img class="hero-media" src="@site.HeroPosterPath" alt="" />
+    }
+    @if (site.HeroVideoPath is not null)
+    {
+        <video class="hero-media" autoplay muted loop playsinline preload="metadata" poster="@site.HeroPosterPath" aria-hidden="true">
+            <source src="@site.HeroVideoPath" type="@(site.HeroVideoPath.EndsWith(".webm") ? "video/webm" : "video/mp4")" />
+        </video>
+    }
+    <div class="container">
+        <div class="hero-content">
+            <span class="hero-eyebrow"><i class="bi bi-stars" aria-hidden="true"></i>@L["Acupuncture and integrative medicine clinic"]</span>
+            <h1>@site.HeroTitle(english)</h1>
+            <p class="lead mb-4">@site.HeroSubtitle(english)</p>
+            <div class="d-flex flex-wrap gap-3">
+                <a class="btn btn-sand btn-lg" asp-page="/Booking/Index"><i class="bi bi-calendar2-check me-2" aria-hidden="true"></i>@L["Book an appointment"]</a>
+                @if (site.Phone is not null)
+                {
+                    <a class="btn btn-glass btn-lg" href="tel:@site.Phone"><i class="bi bi-telephone me-2" aria-hidden="true"></i>@L["Call the clinic"]</a>
+                }
+                else
+                {
+                    <a class="btn btn-glass btn-lg" href="#services">@L["Our services"]</a>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container stats">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="stat">
+                <div class="stat-icon"><i class="bi bi-award" aria-hidden="true"></i></div>
+                <div><strong>@L["20+ years of experience"]</strong><span>@L["in family medicine and acupuncture"]</span></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat">
+                <div class="stat-icon"><i class="bi bi-person-heart" aria-hidden="true"></i></div>
+                <div><strong>@L["Care planned for you"]</strong><span>@L["every session recorded in your file"]</span></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat">
+                <div class="stat-icon"><i class="bi bi-clock-history" aria-hidden="true"></i></div>
+                <div><strong>@L["Online booking"]</strong><span>@L["pick a free time in under a minute"]</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="section" id="services">
+    <div class="container">
+        <div class="section-title">
+            <div class="kicker">@L["Services"]</div>
+            <h2>@L["How we can help"]</h2>
+            <p>@L["Each treatment starts with a full assessment and a plan that fits your health goals."]</p>
+        </div>
+        <div class="row g-4">
+            @for (var i = 0; i < Model.Services.Count; i++)
+            {
+                var service = Model.Services[i];
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon"><i class="bi @icons[i % icons.Length]" aria-hidden="true"></i></div>
+                        <h3>@service.Name(english)</h3>
+                        <p class="duration mb-3"><i class="bi bi-hourglass-split me-1" aria-hidden="true"></i>@string.Format(L["{0} minutes"], Fmt.Number(service.DurationMinutes))</p>
+                        <a class="btn btn-outline-success btn-sm" asp-page="/Booking/Index" asp-route-ServiceId="@service.Id">@L["Book this service"]</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section steps">
+    <div class="container">
+        <div class="section-title">
+            <div class="kicker">@L["Booking"]</div>
+            <h2>@L["Your visit in three steps"]</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4 step">
+                <div class="step-number">@Fmt.Number(1)</div>
+                <h3 class="h5">@L["Choose a service"]</h3>
+                <p class="text-muted mb-0">@L["Acupuncture, catgut embedding or a general visit."]</p>
+            </div>
+            <div class="col-md-4 step">
+                <div class="step-number">@Fmt.Number(2)</div>
+                <h3 class="h5">@L["Pick a time"]</h3>
+                <p class="text-muted mb-0">@L["See the doctor's free times and book online."]</p>
+            </div>
+            <div class="col-md-4 step">
+                <div class="step-number">@Fmt.Number(3)</div>
+                <h3 class="h5">@L["Visit the clinic"]</h3>
+                <p class="text-muted mb-0">@L["Your treatment and progress are kept in your medical file."]</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (Model.LatestPosts.Count > 0)
+{
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <div class="kicker">@L["Blog"]</div>
+                <h2>@L["From the doctor's blog"]</h2>
+            </div>
+            <div class="row g-4">
+                @foreach (var post in Model.LatestPosts)
+                {
+                    <div class="col-md-4"><partial name="_PostCard" model="(post, BlogPostPage)" /></div>
+                }
+            </div>
+            <div class="text-center mt-4"><a class="btn btn-outline-success" asp-page="/Blog/Index">@L["All posts"]</a></div>
+        </div>
+    </section>
+}
+
+<section class="section pb-0">
+    <div class="container">
+        <div class="cta-band d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div>
+                <h2 class="h3 mb-2">@L["Ready to start your treatment?"]</h2>
+                <p class="mb-0 opacity-75">@L["Book your first session online in under a minute."]</p>
+            </div>
+            <a class="btn btn-sand btn-lg" asp-page="/Booking/Index">@L["Book an appointment"]</a>
+        </div>
+    </div>
+</section>

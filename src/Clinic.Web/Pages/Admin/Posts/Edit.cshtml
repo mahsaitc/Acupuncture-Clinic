@@ -1,0 +1,107 @@
+@page
+@using Clinic.Domain.Entities
+@model Clinic.Web.Pages.Admin.Posts.EditModel
+@{
+    var isArticle = Model.Kind == PostKind.Article;
+    ViewData["Title"] = Model.Id is null ? (isArticle ? L["New article"] : L["New post"]) : L["Edit"];
+}
+
+<div class="page-head">
+    <div>
+        <a class="small" asp-page="./Index" asp-route-kind="@Model.Kind">@(isArticle ? L["Medical articles"] : L["Blog"])</a>
+        <h1 class="h3 mt-1">@ViewData["Title"]</h1>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" asp-route-id="@Model.Id" asp-route-kind="@Model.Kind">
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    <div class="row g-4">
+        <div class="col-xl-8">
+            <ul class="nav nav-pills mb-3" role="tablist">
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-fa" type="button">فارسی</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-en" type="button">English</button></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab-fa" dir="rtl">
+                    <div class="mb-3">
+                        <label asp-for="Input.TitleFa" class="form-label"></label>
+                        <input asp-for="Input.TitleFa" class="form-control form-control-lg" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.SummaryFa" class="form-label"></label>
+                        <textarea asp-for="Input.SummaryFa" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.BodyFa" class="form-label"></label>
+                        <textarea asp-for="Input.BodyFa" class="form-control markdown-editor"></textarea>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tab-en" dir="ltr">
+                    <p class="text-muted small">@L["Optional. The English site shows this post only when the English title and text are filled."]</p>
+                    <div class="mb-3">
+                        <label asp-for="Input.TitleEn" class="form-label"></label>
+                        <input asp-for="Input.TitleEn" class="form-control form-control-lg" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.SummaryEn" class="form-label"></label>
+                        <textarea asp-for="Input.SummaryEn" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.BodyEn" class="form-label"></label>
+                        <textarea asp-for="Input.BodyEn" class="form-control markdown-editor"></textarea>
+                    </div>
+                </div>
+            </div>
+            <details class="small text-muted">
+                <summary>@L["Formatting help"]</summary>
+                <pre class="bg-white border rounded p-3 mt-2" dir="ltr">## Heading
+**bold**  *italic*
+- list item
+1. numbered item
+[link text](https://example.com)
+> quote</pre>
+            </details>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card card-soft mb-3">
+                <div class="card-body">
+                    <div class="form-check form-switch mb-3">
+                        <input asp-for="Input.IsPublished" class="form-check-input" role="switch" />
+                        <label asp-for="Input.IsPublished" class="form-check-label"></label>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100"><i class="bi bi-check-lg me-1"></i>@L["Save"]</button>
+                </div>
+            </div>
+            <div class="card card-soft mb-3">
+                <div class="card-body">
+                    <label class="form-label" for="cover">@L["Cover image"]</label>
+                    <input class="form-control" type="file" id="cover" name="cover" accept="image/jpeg,image/png,image/webp" />
+                    @if (Model.CoverImagePath is not null)
+                    {
+                        <img class="rounded mt-2 w-100" src="@Model.CoverImagePath" alt="" />
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="removeCover" name="removeCover" value="true" />
+                            <label class="form-check-label" for="removeCover">@L["Remove the image"]</label>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="card card-soft">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Input.Slug" class="form-label"></label>
+                        <input asp-for="Input.Slug" class="form-control" dir="ltr" />
+                        <div class="form-text">@L["Leave empty to build it from the title."]</div>
+                    </div>
+                    <div>
+                        <label asp-for="Input.References" class="form-label"></label>
+                        <textarea asp-for="Input.References" class="form-control" rows="4" dir="ltr" placeholder="https://pubmed.ncbi.nlm.nih.gov/..."></textarea>
+                        <div class="form-text">@L["One per line. Shown at the end of the post."]</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

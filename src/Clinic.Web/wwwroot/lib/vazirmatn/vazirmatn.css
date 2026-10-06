@@ -1,0 +1,8 @@
+/* Vazirmatn variable font, self-hosted so the site does not depend on Google Fonts (often unreachable in Iran). SIL OFL 1.1, see OFL.txt. */
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("Vazirmatn-Variable.woff2") format("woff2-variations"), url("Vazirmatn-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
