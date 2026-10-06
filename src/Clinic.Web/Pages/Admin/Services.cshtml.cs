@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using Clinic.Domain.Entities;
 using Clinic.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace Clinic.Web.Pages.Admin;
 
+[Authorize(Policy = Policies.Admin)]
 public class ServicesModel(ClinicDbContext db) : PageModel
 {
     public List<ClinicService> Services { get; private set; } = [];

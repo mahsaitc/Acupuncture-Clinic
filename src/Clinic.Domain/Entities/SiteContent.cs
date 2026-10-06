@@ -21,6 +21,16 @@ public class SiteContent
     public string? Phone { get; set; }
     public string? AddressFa { get; set; }
     public string? AddressEn { get; set; }
+    public string? Email { get; set; }
+    public string? OpeningHoursFa { get; set; }
+    public string? OpeningHoursEn { get; set; }
+
+    /// <summary>The src of Google Maps' "Embed a map" iframe (https://www.google.com/maps/embed?pb=...).</summary>
+    public string? MapEmbedUrl { get; set; }
+
+    /// <summary>A normal Google Maps link to the clinic, for "Get directions".</summary>
+    public string? MapLinkUrl { get; set; }
+
     public string? InstagramUrl { get; set; }
     public string? WhatsAppUrl { get; set; }
     public string? TelegramUrl { get; set; }
@@ -31,4 +41,7 @@ public class SiteContent
     public string HeroTitle(bool english) => english ? HeroTitleEn : HeroTitleFa;
     public string HeroSubtitle(bool english) => english ? HeroSubtitleEn : HeroSubtitleFa;
     public string? Address(bool english) => english ? AddressEn : AddressFa;
+    public string? OpeningHours(bool english) => english ? OpeningHoursEn : OpeningHoursFa;
+
+    public bool HasSocialLinks => InstagramUrl is not null || WhatsAppUrl is not null || TelegramUrl is not null || YouTubeUrl is not null;
 }

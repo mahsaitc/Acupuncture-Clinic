@@ -495,4 +495,319 @@
   <data name="pick a free time in under a minute" xml:space="preserve">
     <value>انتخاب زمان آزاد در کمتر از یک دقیقه</value>
   </data>
+  <data name="Active" xml:space="preserve">
+    <value>فعال</value>
+  </data>
+  <data name="Acupuncture and medical articles" xml:space="preserve">
+    <value>مقالات طب سوزنی و پزشکی</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>نشانی</value>
+  </data>
+  <data name="All messages" xml:space="preserve">
+    <value>همه پیام‌ها</value>
+  </data>
+  <data name="All posts" xml:space="preserve">
+    <value>همه مطالب</value>
+  </data>
+  <data name="Another post already uses this web address." xml:space="preserve">
+    <value>مطلب دیگری از این آدرس استفاده می‌کند.</value>
+  </data>
+  <data name="Appointment history" xml:space="preserve">
+    <value>سابقه نوبت‌ها</value>
+  </data>
+  <data name="Appointments" xml:space="preserve">
+    <value>نوبت‌ها</value>
+  </data>
+  <data name="Appointments in the next 7 days" xml:space="preserve">
+    <value>نوبت‌های ۷ روز آینده</value>
+  </data>
+  <data name="Appointments today" xml:space="preserve">
+    <value>نوبت‌های امروز</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>بایگانی</value>
+  </data>
+  <data name="Articles" xml:space="preserve">
+    <value>مقالات</value>
+  </data>
+  <data name="Blog" xml:space="preserve">
+    <value>بلاگ</value>
+  </data>
+  <data name="Book a visit or send a message to the doctor." xml:space="preserve">
+    <value>نوبت بگیرید یا برای پزشک پیام بفرستید.</value>
+  </data>
+  <data name="Clinic" xml:space="preserve">
+    <value>کلینیک</value>
+  </data>
+  <data name="Clinic details" xml:space="preserve">
+    <value>اطلاعات کلینیک</value>
+  </data>
+  <data name="Clinic email" xml:space="preserve">
+    <value>ایمیل کلینیک</value>
+  </data>
+  <data name="Clinic location on the map" xml:space="preserve">
+    <value>موقعیت کلینیک روی نقشه</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>بستن</value>
+  </data>
+  <data name="Completed visits" xml:space="preserve">
+    <value>ویزیت‌های انجام‌شده</value>
+  </data>
+  <data name="Content" xml:space="preserve">
+    <value>محتوا</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>داشبورد</value>
+  </data>
+  <data name="Deactivated" xml:space="preserve">
+    <value>غیرفعال</value>
+  </data>
+  <data name="Delete this post permanently?" xml:space="preserve">
+    <value>این مطلب برای همیشه حذف شود؟</value>
+  </data>
+  <data name="Do not use this form for emergencies. In an emergency call 115." xml:space="preserve">
+    <value>برای موارد اورژانسی از این فرم استفاده نکنید. در شرایط اورژانسی با ۱۱۵ تماس بگیرید.</value>
+  </data>
+  <data name="Doctor's blog" xml:space="preserve">
+    <value>بلاگ پزشک</value>
+  </data>
+  <data name="Doctors waiting for approval" xml:space="preserve">
+    <value>پزشکان در انتظار تأیید</value>
+  </data>
+  <data name="Draft" xml:space="preserve">
+    <value>پیش‌نویس</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>ویرایش</value>
+  </data>
+  <data name="Email (optional)" xml:space="preserve">
+    <value>ایمیل (اختیاری)</value>
+  </data>
+  <data name="Enter a web address using letters, digits and hyphens." xml:space="preserve">
+    <value>آدرس را با حروف، عدد و خط تیره وارد کنید.</value>
+  </data>
+  <data name="For the English version, fill in both the English title and the English text." xml:space="preserve">
+    <value>برای نسخه انگلیسی، هم عنوان و هم متن انگلیسی را وارد کنید.</value>
+  </data>
+  <data name="Formatting help" xml:space="preserve">
+    <value>راهنمای قالب‌بندی متن</value>
+  </data>
+  <data name="From the doctor's blog" xml:space="preserve">
+    <value>از بلاگ پزشک</value>
+  </data>
+  <data name="Get directions" xml:space="preserve">
+    <value>مسیریابی</value>
+  </data>
+  <data name="Google Maps embed code" xml:space="preserve">
+    <value>کد نقشه گوگل</value>
+  </data>
+  <data name="Google Maps link" xml:space="preserve">
+    <value>لینک گوگل مپ</value>
+  </data>
+  <data name="Have a question about your treatment?" xml:space="preserve">
+    <value>درباره درمان خود سؤالی دارید؟</value>
+  </data>
+  <data name="Health tips, clinic news and answers to common questions from the doctor." xml:space="preserve">
+    <value>نکات سلامتی، اخبار کلینیک و پاسخ پزشک به سؤالات رایج.</value>
+  </data>
+  <data name="Home page and contact" xml:space="preserve">
+    <value>صفحه اصلی و تماس</value>
+  </data>
+  <data name="In Google Maps, open the clinic, choose Share, then Embed a map, and paste the code here." xml:space="preserve">
+    <value>در گوگل مپ مطب را باز کنید، Share و سپس Embed a map را بزنید و کد را اینجا بچسبانید.</value>
+  </data>
+  <data name="Inbox" xml:space="preserve">
+    <value>صندوق ورودی</value>
+  </data>
+  <data name="Languages" xml:space="preserve">
+    <value>زبان‌ها</value>
+  </data>
+  <data name="Last updated" xml:space="preserve">
+    <value>آخرین ویرایش</value>
+  </data>
+  <data name="Latest messages" xml:space="preserve">
+    <value>آخرین پیام‌ها</value>
+  </data>
+  <data name="Leave empty to build it from the title." xml:space="preserve">
+    <value>خالی بگذارید تا از روی عنوان ساخته شود.</value>
+  </data>
+  <data name="Management panel" xml:space="preserve">
+    <value>پنل مدیریت</value>
+  </data>
+  <data name="Mark as read" xml:space="preserve">
+    <value>خوانده شد</value>
+  </data>
+  <data name="Mark as unread" xml:space="preserve">
+    <value>خوانده نشده</value>
+  </data>
+  <data name="Medical articles" xml:space="preserve">
+    <value>مقالات پزشکی</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>پیام</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>پیام‌ها</value>
+  </data>
+  <data name="More to read" xml:space="preserve">
+    <value>مطالب بیشتر</value>
+  </data>
+  <data name="Move to inbox" xml:space="preserve">
+    <value>انتقال به صندوق ورودی</value>
+  </data>
+  <data name="New article" xml:space="preserve">
+    <value>مقاله جدید</value>
+  </data>
+  <data name="New post" xml:space="preserve">
+    <value>مطلب جدید</value>
+  </data>
+  <data name="Next appointment" xml:space="preserve">
+    <value>نوبت بعدی</value>
+  </data>
+  <data name="No appointments yet." xml:space="preserve">
+    <value>هنوز نوبتی ثبت نشده است.</value>
+  </data>
+  <data name="No messages yet." xml:space="preserve">
+    <value>هنوز پیامی نیامده است.</value>
+  </data>
+  <data name="Nothing has been published here yet." xml:space="preserve">
+    <value>هنوز مطلبی منتشر نشده است.</value>
+  </data>
+  <data name="Nothing written yet." xml:space="preserve">
+    <value>هنوز مطلبی نوشته نشده است.</value>
+  </data>
+  <data name="One per line. Shown at the end of the post." xml:space="preserve">
+    <value>هر منبع در یک خط. در انتهای مطلب نمایش داده می‌شود.</value>
+  </data>
+  <data name="Open calendar" xml:space="preserve">
+    <value>باز کردن تقویم</value>
+  </data>
+  <data name="Opening hours" xml:space="preserve">
+    <value>ساعات کاری</value>
+  </data>
+  <data name="Opening hours (English)" xml:space="preserve">
+    <value>ساعات کاری (انگلیسی)</value>
+  </data>
+  <data name="Opening hours (Persian)" xml:space="preserve">
+    <value>ساعات کاری (فارسی)</value>
+  </data>
+  <data name="Optional. The English site shows this post only when the English title and text are filled." xml:space="preserve">
+    <value>اختیاری. نسخه انگلیسی سایت فقط وقتی این مطلب را نشان می‌دهد که عنوان و متن انگلیسی پر شده باشند.</value>
+  </data>
+  <data name="Paste the embed code from Google Maps: Share, then Embed a map." xml:space="preserve">
+    <value>کد نقشه را از گوگل مپ بچسبانید: Share و سپس Embed a map.</value>
+  </data>
+  <data name="Patients" xml:space="preserve">
+    <value>بیماران</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>تلفن</value>
+  </data>
+  <data name="Publish" xml:space="preserve">
+    <value>انتشار</value>
+  </data>
+  <data name="Publish on the site" xml:space="preserve">
+    <value>انتشار در سایت</value>
+  </data>
+  <data name="Published" xml:space="preserve">
+    <value>منتشر شده</value>
+  </data>
+  <data name="Published posts and articles" xml:space="preserve">
+    <value>مطالب و مقالات منتشرشده</value>
+  </data>
+  <data name="References" xml:space="preserve">
+    <value>منابع</value>
+  </data>
+  <data name="Registered on" xml:space="preserve">
+    <value>تاریخ ثبت‌نام</value>
+  </data>
+  <data name="Registered patients" xml:space="preserve">
+    <value>بیماران ثبت‌نام‌شده</value>
+  </data>
+  <data name="Registered user" xml:space="preserve">
+    <value>کاربر ثبت‌نام‌شده</value>
+  </data>
+  <data name="Remove the image" xml:space="preserve">
+    <value>حذف تصویر</value>
+  </data>
+  <data name="Scientific articles on acupuncture and integrative medicine, with their sources." xml:space="preserve">
+    <value>مقالات علمی درباره طب سوزنی و طب تلفیقی، همراه با منابع.</value>
+  </data>
+  <data name="Send a message to the doctor" xml:space="preserve">
+    <value>ارسال پیام به پزشک</value>
+  </data>
+  <data name="Send message" xml:space="preserve">
+    <value>ارسال پیام</value>
+  </data>
+  <data name="Send your question to the doctor, or call and visit the clinic." xml:space="preserve">
+    <value>سؤال خود را برای پزشک بفرستید، یا تماس بگیرید و به کلینیک مراجعه کنید.</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>تنظیمات</value>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>موضوع</value>
+  </data>
+  <data name="Summary (English)" xml:space="preserve">
+    <value>خلاصه (انگلیسی)</value>
+  </data>
+  <data name="Summary (Persian)" xml:space="preserve">
+    <value>خلاصه (فارسی)</value>
+  </data>
+  <data name="Text (English)" xml:space="preserve">
+    <value>متن (انگلیسی)</value>
+  </data>
+  <data name="Text (Persian)" xml:space="preserve">
+    <value>متن (فارسی)</value>
+  </data>
+  <data name="The medical record, acupuncture points and images come in the next phase." xml:space="preserve">
+    <value>پرونده پزشکی، نقاط طب سوزنی و تصاویر در فاز بعد اضافه می‌شوند.</value>
+  </data>
+  <data name="The post was deleted." xml:space="preserve">
+    <value>مطلب حذف شد.</value>
+  </data>
+  <data name="The post was saved." xml:space="preserve">
+    <value>مطلب ذخیره شد.</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>عنوان</value>
+  </data>
+  <data name="Title (English)" xml:space="preserve">
+    <value>عنوان (انگلیسی)</value>
+  </data>
+  <data name="Title (Persian)" xml:space="preserve">
+    <value>عنوان (فارسی)</value>
+  </data>
+  <data name="Today's appointments" xml:space="preserve">
+    <value>نوبت‌های امروز</value>
+  </data>
+  <data name="Unpublish" xml:space="preserve">
+    <value>لغو انتشار</value>
+  </data>
+  <data name="Unread messages" xml:space="preserve">
+    <value>پیام‌های خوانده‌نشده</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>مشاهده</value>
+  </data>
+  <data name="View site" xml:space="preserve">
+    <value>مشاهده سایت</value>
+  </data>
+  <data name="We are here to help" xml:space="preserve">
+    <value>ما برای کمک اینجا هستیم</value>
+  </data>
+  <data name="Web address (slug)" xml:space="preserve">
+    <value>آدرس صفحه (slug)</value>
+  </data>
+  <data name="You have sent several messages. Please try again later or call the clinic." xml:space="preserve">
+    <value>چند پیام فرستاده‌اید. لطفاً بعداً دوباره تلاش کنید یا با کلینیک تماس بگیرید.</value>
+  </data>
+  <data name="Your message was sent. The clinic will contact you soon." xml:space="preserve">
+    <value>پیام شما ارسال شد. کلینیک به‌زودی با شما تماس می‌گیرد.</value>
+  </data>
+  <data name="{0} patients" xml:space="preserve">
+    <value>{0} بیمار</value>
+  </data>
 </root>

@@ -1,0 +1,7 @@
+@page "/Blog/{slug}"
+@model Clinic.Web.Pages.Blog.PostModel
+@{
+    ViewData["Title"] = Model.Post.Title(CulturePath.IsEnglish);
+    ViewData["Description"] = Model.Post.Summary(CulturePath.IsEnglish);
+}
+<partial name="_PostView" model="Model" />

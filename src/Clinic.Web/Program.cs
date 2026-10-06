@@ -20,6 +20,9 @@ builder.Services.Configure<Microsoft.Extensions.WebEncoders.WebEncoderOptions>(o
 builder.Services.AddScoped<DisplayFormat>();
 builder.Services.AddSingleton<MediaStore>();
 builder.Services.AddScoped<SiteContentProvider>();
+builder.Services.AddSingleton<Clinic.Web.Content.MarkdownRenderer>();
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<Clinic.Web.Content.ContactThrottle>();
 // Allow the hero video upload through the form reader; the page itself enforces the real limit.
 builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(o => o.MultipartBodyLengthLimit = MediaStore.MaxVideoBytes + MediaStore.MaxImageBytes + 1024 * 1024);
 builder.Services.AddScoped<IdentityErrorDescriber, LocalizedIdentityErrorDescriber>();
@@ -27,9 +30,8 @@ builder.Services.AddScoped<IdentityErrorDescriber, LocalizedIdentityErrorDescrib
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddRazorPages(options =>
     {
-        options.Conventions.AuthorizeFolder("/Admin", "Admin");
-        options.Conventions.AuthorizeFolder("/Doctor", "Doctor");
-        options.Conventions.AuthorizeFolder("/Staff", "Staff");
+        // The whole management panel needs a staff role; pages narrow it further with [Authorize(Policy = ...)].
+        options.Conventions.AuthorizeFolder("/Admin", Policies.Staff);
         options.Conventions.AuthorizeFolder("/Appointments");
         options.Conventions.AuthorizeFolder("/Booking");
     })
@@ -38,9 +40,10 @@ builder.Services.AddRazorPages(options =>
         options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));
 
 builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("Admin", p => p.RequireRole(Roles.Admin))
-    .AddPolicy("Doctor", p => p.RequireRole(Roles.Doctor))
-    .AddPolicy("Staff", p => p.RequireRole(Roles.Admin, Roles.Doctor, Roles.Receptionist));
+    .AddPolicy(Policies.Admin, p => p.RequireRole(Roles.Admin))
+    .AddPolicy(Policies.Doctor, p => p.RequireRole(Roles.Doctor))
+    .AddPolicy(Policies.Content, p => p.RequireRole(Roles.Admin, Roles.Doctor))
+    .AddPolicy(Policies.Staff, p => p.RequireRole(Roles.Admin, Roles.Doctor, Roles.Receptionist));
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

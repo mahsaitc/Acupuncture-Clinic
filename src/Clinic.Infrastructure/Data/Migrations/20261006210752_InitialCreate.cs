@@ -55,6 +55,27 @@ namespace Clinic.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContactMessages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Phone = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    Subject = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Body = table.Column<string>(type: "TEXT", maxLength: 4000, nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ReadUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    IsArchived = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContactMessages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Services",
                 columns: table => new
                 {
@@ -84,6 +105,11 @@ namespace Clinic.Infrastructure.Data.Migrations
                     Phone = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
                     AddressFa = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
                     AddressEn = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    OpeningHoursFa = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
+                    OpeningHoursEn = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
+                    MapEmbedUrl = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    MapLinkUrl = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     InstagramUrl = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
                     WhatsAppUrl = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
                     TelegramUrl = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
@@ -227,6 +253,39 @@ namespace Clinic.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Kind = table.Column<int>(type: "INTEGER", nullable: false),
+                    Slug = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    TitleFa = table.Column<string>(type: "TEXT", maxLength: 250, nullable: false),
+                    SummaryFa = table.Column<string>(type: "TEXT", maxLength: 600, nullable: true),
+                    BodyFa = table.Column<string>(type: "TEXT", nullable: false),
+                    TitleEn = table.Column<string>(type: "TEXT", maxLength: 250, nullable: true),
+                    SummaryEn = table.Column<string>(type: "TEXT", maxLength: 600, nullable: true),
+                    BodyEn = table.Column<string>(type: "TEXT", nullable: true),
+                    CoverImagePath = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
+                    References = table.Column<string>(type: "TEXT", maxLength: 4000, nullable: true),
+                    AuthorUserId = table.Column<string>(type: "TEXT", nullable: false),
+                    IsPublished = table.Column<bool>(type: "INTEGER", nullable: false),
+                    PublishedUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CreatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_AspNetUsers_AuthorUserId",
+                        column: x => x.AuthorUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Appointments",
                 columns: table => new
                 {
@@ -339,9 +398,30 @@ namespace Clinic.Infrastructure.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ContactMessages_IsArchived_CreatedUtc",
+                table: "ContactMessages",
+                columns: new[] { "IsArchived", "CreatedUtc" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Doctors_UserId",
                 table: "Doctors",
                 column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_AuthorUserId",
+                table: "Posts",
+                column: "AuthorUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_Kind_IsPublished_PublishedUtc",
+                table: "Posts",
+                columns: new[] { "Kind", "IsPublished", "PublishedUtc" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_Kind_Slug",
+                table: "Posts",
+                columns: new[] { "Kind", "Slug" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -370,6 +450,12 @@ namespace Clinic.Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "ContactMessages");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "SiteContent");

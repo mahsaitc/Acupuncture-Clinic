@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
-namespace Clinic.Web.Pages.Staff;
+namespace Clinic.Web.Pages.Admin;
 
 /// <summary>Day view of every appointment in the clinic, for admin, doctors and reception.</summary>
 public class AppointmentsModel(ClinicDbContext db, IBookingService booking, ClinicTime clinicTime, TimeProvider time) : PageModel

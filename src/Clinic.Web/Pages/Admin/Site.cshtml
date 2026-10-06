@@ -1,10 +1,10 @@
 @page
 @model Clinic.Web.Pages.Admin.SiteModel
 @{
-    ViewData["Title"] = L["Site content"];
+    ViewData["Title"] = L["Home page and contact"];
 }
 
-<h1 class="h3 mb-4">@L["Site content"]</h1>
+<h1 class="h3 mb-4">@L["Home page and contact"]</h1>
 
 <form method="post" enctype="multipart/form-data">
     <div asp-validation-summary="All" class="text-danger mb-3"></div>
@@ -71,6 +71,28 @@
                 <div class="col-md-4">
                     <label asp-for="Input.AddressEn" class="form-label"></label>
                     <input asp-for="Input.AddressEn" class="form-control" dir="ltr" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Input.Email" class="form-label"></label>
+                    <input asp-for="Input.Email" class="form-control" dir="ltr" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Input.OpeningHoursFa" class="form-label"></label>
+                    <input asp-for="Input.OpeningHoursFa" class="form-control" dir="rtl" placeholder="شنبه تا پنجشنبه، ۹ تا ۱۳" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Input.OpeningHoursEn" class="form-label"></label>
+                    <input asp-for="Input.OpeningHoursEn" class="form-control" dir="ltr" placeholder="Sat to Thu, 9:00 to 13:00" />
+                </div>
+                <div class="col-md-8">
+                    <label asp-for="Input.MapEmbed" class="form-label"></label>
+                    <textarea asp-for="Input.MapEmbed" class="form-control" rows="3" dir="ltr" placeholder="&lt;iframe src=&quot;https://www.google.com/maps/embed?pb=...&quot;&gt;&lt;/iframe&gt;"></textarea>
+                    <div class="form-text">@L["In Google Maps, open the clinic, choose Share, then Embed a map, and paste the code here."]</div>
+                    <span asp-validation-for="Input.MapEmbed" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Input.MapLinkUrl" class="form-label"></label>
+                    <input asp-for="Input.MapLinkUrl" class="form-control" dir="ltr" placeholder="https://maps.app.goo.gl/..." />
                 </div>
                 <div class="col-md-6">
                     <label asp-for="Input.InstagramUrl" class="form-label"></label>

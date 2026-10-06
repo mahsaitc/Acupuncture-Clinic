@@ -1,7 +1,7 @@
 namespace Clinic.Web.Media;
 
 /// <summary>
-/// Stores public site media (hero video and poster) on disk and serves it under /media.
+/// Stores public site media (hero video, poster, post cover images) on disk and serves it under /media.
 /// Medical files must never go here: everything in this folder is publicly readable.
 /// </summary>
 public class MediaStore(IConfiguration config, IWebHostEnvironment env)
@@ -32,6 +32,9 @@ public class MediaStore(IConfiguration config, IWebHostEnvironment env)
 
     public Task<SaveResult> SaveImageAsync(IFormFile file, CancellationToken ct = default) =>
         SaveAsync(file, "hero", ImageTypes, MaxImageBytes, ct);
+
+    public Task<SaveResult> SavePostImageAsync(IFormFile file, CancellationToken ct = default) =>
+        SaveAsync(file, "posts", ImageTypes, MaxImageBytes, ct);
 
     /// <summary>Deletes a file previously returned by this store. Paths outside the store are ignored.</summary>
     public void Delete(string? webPath)

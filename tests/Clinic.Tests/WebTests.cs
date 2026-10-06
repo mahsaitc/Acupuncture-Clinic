@@ -73,6 +73,99 @@ public class WebTests(ClinicWebFactory factory) : IClassFixture<ClinicWebFactory
     }
 
     [Fact]
+    public async Task Contact_form_saves_the_message()
+    {
+        var client = factory.CreateClient();
+        var form = await client.GetStringAsync("/Contact");
+        var token = System.Text.RegularExpressions.Regex.Match(form, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"").Groups[1].Value;
+
+        var response = await client.PostAsync("/Contact", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["__RequestVerificationToken"] = token,
+            ["Input.Name"] = "سارا احمدی",
+            ["Input.Phone"] = "09121234567",
+            ["Input.Subject"] = "سؤال درباره کاشت نخ",
+            ["Input.Body"] = "چند جلسه برای کاشت نخ لازم است؟",
+        }));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Contains("پیام شما ارسال شد", await response.Content.ReadAsStringAsync());
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+        Assert.Contains(db.ContactMessages, m => m.Subject == "سؤال درباره کاشت نخ" && m.ReadUtc == null);
+    }
+
+    [Fact]
+    public async Task Contact_form_drops_messages_from_bots()
+    {
+        var client = factory.CreateClient();
+        var form = await client.GetStringAsync("/Contact");
+        var token = System.Text.RegularExpressions.Regex.Match(form, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"").Groups[1].Value;
+
+        await client.PostAsync("/Contact", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["__RequestVerificationToken"] = token,
+            ["Website"] = "http://spam.example",
+            ["Input.Name"] = "Bot",
+            ["Input.Phone"] = "09120000000",
+            ["Input.Subject"] = "spam-subject",
+            ["Input.Body"] = "buy cheap things now",
+        }));
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+        Assert.DoesNotContain(db.ContactMessages, m => m.Subject == "spam-subject");
+    }
+
+    [Fact]
+    public async Task Contact_page_shows_the_map_and_social_links()
+    {
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+            var content = await db.SiteContent.FindAsync(SiteContent.SingletonId);
+            content!.MapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m18";
+            content.InstagramUrl = "https://instagram.com/clinic";
+            await db.SaveChangesAsync();
+        }
+
+        var html = await Client().GetStringAsync("/Contact");
+
+        Assert.Contains("<iframe src=\"https://www.google.com/maps/embed?pb=!1m18\"", html);
+        Assert.Contains("href=\"https://instagram.com/clinic\"", html);
+    }
+
+    [Fact]
+    public async Task Blog_shows_only_published_posts_and_english_only_when_translated()
+    {
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+            var author = new Clinic.Infrastructure.Identity.ApplicationUser { UserName = "author@x", Email = "author@x", FullName = "دکتر" };
+            db.Users.Add(author);
+            db.Posts.AddRange(
+                new Post { Kind = PostKind.Blog, Slug = "published-fa", TitleFa = "مطلب منتشرشده", BodyFa = "متن **مهم**", AuthorUserId = author.Id, IsPublished = true, PublishedUtc = DateTime.UtcNow },
+                new Post { Kind = PostKind.Blog, Slug = "draft", TitleFa = "پیش‌نویس محرمانه", BodyFa = "x", AuthorUserId = author.Id },
+                new Post { Kind = PostKind.Blog, Slug = "both", TitleFa = "دوزبانه", BodyFa = "x", TitleEn = "Bilingual post", BodyEn = "<script>alert(1)</script> body", AuthorUserId = author.Id, IsPublished = true, PublishedUtc = DateTime.UtcNow });
+            await db.SaveChangesAsync();
+        }
+
+        var fa = await Client().GetStringAsync("/Blog");
+        var en = await Client().GetStringAsync("/en/Blog");
+        var post = await Client().GetStringAsync("/Blog/published-fa");
+        var enPost = await Client().GetStringAsync("/en/Blog/both");
+
+        Assert.Contains("مطلب منتشرشده", fa);
+        Assert.DoesNotContain("پیش‌نویس محرمانه", fa);
+        Assert.Contains("Bilingual post", en);
+        Assert.DoesNotContain("مطلب منتشرشده", en);
+        Assert.Contains("<strong>مهم</strong>", post);
+        Assert.DoesNotContain("<script>alert(1)</script>", enPost);
+        Assert.Equal(HttpStatusCode.NotFound, (await Client().GetAsync("/Blog/draft")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await Client().GetAsync("/en/Blog/published-fa")).StatusCode);
+    }
+
+    [Fact]
     public async Task Fa_prefix_is_an_alias_of_the_root()
     {
         var html = await Client().GetStringAsync("/fa/Account/Login");
@@ -94,9 +187,14 @@ public class WebTests(ClinicWebFactory factory) : IClassFixture<ClinicWebFactory
     [InlineData("/Booking", "/Account/Login")]
     [InlineData("/en/Booking", "/en/Account/Login")]
     [InlineData("/Admin/Users", "/Account/Login")]
-    [InlineData("/Staff/Appointments", "/Account/Login")]
-    [InlineData("/Doctor/Schedule", "/Account/Login")]
+    [InlineData("/Admin", "/Account/Login")]
+    [InlineData("/Admin/Appointments", "/Account/Login")]
+    [InlineData("/Admin/Schedule", "/Account/Login")]
     [InlineData("/Admin/Site", "/Account/Login")]
+    [InlineData("/Admin/Patients", "/Account/Login")]
+    [InlineData("/Admin/Messages", "/Account/Login")]
+    [InlineData("/Admin/Posts?kind=Blog", "/Account/Login")]
+    [InlineData("/en/Admin/Posts/Edit?kind=Article", "/en/Account/Login")]
     public async Task Protected_pages_redirect_anonymous_users_to_login(string path, string login)
     {
         var response = await Client().GetAsync(path);

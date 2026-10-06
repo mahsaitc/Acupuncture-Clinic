@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using Clinic.Domain.Entities;
 using Clinic.Infrastructure.Data;
+using Clinic.Web.Content;
 using Clinic.Web.Media;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
@@ -9,6 +11,7 @@ using Microsoft.Extensions.Localization;
 namespace Clinic.Web.Pages.Admin;
 
 /// <summary>Home page hero (text, video, poster) and the clinic's contact details.</summary>
+[Authorize(Policy = Policies.Admin)]
 [RequestSizeLimit(MediaStore.MaxVideoBytes + MediaStore.MaxImageBytes + 1024 * 1024)]
 public class SiteModel(ClinicDbContext db, MediaStore media, TimeProvider time, IStringLocalizer<SharedResource> l) : PageModel
 {
@@ -50,6 +53,26 @@ public class SiteModel(ClinicDbContext db, MediaStore media, TimeProvider time, 
         [Display(Name = "Address (English)")]
         public string? AddressEn { get; set; }
 
+        [EmailAddress(ErrorMessage = "Enter a valid email address.")]
+        [Display(Name = "Clinic email")]
+        public string? Email { get; set; }
+
+        [StringLength(300)]
+        [Display(Name = "Opening hours (Persian)")]
+        public string? OpeningHoursFa { get; set; }
+
+        [StringLength(300)]
+        [Display(Name = "Opening hours (English)")]
+        public string? OpeningHoursEn { get; set; }
+
+        [StringLength(4000)]
+        [Display(Name = "Google Maps embed code")]
+        public string? MapEmbed { get; set; }
+
+        [Url(ErrorMessage = "Enter a full link starting with https://")]
+        [Display(Name = "Google Maps link")]
+        public string? MapLinkUrl { get; set; }
+
         [Url(ErrorMessage = "Enter a full link starting with https://")]
         [Display(Name = "Instagram link")]
         public string? InstagramUrl { get; set; }
@@ -83,6 +106,11 @@ public class SiteModel(ClinicDbContext db, MediaStore media, TimeProvider time, 
             WhatsAppUrl = content.WhatsAppUrl,
             TelegramUrl = content.TelegramUrl,
             YouTubeUrl = content.YouTubeUrl,
+            Email = content.Email,
+            OpeningHoursFa = content.OpeningHoursFa,
+            OpeningHoursEn = content.OpeningHoursEn,
+            MapEmbed = content.MapEmbedUrl,
+            MapLinkUrl = content.MapLinkUrl,
         };
     }
 
@@ -91,6 +119,13 @@ public class SiteModel(ClinicDbContext db, MediaStore media, TimeProvider time, 
         var content = await LoadAsync();
         if (!ModelState.IsValid)
         {
+            return Page();
+        }
+
+        var mapEmbedUrl = MapEmbed.ExtractSrc(Input.MapEmbed);
+        if (!string.IsNullOrWhiteSpace(Input.MapEmbed) && mapEmbedUrl is null)
+        {
+            ModelState.AddModelError("Input.MapEmbed", l["Paste the embed code from Google Maps: Share, then Embed a map."]);
             return Page();
         }
 
@@ -138,6 +173,11 @@ public class SiteModel(ClinicDbContext db, MediaStore media, TimeProvider time, 
         content.WhatsAppUrl = Clean(Input.WhatsAppUrl);
         content.TelegramUrl = Clean(Input.TelegramUrl);
         content.YouTubeUrl = Clean(Input.YouTubeUrl);
+        content.Email = Clean(Input.Email);
+        content.OpeningHoursFa = Clean(Input.OpeningHoursFa);
+        content.OpeningHoursEn = Clean(Input.OpeningHoursEn);
+        content.MapEmbedUrl = mapEmbedUrl;
+        content.MapLinkUrl = Clean(Input.MapLinkUrl);
         content.UpdatedUtc = time.GetUtcNow().UtcDateTime;
         await db.SaveChangesAsync();
 

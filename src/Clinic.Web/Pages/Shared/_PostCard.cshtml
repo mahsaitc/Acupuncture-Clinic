@@ -1,0 +1,25 @@
+@model (Clinic.Domain.Entities.Post Post, string Page)
+@{
+    var english = CulturePath.IsEnglish;
+    var post = Model.Post;
+}
+<article class="post-card h-100">
+    <a asp-page="@Model.Page" asp-route-slug="@post.Slug" class="post-card-image" tabindex="-1" aria-hidden="true">
+        @if (post.CoverImagePath is not null)
+        {
+            <img src="@post.CoverImagePath" alt="" loading="lazy" />
+        }
+        else
+        {
+            <span><i class="bi bi-flower1"></i></span>
+        }
+    </a>
+    <div class="post-card-body">
+        <div class="small text-muted mb-2">@(post.PublishedUtc is DateTime d ? Fmt.Date(d) : "")</div>
+        <h2 class="h5"><a asp-page="@Model.Page" asp-route-slug="@post.Slug" class="stretched-link text-reset text-decoration-none">@post.Title(english)</a></h2>
+        @if (post.Summary(english) is string summary)
+        {
+            <p class="text-muted mb-0">@summary</p>
+        }
+    </div>
+</article>

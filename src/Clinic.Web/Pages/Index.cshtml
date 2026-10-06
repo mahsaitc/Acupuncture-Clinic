@@ -5,6 +5,7 @@
     ViewData["FullWidth"] = true;
     var english = CulturePath.IsEnglish;
     var site = Model.Content;
+    const string BlogPostPage = "/Blog/Post";
     string[] icons = ["bi-flower1", "bi-heart-pulse", "bi-clipboard2-pulse", "bi-droplet", "bi-activity", "bi-leaf"];
 }
 
@@ -111,6 +112,25 @@
         </div>
     </div>
 </section>
+
+@if (Model.LatestPosts.Count > 0)
+{
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <div class="kicker">@L["Blog"]</div>
+                <h2>@L["From the doctor's blog"]</h2>
+            </div>
+            <div class="row g-4">
+                @foreach (var post in Model.LatestPosts)
+                {
+                    <div class="col-md-4"><partial name="_PostCard" model="(post, BlogPostPage)" /></div>
+                }
+            </div>
+            <div class="text-center mt-4"><a class="btn btn-outline-success" asp-page="/Blog/Index">@L["All posts"]</a></div>
+        </div>
+    </section>
+}
 
 <section class="section pb-0">
     <div class="container">

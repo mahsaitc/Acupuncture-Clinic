@@ -1,0 +1,54 @@
+@page
+@model Clinic.Web.Pages.Admin.Patients.IndexModel
+@{
+    ViewData["Title"] = L["Patients"];
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="h3">@L["Patients"]</h1>
+        <div class="text-muted">@L["{0} patients", Fmt.Number(Model.Total)]</div>
+    </div>
+    <form method="get" class="d-flex gap-2">
+        <input class="form-control" name="Q" value="@Model.Q" placeholder="@L["Search name, email or mobile"]" />
+        <button class="btn btn-success"><i class="bi bi-search"></i></button>
+    </form>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover bg-white align-middle">
+        <thead>
+            <tr>
+                <th>@L["Name"]</th>
+                <th>@L["Mobile number"]</th>
+                <th>@L["Completed visits"]</th>
+                <th>@L["Next appointment"]</th>
+                <th>@L["Registered on"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.Rows)
+            {
+                <tr class="@(r.IsActive ? "" : "table-secondary")">
+                    <td><a class="fw-semibold" asp-page="./Details" asp-route-id="@r.Id">@r.FullName</a><div class="small text-muted" dir="ltr">@r.Email</div></td>
+                    <td dir="ltr" class="text-nowrap">@r.Phone</td>
+                    <td>@Fmt.Number(r.Visits)</td>
+                    <td class="text-nowrap">@(r.NextUtc is DateTime next ? Fmt.DateTime(next) : "-")</td>
+                    <td class="text-nowrap small">@Fmt.Date(r.CreatedUtc)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.PageCount > 1)
+{
+    <nav class="mt-3">
+        <ul class="pagination">
+            @for (var i = 1; i <= Model.PageCount; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")"><a class="page-link" asp-route-p="@i" asp-route-Q="@Model.Q">@Fmt.Number(i)</a></li>
+            }
+        </ul>
+    </nav>
+}

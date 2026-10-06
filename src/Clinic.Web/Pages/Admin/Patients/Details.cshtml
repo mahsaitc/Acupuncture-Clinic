@@ -1,0 +1,80 @@
+@page
+@model Clinic.Web.Pages.Admin.Patients.DetailsModel
+@{
+    ViewData["Title"] = Model.Patient.FullName;
+    var english = CulturePath.IsEnglish;
+    var p = Model.Patient;
+}
+
+<div class="page-head">
+    <div>
+        <a class="small" asp-page="./Index"><i class="bi @(english ? "bi-arrow-left" : "bi-arrow-right") me-1"></i>@L["Patients"]</a>
+        <h1 class="h3 mt-1">@p.FullName</h1>
+    </div>
+    <a class="btn btn-success" asp-page="/Booking/Index"><i class="bi bi-plus-lg me-1"></i>@L["New appointment"]</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card card-soft">
+            <div class="card-body">
+                <h2 class="h6 text-muted mb-3">@L["Contact"]</h2>
+                <dl class="mb-0">
+                    <dt>@L["Mobile number"]</dt>
+                    <dd dir="ltr" class="text-start"><a href="tel:@p.PhoneNumber">@p.PhoneNumber</a></dd>
+                    <dt>@L["Email"]</dt>
+                    <dd dir="ltr" class="text-start"><a href="mailto:@p.Email">@p.Email</a></dd>
+                    <dt>@L["Registered on"]</dt>
+                    <dd>@Fmt.Date(p.CreatedUtc)</dd>
+                    <dt>@L["Status"]</dt>
+                    <dd>@(p.IsActive ? L["Active"] : L["Deactivated"])</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="alert alert-light border mt-3 small mb-0">
+            <i class="bi bi-info-circle me-1"></i>@L["The medical record, acupuncture points and images come in the next phase."]
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card card-soft mb-4">
+            <div class="card-body">
+                <h2 class="h5 mb-3">@L["Appointment history"]</h2>
+                @if (Model.Appointments.Count == 0)
+                {
+                    <p class="text-muted mb-0">@L["No appointments yet."]</p>
+                }
+                else
+                {
+                    <ul class="list-unstyled mb-0 d-grid gap-2">
+                        @foreach (var a in Model.Appointments)
+                        {
+                            <li class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                <div>
+                                    <div>@a.Service?.Name(english)</div>
+                                    <div class="small text-muted">@Fmt.DateTime(a.StartUtc)</div>
+                                    @if (a.PatientNote is not null) { <div class="small fst-italic">@a.PatientNote</div> }
+                                </div>
+                                <partial name="_StatusBadge" model="a.Status" />
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+        @if (Model.Messages.Count > 0)
+        {
+            <div class="card card-soft">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">@L["Messages"]</h2>
+                    @foreach (var m in Model.Messages)
+                    {
+                        <div class="border-bottom py-2">
+                            <div class="d-flex justify-content-between"><strong>@m.Subject</strong><span class="small text-muted">@Fmt.Date(m.CreatedUtc)</span></div>
+                            <div style="white-space: pre-line">@m.Body</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

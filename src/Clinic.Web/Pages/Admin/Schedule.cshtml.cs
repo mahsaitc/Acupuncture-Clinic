@@ -1,14 +1,16 @@
 using System.Security.Claims;
 using Clinic.Domain.Entities;
 using Clinic.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
-namespace Clinic.Web.Pages.Doctor;
+namespace Clinic.Web.Pages.Admin;
 
 /// <summary>A doctor's weekly working hours, which drive the free slots shown to patients.</summary>
+[Authorize(Policy = Policies.Doctor)]
 public class ScheduleModel(ClinicDbContext db, IStringLocalizer<SharedResource> l) : PageModel
 {
     /// <summary>Iranian week order, Saturday first.</summary>

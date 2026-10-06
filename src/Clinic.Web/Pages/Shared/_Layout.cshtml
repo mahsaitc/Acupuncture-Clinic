@@ -10,6 +10,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - @L["Acupuncture Clinic"]</title>
+    @if (ViewData["Description"] is string description)
+    {
+        <meta name="description" content="@description" />
+    }
     <link rel="alternate" hreflang="@(english ? "fa" : "en")" href="@CulturePath.SwitchUrl(Context.Request)" />
     <link rel="stylesheet" href="~/lib/vazirmatn/vazirmatn.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
@@ -36,35 +40,23 @@
                 <div class="navbar-collapse collapse">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item"><a class="nav-link" asp-page="/Index">@L["Home"]</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Blog/Index">@L["Blog"]</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Articles/Index">@L["Articles"]</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Contact">@L["Contact us"]</a></li>
                         <li class="nav-item"><a class="nav-link" asp-page="/Booking/Index">@L["Book an appointment"]</a></li>
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item"><a class="nav-link" asp-page="/Appointments/Mine">@L["My appointments"]</a></li>
-                        }
-                        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Doctor) || User.IsInRole(Roles.Receptionist))
-                        {
-                            <li class="nav-item"><a class="nav-link" asp-page="/Staff/Appointments">@L["Clinic calendar"]</a></li>
-                        }
-                        @if (User.IsInRole(Roles.Doctor))
-                        {
-                            <li class="nav-item"><a class="nav-link" asp-page="/Doctor/Schedule">@L["Working hours"]</a></li>
-                        }
-                        @if (User.IsInRole(Roles.Admin))
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">@L["Management"]</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-page="/Admin/Users">@L["Users"]</a></li>
-                                    <li><a class="dropdown-item" asp-page="/Admin/Services">@L["Services"]</a></li>
-                                    <li><a class="dropdown-item" asp-page="/Admin/Site">@L["Site content"]</a></li>
-                                </ul>
-                            </li>
                         }
                     </ul>
                     <ul class="navbar-nav align-items-lg-center gap-lg-2">
                         <li class="nav-item">
                             <a class="nav-link" href="@CulturePath.SwitchUrl(Context.Request)" hreflang="@(english ? "fa" : "en")">@(english ? "فارسی" : "English")</a>
                         </li>
+                        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Doctor) || User.IsInRole(Roles.Receptionist))
+                        {
+                            <li class="nav-item"><a class="btn btn-outline-success" asp-page="/Admin/Index"><i class="bi bi-speedometer2 me-1" aria-hidden="true"></i>@L["Management panel"]</a></li>
+                        }
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
@@ -115,6 +107,7 @@
                             <li><i class="bi bi-geo-alt me-2" aria-hidden="true"></i>@address</li>
                         }
                         <li><i class="bi bi-calendar2-check me-2" aria-hidden="true"></i><a asp-page="/Booking/Index">@L["Book an appointment"]</a></li>
+                        <li><i class="bi bi-envelope me-2" aria-hidden="true"></i><a asp-page="/Contact">@L["Send a message to the doctor"]</a></li>
                     </ul>
                 </div>
                 <div class="col-sm-6 col-lg-3">

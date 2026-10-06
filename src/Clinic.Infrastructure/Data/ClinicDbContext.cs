@@ -12,6 +12,8 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options) : Identi
     public DbSet<ClinicService> Services => Set<ClinicService>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<SiteContent> SiteContent => Set<SiteContent>();
+    public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
+    public DbSet<Post> Posts => Set<Post>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -63,6 +65,36 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options) : Identi
             e.Property(c => c.WhatsAppUrl).HasMaxLength(300);
             e.Property(c => c.TelegramUrl).HasMaxLength(300);
             e.Property(c => c.YouTubeUrl).HasMaxLength(300);
+            e.Property(c => c.Email).HasMaxLength(200);
+            e.Property(c => c.OpeningHoursFa).HasMaxLength(300);
+            e.Property(c => c.OpeningHoursEn).HasMaxLength(300);
+            e.Property(c => c.MapEmbedUrl).HasMaxLength(2000);
+            e.Property(c => c.MapLinkUrl).HasMaxLength(500);
+        });
+
+        builder.Entity<ContactMessage>(e =>
+        {
+            e.Property(m => m.Name).HasMaxLength(200).IsRequired();
+            e.Property(m => m.Phone).HasMaxLength(30).IsRequired();
+            e.Property(m => m.Email).HasMaxLength(200);
+            e.Property(m => m.Subject).HasMaxLength(200).IsRequired();
+            e.Property(m => m.Body).HasMaxLength(4000).IsRequired();
+            e.HasIndex(m => new { m.IsArchived, m.CreatedUtc });
+        });
+
+        builder.Entity<Post>(e =>
+        {
+            e.Property(p => p.Slug).HasMaxLength(150).IsRequired();
+            e.HasIndex(p => new { p.Kind, p.Slug }).IsUnique();
+            e.HasIndex(p => new { p.Kind, p.IsPublished, p.PublishedUtc });
+            e.Property(p => p.TitleFa).HasMaxLength(250).IsRequired();
+            e.Property(p => p.TitleEn).HasMaxLength(250);
+            e.Property(p => p.SummaryFa).HasMaxLength(600);
+            e.Property(p => p.SummaryEn).HasMaxLength(600);
+            e.Property(p => p.BodyFa).IsRequired();
+            e.Property(p => p.CoverImagePath).HasMaxLength(300);
+            e.Property(p => p.References).HasMaxLength(4000);
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(p => p.AuthorUserId).OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

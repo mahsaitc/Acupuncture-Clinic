@@ -1,0 +1,49 @@
+@page
+@model Clinic.Web.Pages.Admin.MessagesModel
+@{
+    ViewData["Title"] = L["Messages"];
+}
+
+<div class="page-head">
+    <h1 class="h3">@L["Messages"]</h1>
+    <div class="btn-group">
+        <a class="btn @(Model.Archived ? "btn-outline-success" : "btn-success")" asp-route-Archived="false">@L["Inbox"]</a>
+        <a class="btn @(Model.Archived ? "btn-success" : "btn-outline-success")" asp-route-Archived="true">@L["Archive"]</a>
+    </div>
+</div>
+
+@if (Model.Messages.Count == 0)
+{
+    <p class="text-muted">@L["No messages yet."]</p>
+}
+
+<div class="d-grid gap-3">
+    @foreach (var m in Model.Messages)
+    {
+        <div class="card card-soft @(m.ReadUtc is null ? "message-unread" : "")" id="m@(m.Id)">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+                    <div>
+                        <h2 class="h6 mb-1">@m.Subject</h2>
+                        <div class="small text-muted">
+                            @m.Name ·
+                            <a href="tel:@m.Phone" dir="ltr">@m.Phone</a>
+                            @if (m.Email is not null) { <span>· <a href="mailto:@m.Email" dir="ltr">@m.Email</a></span> }
+                            @if (m.UserId is not null) { <span class="badge bg-success-subtle text-success-emphasis ms-1">@L["Registered user"]</span> }
+                        </div>
+                    </div>
+                    <div class="small text-muted text-nowrap">@Fmt.DateTime(m.CreatedUtc)</div>
+                </div>
+                <p class="mb-3" style="white-space: pre-line">@m.Body</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <form method="post" asp-page-handler="Read" asp-route-id="@m.Id" asp-route-read="@(m.ReadUtc is null)" asp-route-Archived="@Model.Archived">
+                        <button type="submit" class="btn btn-sm btn-outline-success">@(m.ReadUtc is null ? L["Mark as read"] : L["Mark as unread"])</button>
+                    </form>
+                    <form method="post" asp-page-handler="Archive" asp-route-id="@m.Id" asp-route-archive="@(!m.IsArchived)" asp-route-Archived="@Model.Archived">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">@(m.IsArchived ? L["Move to inbox"] : L["Archive"])</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>

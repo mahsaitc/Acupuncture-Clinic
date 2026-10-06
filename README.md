@@ -19,7 +19,20 @@ dotnet user-secrets set "Seed:AdminPassword" "a-strong-password"
 dotnet user-secrets set "Seed:AdminName" "Dr. ..."
 ```
 
-The seed admin also gets the Doctor role. Set working hours under "Working hours", then patients can book.
+The seed admin also gets the Doctor role. Open the management panel at `/Admin`, set working hours under "Working hours", then patients can book.
+
+## Management panel
+
+`/Admin` is open to staff. What each role sees:
+
+| Section | Admin | Doctor | Receptionist |
+| --- | --- | --- | --- |
+| Dashboard, appointments, patients, messages | yes | yes | yes |
+| Working hours | if also a doctor | yes | no |
+| Blog and medical articles | yes | yes | no |
+| Home page and contact, users, services | yes | no | no |
+
+Blog posts and articles are written in Markdown. Raw HTML is not allowed and the output is sanitized.
 
 ## Tests
 

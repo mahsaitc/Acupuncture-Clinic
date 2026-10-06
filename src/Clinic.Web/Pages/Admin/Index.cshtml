@@ -1,0 +1,111 @@
+@page
+@model Clinic.Web.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = L["Dashboard"];
+    var english = CulturePath.IsEnglish;
+    var isAdmin = User.IsInRole(Roles.Admin);
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="h3">@L["Dashboard"]</h1>
+        <div class="text-muted">@Fmt.Date(DateTime.UtcNow)</div>
+    </div>
+    <a class="btn btn-success" asp-page="/Booking/Index"><i class="bi bi-plus-lg me-1"></i>@L["New appointment"]</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-4">
+        <a class="kpi" asp-page="./Appointments">
+            <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
+            <div><div class="kpi-value">@Fmt.Number(Model.TodayCount)</div><div class="kpi-label">@L["Appointments today"]</div></div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-4">
+        <div class="kpi">
+            <div class="stat-icon"><i class="bi bi-calendar-week"></i></div>
+            <div><div class="kpi-value">@Fmt.Number(Model.WeekCount)</div><div class="kpi-label">@L["Appointments in the next 7 days"]</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-4">
+        <a class="kpi" asp-page="./Patients/Index">
+            <div class="stat-icon"><i class="bi bi-people"></i></div>
+            <div><div class="kpi-value">@Fmt.Number(Model.PatientCount)</div><div class="kpi-label">@L["Registered patients"]</div></div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-4">
+        <a class="kpi" asp-page="./Messages">
+            <div class="stat-icon"><i class="bi bi-envelope-paper"></i></div>
+            <div><div class="kpi-value">@Fmt.Number(Model.UnreadMessages)</div><div class="kpi-label">@L["Unread messages"]</div></div>
+        </a>
+    </div>
+    @if (isAdmin)
+    {
+        <div class="col-sm-6 col-xl-4">
+            <a class="kpi" asp-page="./Users">
+                <div class="stat-icon"><i class="bi bi-person-check"></i></div>
+                <div><div class="kpi-value">@Fmt.Number(Model.PendingDoctors)</div><div class="kpi-label">@L["Doctors waiting for approval"]</div></div>
+            </a>
+        </div>
+    }
+    <div class="col-sm-6 col-xl-4">
+        <div class="kpi">
+            <div class="stat-icon"><i class="bi bi-journal-text"></i></div>
+            <div><div class="kpi-value">@Fmt.Number(Model.PublishedPosts)</div><div class="kpi-label">@L["Published posts and articles"]</div></div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-7">
+        <div class="card card-soft h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">@L["Today's appointments"]</h2>
+                    <a asp-page="./Appointments">@L["Open calendar"]</a>
+                </div>
+                @if (Model.Today.Count == 0)
+                {
+                    <p class="text-muted mb-0">@L["No appointments on this day."]</p>
+                }
+                else
+                {
+                    <ul class="list-unstyled mb-0 d-grid gap-2">
+                        @foreach (var a in Model.Today)
+                        {
+                            <li class="d-flex align-items-center gap-3">
+                                <span class="fw-bold text-nowrap" style="min-width: 3.5rem">@Fmt.Time(a.StartUtc)</span>
+                                <span class="flex-grow-1">@a.Patient <span class="text-muted small">· @a.Service?.Name(english)</span></span>
+                                <partial name="_StatusBadge" model="a.Status" />
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-5">
+        <div class="card card-soft h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">@L["Latest messages"]</h2>
+                    <a asp-page="./Messages">@L["All messages"]</a>
+                </div>
+                @if (Model.LatestMessages.Count == 0)
+                {
+                    <p class="text-muted mb-0">@L["No messages yet."]</p>
+                }
+                @foreach (var m in Model.LatestMessages)
+                {
+                    <a class="d-block text-decoration-none text-reset border-bottom py-2 @(m.ReadUtc is null ? "fw-semibold" : "")" asp-page="./Messages" asp-fragment="m@(m.Id)">
+                        <div class="d-flex justify-content-between gap-2">
+                            <span>@m.Subject</span>
+                            <span class="small text-muted text-nowrap">@Fmt.Date(m.CreatedUtc)</span>
+                        </div>
+                        <div class="small text-muted">@m.Name</div>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

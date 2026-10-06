@@ -4,6 +4,7 @@ using Clinic.Domain.Entities;
 using Clinic.Infrastructure.Data;
 using Clinic.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Clinic.Web.Pages.Admin;
 
+[Authorize(Policy = Policies.Admin)]
 public class UsersModel(ClinicDbContext db, UserManager<ApplicationUser> userManager, IStringLocalizer<SharedResource> l) : PageModel
 {
     private const int PageSize = 50;

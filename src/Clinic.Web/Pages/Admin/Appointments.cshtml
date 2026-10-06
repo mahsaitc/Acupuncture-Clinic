@@ -1,7 +1,7 @@
 @page
 @using System.Globalization
 @using Clinic.Domain.Entities
-@model Clinic.Web.Pages.Staff.AppointmentsModel
+@model Clinic.Web.Pages.Admin.AppointmentsModel
 @{
     ViewData["Title"] = L["Clinic calendar"];
     var english = CulturePath.IsEnglish;
@@ -52,7 +52,7 @@ else
                         <td class="text-nowrap">
                             @if (r.Status != AppointmentStatus.Cancelled)
                             {
-                                @foreach (var s in Clinic.Web.Pages.Staff.AppointmentsModel.SettableStatuses)
+                                @foreach (var s in Clinic.Web.Pages.Admin.AppointmentsModel.SettableStatuses)
                                 {
                                     <form method="post" asp-page-handler="Status" asp-route-id="@r.Id" asp-route-status="@s" asp-route-Date="@Model.Date" class="d-inline">
                                         <button type="submit" class="btn btn-sm btn-outline-secondary" disabled="@(r.Status == s)">@L[s.ToString()]</button>

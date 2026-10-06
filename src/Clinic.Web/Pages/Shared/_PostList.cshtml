@@ -1,0 +1,38 @@
+@model Clinic.Web.Content.PostListPageModel
+@{
+    var isArticle = Model.Kind == Clinic.Domain.Entities.PostKind.Article;
+    var postPage = isArticle ? "/Articles/Post" : "/Blog/Post";
+}
+<div class="section-title mb-5">
+    <div class="kicker">@(isArticle ? L["Articles"] : L["Blog"])</div>
+    <h1 class="h2">@ViewData["Title"]</h1>
+    <p>@(isArticle ? L["Scientific articles on acupuncture and integrative medicine, with their sources."] : L["Health tips, clinic news and answers to common questions from the doctor."])</p>
+</div>
+
+@if (Model.Posts.Count == 0)
+{
+    <p class="text-center text-muted py-5">@L["Nothing has been published here yet."]</p>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var post in Model.Posts)
+        {
+            <div class="col-md-6 col-lg-4">
+                <partial name="_PostCard" model="(post, postPage)" />
+            </div>
+        }
+    </div>
+}
+
+@if (Model.PageCount > 1)
+{
+    <nav class="mt-5 d-flex justify-content-center">
+        <ul class="pagination">
+            @for (var i = 1; i <= Model.PageCount; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")"><a class="page-link" asp-route-p="@i">@Fmt.Number(i)</a></li>
+            }
+        </ul>
+    </nav>
+}
