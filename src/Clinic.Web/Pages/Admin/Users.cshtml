@@ -1,0 +1,65 @@
+@page
+@model Clinic.Web.Pages.Admin.UsersModel
+@{
+    ViewData["Title"] = L["Users"];
+}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <h1 class="h3 mb-0">@L["Users"]</h1>
+    <form method="get" class="d-flex gap-2">
+        <input class="form-control" name="Q" value="@Model.Q" placeholder="@L["Search name, email or mobile"]" />
+        <button class="btn btn-outline-success">@L["Search"]</button>
+    </form>
+</div>
+
+<div class="table-responsive">
+    <table class="table bg-white align-middle">
+        <thead>
+            <tr>
+                <th>@L["Name"]</th>
+                <th>@L["Contact"]</th>
+                <th>@L["Roles"]</th>
+                <th>@L["Status"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.Rows)
+            {
+                <tr class="@(r.User.IsActive ? "" : "table-secondary")">
+                    <td>
+                        @r.User.FullName
+                        <div class="small text-muted">@Fmt.Date(r.User.CreatedUtc)</div>
+                        @if (r.Doctor is not null)
+                        {
+                            <div class="small">@L["Medical Council number"]: <span dir="ltr">@r.Doctor.MedicalCouncilNumber</span></div>
+                            @if (!r.Doctor.IsApproved)
+                            {
+                                <form method="post" asp-page-handler="ApproveDoctor" asp-route-id="@r.User.Id" asp-route-Q="@Model.Q" class="mt-1">
+                                    <button type="submit" class="btn btn-sm btn-warning">@L["Approve doctor"]</button>
+                                </form>
+                            }
+                        }
+                    </td>
+                    <td class="small" dir="ltr">@r.User.Email<br />@r.User.PhoneNumber</td>
+                    <td>
+                        @foreach (var role in Roles.All)
+                        {
+                            var has = r.Roles.Contains(role);
+                            <form method="post" asp-page-handler="ToggleRole" asp-route-id="@r.User.Id" asp-route-role="@role" asp-route-Q="@Model.Q" class="d-inline">
+                                <button type="submit" class="btn btn-sm mb-1 @(has ? "btn-success" : "btn-outline-secondary")"
+                                        title="@(has ? L["Remove role"] : L["Add role"])">@L[role]</button>
+                            </form>
+                        }
+                    </td>
+                    <td>
+                        <form method="post" asp-page-handler="ToggleActive" asp-route-id="@r.User.Id" asp-route-Q="@Model.Q">
+                            <button type="submit" class="btn btn-sm @(r.User.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                                @(r.User.IsActive ? L["Deactivate"] : L["Activate"])
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

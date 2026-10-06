@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Access denied" xml:space="preserve">
+    <value>دسترسی ممنوع</value>
+  </data>
+  <data name="Activate" xml:space="preserve">
+    <value>فعال‌سازی</value>
+  </data>
+  <data name="Acupuncture Clinic" xml:space="preserve">
+    <value>کلینیک طب سوزنی</value>
+  </data>
+  <data name="Acupuncture and integrative medicine clinic" xml:space="preserve">
+    <value>کلینیک طب سوزنی و طب تلفیقی</value>
+  </data>
+  <data name="Acupuncture, catgut embedding for weight management, and family medicine under one roof." xml:space="preserve">
+    <value>طب سوزنی، کاشت نخ (کتگوت) برای مدیریت وزن و پزشکی خانواده در یک مکان.</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>افزودن</value>
+  </data>
+  <data name="Add a block" xml:space="preserve">
+    <value>افزودن بازه کاری</value>
+  </data>
+  <data name="Add a service" xml:space="preserve">
+    <value>افزودن خدمت</value>
+  </data>
+  <data name="Add role" xml:space="preserve">
+    <value>افزودن نقش</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>مدیر</value>
+  </data>
+  <data name="An account with this email already exists." xml:space="preserve">
+    <value>حسابی با این ایمیل از قبل وجود دارد.</value>
+  </data>
+  <data name="Approve doctor" xml:space="preserve">
+    <value>تأیید پزشک</value>
+  </data>
+  <data name="Are you a doctor?" xml:space="preserve">
+    <value>پزشک هستید؟</value>
+  </data>
+  <data name="Book an appointment" xml:space="preserve">
+    <value>رزرو نوبت</value>
+  </data>
+  <data name="Booked" xml:space="preserve">
+    <value>رزرو شده</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>لغو</value>
+  </data>
+  <data name="Cancel this appointment?" xml:space="preserve">
+    <value>این نوبت لغو شود؟</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>لغو شده</value>
+  </data>
+  <data name="Choose a day" xml:space="preserve">
+    <value>انتخاب روز</value>
+  </data>
+  <data name="Choose a doctor" xml:space="preserve">
+    <value>انتخاب پزشک</value>
+  </data>
+  <data name="Choose a service" xml:space="preserve">
+    <value>انتخاب خدمت</value>
+  </data>
+  <data name="Clinic calendar" xml:space="preserve">
+    <value>تقویم کلینیک</value>
+  </data>
+  <data name="Closed" xml:space="preserve">
+    <value>تعطیل</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>انجام شده</value>
+  </data>
+  <data name="Confirm password" xml:space="preserve">
+    <value>تکرار رمز عبور</value>
+  </data>
+  <data name="Confirmed" xml:space="preserve">
+    <value>تأیید شده</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>تماس</value>
+  </data>
+  <data name="Day" xml:space="preserve">
+    <value>روز</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>غیرفعال‌سازی</value>
+  </data>
+  <data name="Doctor" xml:space="preserve">
+    <value>پزشک</value>
+  </data>
+  <data name="Doctor accounts are activated after the clinic admin checks your Medical Council number." xml:space="preserve">
+    <value>حساب پزشک پس از بررسی شماره نظام پزشکی توسط مدیر کلینیک فعال می‌شود.</value>
+  </data>
+  <data name="Doctor sign up" xml:space="preserve">
+    <value>ثبت‌نام پزشک</value>
+  </data>
+  <data name="Duration (minutes)" xml:space="preserve">
+    <value>مدت (دقیقه)</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>ایمیل</value>
+  </data>
+  <data name="Email or password is incorrect." xml:space="preserve">
+    <value>ایمیل یا رمز عبور اشتباه است.</value>
+  </data>
+  <data name="Enter a mobile number like 09121234567." xml:space="preserve">
+    <value>شماره موبایل را مانند 09121234567 وارد کنید.</value>
+  </data>
+  <data name="Enter a valid email address." xml:space="preserve">
+    <value>یک ایمیل معتبر وارد کنید.</value>
+  </data>
+  <data name="Enter digits only." xml:space="preserve">
+    <value>فقط عدد وارد کنید.</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>خطا</value>
+  </data>
+  <data name="Free times on {0}" xml:space="preserve">
+    <value>زمان‌های آزاد {0}</value>
+  </data>
+  <data name="Friday" xml:space="preserve">
+    <value>جمعه</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>از</value>
+  </data>
+  <data name="Full name" xml:space="preserve">
+    <value>نام و نام خانوادگی</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>خانه</value>
+  </data>
+  <data name="Log in" xml:space="preserve">
+    <value>ورود</value>
+  </data>
+  <data name="Log out" xml:space="preserve">
+    <value>خروج</value>
+  </data>
+  <data name="Management" xml:space="preserve">
+    <value>مدیریت</value>
+  </data>
+  <data name="Medical Council number" xml:space="preserve">
+    <value>شماره نظام پزشکی</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>منو</value>
+  </data>
+  <data name="Mobile number" xml:space="preserve">
+    <value>شماره موبایل</value>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>دوشنبه</value>
+  </data>
+  <data name="My appointments" xml:space="preserve">
+    <value>نوبت‌های من</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>نام</value>
+  </data>
+  <data name="Name (English)" xml:space="preserve">
+    <value>نام (انگلیسی)</value>
+  </data>
+  <data name="Name (Persian)" xml:space="preserve">
+    <value>نام (فارسی)</value>
+  </data>
+  <data name="New appointment" xml:space="preserve">
+    <value>نوبت جدید</value>
+  </data>
+  <data name="No account yet?" xml:space="preserve">
+    <value>هنوز حساب ندارید؟</value>
+  </data>
+  <data name="No appointments on this day." xml:space="preserve">
+    <value>در این روز نوبتی ثبت نشده است.</value>
+  </data>
+  <data name="No doctor profile is linked to this account." xml:space="preserve">
+    <value>پروفایل پزشکی به این حساب متصل نیست.</value>
+  </data>
+  <data name="No free time on this day. Please choose another day." xml:space="preserve">
+    <value>در این روز زمان آزاد وجود ندارد. لطفاً روز دیگری انتخاب کنید.</value>
+  </data>
+  <data name="No patient with this email was found." xml:space="preserve">
+    <value>بیماری با این ایمیل پیدا نشد.</value>
+  </data>
+  <data name="NoShow" xml:space="preserve">
+    <value>عدم مراجعه</value>
+  </data>
+  <data name="Note for the doctor (optional)" xml:space="preserve">
+    <value>توضیح برای پزشک (اختیاری)</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>رمز عبور</value>
+  </data>
+  <data name="Past and cancelled" xml:space="preserve">
+    <value>گذشته و لغوشده</value>
+  </data>
+  <data name="Patient" xml:space="preserve">
+    <value>بیمار</value>
+  </data>
+  <data name="Patient email (leave empty to book for yourself)" xml:space="preserve">
+    <value>ایمیل بیمار (برای رزرو برای خودتان خالی بگذارید)</value>
+  </data>
+  <data name="Patient sign up" xml:space="preserve">
+    <value>ثبت‌نام بیمار</value>
+  </data>
+  <data name="Patients can book only inside these weekly blocks." xml:space="preserve">
+    <value>بیماران فقط در این بازه‌های هفتگی می‌توانند نوبت بگیرند.</value>
+  </data>
+  <data name="Receptionist" xml:space="preserve">
+    <value>منشی</value>
+  </data>
+  <data name="Remember me" xml:space="preserve">
+    <value>مرا به خاطر بسپار</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Remove role" xml:space="preserve">
+    <value>حذف نقش</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>نقش‌ها</value>
+  </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>شنبه</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>جستجو</value>
+  </data>
+  <data name="Search name, email or mobile" xml:space="preserve">
+    <value>جستجوی نام، ایمیل یا موبایل</value>
+  </data>
+  <data name="Send request" xml:space="preserve">
+    <value>ارسال درخواست</value>
+  </data>
+  <data name="Service" xml:space="preserve">
+    <value>خدمت</value>
+  </data>
+  <data name="Services" xml:space="preserve">
+    <value>خدمات</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>نمایش</value>
+  </data>
+  <data name="Sign up" xml:space="preserve">
+    <value>ثبت‌نام</value>
+  </data>
+  <data name="Something went wrong. Please try again." xml:space="preserve">
+    <value>مشکلی پیش آمد. لطفاً دوباره تلاش کنید.</value>
+  </data>
+  <data name="Specialty" xml:space="preserve">
+    <value>تخصص</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>وضعیت</value>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>یکشنبه</value>
+  </data>
+  <data name="The appointment was cancelled." xml:space="preserve">
+    <value>نوبت لغو شد.</value>
+  </data>
+  <data name="The doctor account was approved." xml:space="preserve">
+    <value>حساب پزشک تأیید شد.</value>
+  </data>
+  <data name="The end time must be after the start time." xml:space="preserve">
+    <value>ساعت پایان باید بعد از ساعت شروع باشد.</value>
+  </data>
+  <data name="The password must be at least {0} characters." xml:space="preserve">
+    <value>رمز عبور باید حداقل {0} کاراکتر باشد.</value>
+  </data>
+  <data name="The password must contain a digit." xml:space="preserve">
+    <value>رمز عبور باید یک عدد داشته باشد.</value>
+  </data>
+  <data name="The password must contain a lowercase English letter." xml:space="preserve">
+    <value>رمز عبور باید یک حرف کوچک انگلیسی داشته باشد.</value>
+  </data>
+  <data name="The password must contain an uppercase English letter." xml:space="preserve">
+    <value>رمز عبور باید یک حرف بزرگ انگلیسی داشته باشد.</value>
+  </data>
+  <data name="The passwords do not match." xml:space="preserve">
+    <value>رمزهای عبور یکسان نیستند.</value>
+  </data>
+  <data name="This appointment cannot be cancelled." xml:space="preserve">
+    <value>این نوبت قابل لغو نیست.</value>
+  </data>
+  <data name="This block overlaps an existing block." xml:space="preserve">
+    <value>این بازه با بازه دیگری تداخل دارد.</value>
+  </data>
+  <data name="This time is no longer available. Please choose another time." xml:space="preserve">
+    <value>این زمان دیگر آزاد نیست. لطفاً زمان دیگری انتخاب کنید.</value>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>پنجشنبه</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>ساعت</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>تا</value>
+  </data>
+  <data name="Too many failed attempts. Try again in 15 minutes." xml:space="preserve">
+    <value>تلاش‌های ناموفق زیاد بود. ۱۵ دقیقه دیگر دوباره تلاش کنید.</value>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>سه‌شنبه</value>
+  </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>پیش رو</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>کاربران</value>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>چهارشنبه</value>
+  </data>
+  <data name="Working hours" xml:space="preserve">
+    <value>ساعات کاری</value>
+  </data>
+  <data name="You do not have permission to view this page." xml:space="preserve">
+    <value>اجازه مشاهده این صفحه را ندارید.</value>
+  </data>
+  <data name="You have no upcoming appointments." xml:space="preserve">
+    <value>نوبت پیش رویی ندارید.</value>
+  </data>
+  <data name="Your appointment was booked." xml:space="preserve">
+    <value>نوبت شما ثبت شد.</value>
+  </data>
+  <data name="Your request was sent. You can log in once the clinic admin approves your account." xml:space="preserve">
+    <value>درخواست شما ارسال شد. پس از تأیید مدیر کلینیک می‌توانید وارد شوید.</value>
+  </data>
+  <data name="{0} to {1}" xml:space="preserve">
+    <value>{0} تا {1}</value>
+  </data>
+  <data name="{0} is required." xml:space="preserve">
+    <value>وارد کردن {0} الزامی است.</value>
+  </data>
+  <data name="{0} minutes" xml:space="preserve">
+    <value>{0} دقیقه</value>
+  </data>
+  <data name="{0} must be at least {2} characters." xml:space="preserve">
+    <value>{0} باید حداقل {2} کاراکتر باشد.</value>
+  </data>
+  <data name="{0} must be between {1} and {2}." xml:space="preserve">
+    <value>{0} باید بین {1} و {2} باشد.</value>
+  </data>
+  <data name="20+ years of experience" xml:space="preserve">
+    <value>بیش از ۲۰ سال تجربه</value>
+  </data>
+  <data name="Acupuncture, catgut embedding or a general visit." xml:space="preserve">
+    <value>طب سوزنی، کاشت نخ یا ویزیت عمومی.</value>
+  </data>
+  <data name="Address (English)" xml:space="preserve">
+    <value>نشانی (انگلیسی)</value>
+  </data>
+  <data name="Address (Persian)" xml:space="preserve">
+    <value>نشانی (فارسی)</value>
+  </data>
+  <data name="Background video" xml:space="preserve">
+    <value>ویدئوی پس‌زمینه</value>
+  </data>
+  <data name="Book this service" xml:space="preserve">
+    <value>رزرو این خدمت</value>
+  </data>
+  <data name="Book your first session online in under a minute." xml:space="preserve">
+    <value>اولین جلسه خود را در کمتر از یک دقیقه آنلاین رزرو کنید.</value>
+  </data>
+  <data name="Booking" xml:space="preserve">
+    <value>نوبت‌دهی</value>
+  </data>
+  <data name="Call the clinic" xml:space="preserve">
+    <value>تماس با کلینیک</value>
+  </data>
+  <data name="Care planned for you" xml:space="preserve">
+    <value>درمان متناسب با شما</value>
+  </data>
+  <data name="Clinic phone" xml:space="preserve">
+    <value>تلفن کلینیک</value>
+  </data>
+  <data name="Contact and social media" xml:space="preserve">
+    <value>تماس و شبکه‌های اجتماعی</value>
+  </data>
+  <data name="Contact us" xml:space="preserve">
+    <value>تماس با ما</value>
+  </data>
+  <data name="Cover image" xml:space="preserve">
+    <value>تصویر کاور</value>
+  </data>
+  <data name="Each treatment starts with a full assessment and a plan that fits your health goals." xml:space="preserve">
+    <value>هر درمان با یک ارزیابی کامل و برنامه‌ای متناسب با اهداف سلامتی شما آغاز می‌شود.</value>
+  </data>
+  <data name="Enter a full link starting with https://" xml:space="preserve">
+    <value>لینک کامل را با https:// وارد کنید</value>
+  </data>
+  <data name="Follow us" xml:space="preserve">
+    <value>ما را دنبال کنید</value>
+  </data>
+  <data name="Hero subtitle (English)" xml:space="preserve">
+    <value>زیرعنوان هیرو (انگلیسی)</value>
+  </data>
+  <data name="Hero subtitle (Persian)" xml:space="preserve">
+    <value>زیرعنوان هیرو (فارسی)</value>
+  </data>
+  <data name="Hero title (English)" xml:space="preserve">
+    <value>عنوان هیرو (انگلیسی)</value>
+  </data>
+  <data name="Hero title (Persian)" xml:space="preserve">
+    <value>عنوان هیرو (فارسی)</value>
+  </data>
+  <data name="Home page hero" xml:space="preserve">
+    <value>هیروی صفحه اصلی</value>
+  </data>
+  <data name="How we can help" xml:space="preserve">
+    <value>چگونه می‌توانیم کمک کنیم</value>
+  </data>
+  <data name="Instagram link" xml:space="preserve">
+    <value>لینک اینستاگرام</value>
+  </data>
+  <data name="MP4 or WebM, at most 150 MB. A short, silent clip of 10 to 30 seconds works best." xml:space="preserve">
+    <value>MP4 یا WebM، حداکثر ۱۵۰ مگابایت. یک ویدئوی کوتاه و بی‌صدای ۱۰ تا ۳۰ ثانیه‌ای بهترین نتیجه را دارد.</value>
+  </data>
+  <data name="Online booking" xml:space="preserve">
+    <value>نوبت‌دهی آنلاین</value>
+  </data>
+  <data name="Our services" xml:space="preserve">
+    <value>خدمات ما</value>
+  </data>
+  <data name="Pick a time" xml:space="preserve">
+    <value>انتخاب زمان</value>
+  </data>
+  <data name="Ready to start your treatment?" xml:space="preserve">
+    <value>آماده شروع درمان هستید؟</value>
+  </data>
+  <data name="Remove the video" xml:space="preserve">
+    <value>حذف ویدئو</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>ذخیره</value>
+  </data>
+  <data name="See the doctor's free times and book online." xml:space="preserve">
+    <value>زمان‌های آزاد پزشک را ببینید و آنلاین رزرو کنید.</value>
+  </data>
+  <data name="Shown while the video loads and for visitors who turn off motion. JPG, PNG or WebP, at most 5 MB." xml:space="preserve">
+    <value>هنگام بارگذاری ویدئو و برای بازدیدکنندگانی که حرکت را خاموش کرده‌اند نمایش داده می‌شود. JPG، PNG یا WebP، حداکثر ۵ مگابایت.</value>
+  </data>
+  <data name="Site content" xml:space="preserve">
+    <value>محتوای سایت</value>
+  </data>
+  <data name="Telegram link" xml:space="preserve">
+    <value>لینک تلگرام</value>
+  </data>
+  <data name="The cover image must be a JPG, PNG or WebP file of at most 5 MB." xml:space="preserve">
+    <value>تصویر کاور باید JPG، PNG یا WebP و حداکثر ۵ مگابایت باشد.</value>
+  </data>
+  <data name="The site content was saved." xml:space="preserve">
+    <value>محتوای سایت ذخیره شد.</value>
+  </data>
+  <data name="The video must be an MP4 or WebM file of at most 150 MB." xml:space="preserve">
+    <value>ویدئو باید فایل MP4 یا WebM و حداکثر ۱۵۰ مگابایت باشد.</value>
+  </data>
+  <data name="Visit the clinic" xml:space="preserve">
+    <value>مراجعه به کلینیک</value>
+  </data>
+  <data name="WhatsApp link" xml:space="preserve">
+    <value>لینک واتس‌اپ</value>
+  </data>
+  <data name="YouTube link" xml:space="preserve">
+    <value>لینک یوتیوب</value>
+  </data>
+  <data name="Your treatment and progress are kept in your medical file." xml:space="preserve">
+    <value>روند درمان شما در پرونده پزشکی‌تان ثبت می‌شود.</value>
+  </data>
+  <data name="Your visit in three steps" xml:space="preserve">
+    <value>مراجعه شما در سه مرحله</value>
+  </data>
+  <data name="every session recorded in your file" xml:space="preserve">
+    <value>ثبت همه جلسات در پرونده شما</value>
+  </data>
+  <data name="in family medicine and acupuncture" xml:space="preserve">
+    <value>در پزشکی خانواده و طب سوزنی</value>
+  </data>
+  <data name="pick a free time in under a minute" xml:space="preserve">
+    <value>انتخاب زمان آزاد در کمتر از یک دقیقه</value>
+  </data>
+</root>

@@ -1,0 +1,12 @@
+@model Clinic.Domain.Entities.AppointmentStatus
+@{
+    var css = Model switch
+    {
+        Clinic.Domain.Entities.AppointmentStatus.Confirmed => "bg-primary",
+        Clinic.Domain.Entities.AppointmentStatus.Completed => "bg-success",
+        Clinic.Domain.Entities.AppointmentStatus.Cancelled => "bg-secondary",
+        Clinic.Domain.Entities.AppointmentStatus.NoShow => "bg-danger",
+        _ => "bg-info text-dark",
+    };
+}
+<span class="badge @css">@L[Model.ToString()]</span>

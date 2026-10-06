@@ -1,0 +1,96 @@
+@page
+@model Clinic.Web.Pages.Admin.SiteModel
+@{
+    ViewData["Title"] = L["Site content"];
+}
+
+<h1 class="h3 mb-4">@L["Site content"]</h1>
+
+<form method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    <div class="card card-soft mb-4">
+        <div class="card-body">
+            <h2 class="h5 mb-3">@L["Home page hero"]</h2>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Input.HeroTitleFa" class="form-label"></label>
+                    <input asp-for="Input.HeroTitleFa" class="form-control" dir="rtl" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.HeroTitleEn" class="form-label"></label>
+                    <input asp-for="Input.HeroTitleEn" class="form-control" dir="ltr" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.HeroSubtitleFa" class="form-label"></label>
+                    <textarea asp-for="Input.HeroSubtitleFa" class="form-control" rows="3" dir="rtl"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.HeroSubtitleEn" class="form-label"></label>
+                    <textarea asp-for="Input.HeroSubtitleEn" class="form-control" rows="3" dir="ltr"></textarea>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label" for="video">@L["Background video"]</label>
+                    <input class="form-control" type="file" id="video" name="video" accept="video/mp4,video/webm" />
+                    <div class="form-text">@L["MP4 or WebM, at most 150 MB. A short, silent clip of 10 to 30 seconds works best."]</div>
+                    @if (Model.VideoPath is not null)
+                    {
+                        <video class="rounded mt-2 w-100" src="@Model.VideoPath" muted controls preload="metadata"></video>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="removeVideo" name="removeVideo" value="true" />
+                            <label class="form-check-label" for="removeVideo">@L["Remove the video"]</label>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="poster">@L["Cover image"]</label>
+                    <input class="form-control" type="file" id="poster" name="poster" accept="image/jpeg,image/png,image/webp" />
+                    <div class="form-text">@L["Shown while the video loads and for visitors who turn off motion. JPG, PNG or WebP, at most 5 MB."]</div>
+                    @if (Model.PosterPath is not null)
+                    {
+                        <img class="rounded mt-2 w-100" src="@Model.PosterPath" alt="" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-soft mb-4">
+        <div class="card-body">
+            <h2 class="h5 mb-3">@L["Contact and social media"]</h2>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="Input.Phone" class="form-label"></label>
+                    <input asp-for="Input.Phone" class="form-control" dir="ltr" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Input.AddressFa" class="form-label"></label>
+                    <input asp-for="Input.AddressFa" class="form-control" dir="rtl" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Input.AddressEn" class="form-label"></label>
+                    <input asp-for="Input.AddressEn" class="form-control" dir="ltr" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.InstagramUrl" class="form-label"></label>
+                    <input asp-for="Input.InstagramUrl" class="form-control" dir="ltr" placeholder="https://instagram.com/..." />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.WhatsAppUrl" class="form-label"></label>
+                    <input asp-for="Input.WhatsAppUrl" class="form-control" dir="ltr" placeholder="https://wa.me/98..." />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.TelegramUrl" class="form-label"></label>
+                    <input asp-for="Input.TelegramUrl" class="form-control" dir="ltr" placeholder="https://t.me/..." />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.YouTubeUrl" class="form-label"></label>
+                    <input asp-for="Input.YouTubeUrl" class="form-control" dir="ltr" placeholder="https://youtube.com/@@..." />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success btn-lg px-5">@L["Save"]</button>
+</form>

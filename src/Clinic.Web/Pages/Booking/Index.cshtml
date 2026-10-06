@@ -1,0 +1,74 @@
+@page
+@using System.Globalization
+@model Clinic.Web.Pages.Booking.IndexModel
+@{
+    ViewData["Title"] = L["Book an appointment"];
+}
+
+<h1 class="h3 mb-4">@L["Book an appointment"]</h1>
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-6">
+        <label class="form-label" for="ServiceId">@L["Service"]</label>
+        <select class="form-select" id="ServiceId" name="ServiceId" asp-items="Model.ServiceOptions" onchange="this.form.submit()">
+            <option value="">@L["Choose a service"]</option>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label" for="DoctorId">@L["Doctor"]</label>
+        <select class="form-select" id="DoctorId" name="DoctorId" asp-items="Model.DoctorOptions" onchange="this.form.submit()">
+            <option value="">@L["Choose a doctor"]</option>
+        </select>
+    </div>
+    @if (Model.SelectedDate is not null)
+    {
+        <input type="hidden" name="Date" value="@Model.Date" />
+    }
+    <noscript><div class="col-12"><button class="btn btn-outline-success">@L["Show"]</button></div></noscript>
+</form>
+
+@if (Model.ServiceId is not null && Model.DoctorId is not null)
+{
+    <h2 class="h5">@L["Choose a day"]</h2>
+    <div class="day-strip mb-4">
+        @foreach (var day in Model.Days)
+        {
+            var value = day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            <a class="btn @(day == Model.SelectedDate ? "btn-success" : "btn-outline-success")"
+               asp-page="./Index" asp-route-ServiceId="@Model.ServiceId" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@value">@Fmt.Day(day)</a>
+        }
+    </div>
+}
+
+@if (Model.SelectedDate is DateOnly selected)
+{
+    <h2 class="h5">@L["Free times on {0}", Fmt.Day(selected)]</h2>
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    @if (Model.Slots.Count == 0)
+    {
+        <p class="text-muted">@L["No free time on this day. Please choose another day."]</p>
+    }
+    else
+    {
+        <form method="post" asp-route-ServiceId="@Model.ServiceId" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Model.Date">
+            @if (Model.IsStaff)
+            {
+                <div class="mb-3">
+                    <label class="form-label" for="patientEmail">@L["Patient email (leave empty to book for yourself)"]</label>
+                    <input class="form-control" id="patientEmail" name="patientEmail" type="email" dir="ltr" />
+                </div>
+            }
+            <div class="mb-3">
+                <label class="form-label" for="note">@L["Note for the doctor (optional)"]</label>
+                <textarea class="form-control" id="note" name="note" rows="2" maxlength="500"></textarea>
+            </div>
+            <div class="slot-grid">
+                @foreach (var slot in Model.Slots)
+                {
+                    <button type="submit" name="startTicks" value="@slot.Ticks" class="btn btn-outline-primary">@Fmt.Time(slot)</button>
+                }
+            </div>
+        </form>
+    }
+}

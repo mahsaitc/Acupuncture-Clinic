@@ -1,0 +1,57 @@
+@page
+@model Clinic.Web.Pages.Admin.ServicesModel
+@{
+    ViewData["Title"] = L["Services"];
+}
+
+<h1 class="h3 mb-3">@L["Services"]</h1>
+
+<div class="table-responsive mb-4">
+    <table class="table bg-white align-middle">
+        <thead>
+            <tr>
+                <th>@L["Name (Persian)"]</th>
+                <th>@L["Name (English)"]</th>
+                <th>@L["Duration (minutes)"]</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model.Services)
+            {
+                <tr class="@(s.IsActive ? "" : "table-secondary")">
+                    <td>@s.NameFa</td>
+                    <td dir="ltr" class="text-start">@s.NameEn</td>
+                    <td>@Fmt.Number(s.DurationMinutes)</td>
+                    <td>
+                        <form method="post" asp-page-handler="Toggle" asp-route-id="@s.Id">
+                            <button type="submit" class="btn btn-sm @(s.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                                @(s.IsActive ? L["Deactivate"] : L["Activate"])
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h2 class="h5">@L["Add a service"]</h2>
+<form method="post" asp-page-handler="Add" class="row g-2 align-items-end">
+    <div asp-validation-summary="All" class="text-danger col-12"></div>
+    <div class="col-md-4">
+        <label asp-for="Input.NameFa" class="form-label"></label>
+        <input asp-for="Input.NameFa" class="form-control" />
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Input.NameEn" class="form-label"></label>
+        <input asp-for="Input.NameEn" class="form-control" dir="ltr" />
+    </div>
+    <div class="col-md-2">
+        <label asp-for="Input.DurationMinutes" class="form-label"></label>
+        <input asp-for="Input.DurationMinutes" class="form-control" />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-success w-100">@L["Add"]</button>
+    </div>
+</form>

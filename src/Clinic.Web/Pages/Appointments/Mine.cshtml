@@ -1,0 +1,55 @@
+@page
+@model Clinic.Web.Pages.Appointments.MineModel
+@{
+    ViewData["Title"] = L["My appointments"];
+    var english = CulturePath.IsEnglish;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">@L["My appointments"]</h1>
+    <a class="btn btn-success" asp-page="/Booking/Index">@L["Book an appointment"]</a>
+</div>
+
+<h2 class="h5 mt-4">@L["Upcoming"]</h2>
+@if (Model.Upcoming.Count == 0)
+{
+    <p class="text-muted">@L["You have no upcoming appointments."]</p>
+}
+else
+{
+    <ul class="list-group mb-4">
+        @foreach (var a in Model.Upcoming)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                    <div class="fw-semibold">@a.Service?.Name(english)</div>
+                    <div class="text-muted small">@Fmt.DateTime(a.StartUtc)</div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <partial name="_StatusBadge" model="a.Status" />
+                    <form method="post" asp-page-handler="Cancel" asp-route-id="@a.Id">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('@L["Cancel this appointment?"]')">@L["Cancel"]</button>
+                    </form>
+                </div>
+            </li>
+        }
+    </ul>
+}
+
+@if (Model.Past.Count > 0)
+{
+    <h2 class="h5 mt-4">@L["Past and cancelled"]</h2>
+    <ul class="list-group">
+        @foreach (var a in Model.Past)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <div>@a.Service?.Name(english)</div>
+                    <div class="text-muted small">@Fmt.DateTime(a.StartUtc)</div>
+                </div>
+                <partial name="_StatusBadge" model="a.Status" />
+            </li>
+        }
+    </ul>
+}
