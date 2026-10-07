@@ -38,8 +38,8 @@ public class EditModel(ClinicDbContext db, UserManager<ApplicationUser> users, P
         }
         Patient = patient;
 
-        var birth = await registration.ValidateAsync(Input, ModelState, existingUserId: id);
-        if (!ModelState.IsValid || !await registration.UpdateAsync(patient, Input, birth, ModelState))
+        var dates = await registration.ValidateAsync(Input, ModelState, existingUserId: id);
+        if (!ModelState.IsValid || !await registration.UpdateAsync(patient, Input, dates, ModelState))
         {
             return Page();
         }

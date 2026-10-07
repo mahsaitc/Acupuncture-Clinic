@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Clinic.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ClinicDbContext))]
-    [Migration("20261007134143_InitialCreate")]
+    [Migration("20261007185621_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -282,20 +282,31 @@ namespace Clinic.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Allergies")
-                        .HasMaxLength(1000)
+                    b.Property<string>("AfterCareAdvice")
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("BloodPressure")
-                        .HasMaxLength(20)
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("Appetite")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Areas")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double?>("ArmCm")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("ChiefComplaint")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Conditions")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime?>("ConsentSignedUtc")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Cravings")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
@@ -304,56 +315,130 @@ namespace Clinic.Infrastructure.Data.Migrations
                         .HasMaxLength(8000)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FamilyHistory")
+                    b.Property<int>("Digestion")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DoctorNotes")
+                        .HasMaxLength(8000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DrugAllergies")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("Energy")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Goals")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("GoalsNotes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool?>("HasDrugAllergy")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("HasOtherAllergy")
+                        .HasColumnType("INTEGER");
+
                     b.Property<double?>("HeightCm")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("HipCm")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Icd10")
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
+                    b.Property<DateOnly?>("LastMenstrualPeriod")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LongTermGoals")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Medications")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PastMedicalHistory")
-                        .HasMaxLength(4000)
+                    b.Property<int>("Menstrual")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Methods")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Mood")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ObservedChanges")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OtherAllergies")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OtherAreas")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OtherConditions")
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PatientUserId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("Pulse")
+                    b.Property<int?>("PlannedSessions")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("PulseDiagnosis")
-                        .HasMaxLength(500)
+                    b.Property<string>("ProblemDuration")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Pulse")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SessionInterval")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ShortTermGoals")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Sleep")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Surgeries")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("TcmPattern")
-                        .HasMaxLength(500)
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("TongueDiagnosis")
-                        .HasMaxLength(500)
+                    b.Property<double?>("ThighCm")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("TongueCoating")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("TreatmentPlan")
-                        .HasMaxLength(4000)
+                    b.Property<string>("TongueColor")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<double?>("WaistCm")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("WeightAfterKg")
                         .HasColumnType("REAL");
 
                     b.Property<double?>("WeightKg")
@@ -380,6 +465,9 @@ namespace Clinic.Infrastructure.Data.Migrations
                     b.Property<DateOnly?>("BirthDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("Children")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("City")
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
@@ -404,6 +492,9 @@ namespace Clinic.Infrastructure.Data.Migrations
 
                     b.Property<string>("FatherName")
                         .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("FirstVisitDate")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Gender")

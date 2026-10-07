@@ -80,20 +80,38 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
         var client = await LoginAsync(await CreateUserAsync(Roles.Doctor));
         var url = $"/Admin/Records/Edit?patientId={patient.Id}";
 
-        var response = await PostFormAsync(client, url, new()
-        {
-            ["Input.WeightKg"] = "۸۲٫۵",
-            ["Input.HeightCm"] = "165",
-            ["Input.Diagnosis"] = "چاقی",
-            ["Input.Allergies"] = "پنی‌سیلین",
-        });
+        // Tick boxes send one value per box, so this form has repeated keys.
+        var response = await PostPairsAsync(client, url,
+        [
+            new("Input.WeightKg", "۸۲٫۵"),
+            new("Input.HeightCm", "165"),
+            new("Input.HipCm", "۱۰۴"),
+            new("Input.Diagnosis", "چاقی"),
+            new("Input.HasDrugAllergy", "true"),
+            new("Input.DrugAllergies", "پنی‌سیلین"),
+            new("Input.Conditions", "Diabetes"),
+            new("Input.Conditions", "Thyroid"),
+            new("Input.Goals", "WeightLoss"),
+            new("Input.Sleep", "Poor"),
+            new("Input.Methods", "Embedding"),
+            new("Input.Methods", "Needling"),
+            new("Input.LastMenstrualPeriod", "۱۴۰۵/۰۶/۲۸"),
+            new("Input.DoctorNotes", "پیگیری قند خون"),
+        ]);
 
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         using var scope = factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
         var record = await db.MedicalRecords.SingleAsync(r => r.PatientUserId == patient.Id);
         Assert.Equal(82.5, record.WeightKg);
+        Assert.Equal(104, record.HipCm);
         Assert.Equal("چاقی", record.Diagnosis);
+        Assert.Equal(MedicalCondition.Diabetes | MedicalCondition.Thyroid, record.Conditions);
+        Assert.Equal(TreatmentGoal.WeightLoss, record.Goals);
+        Assert.Equal(SleepQuality.Poor, record.Sleep);
+        Assert.Equal(TreatmentMethod.Needling | TreatmentMethod.Embedding, record.Methods);
+        Assert.True(record.HasDrugAllergy);
+        Assert.Equal(new DateOnly(2026, 9, 19), record.LastMenstrualPeriod);
 
         var raw = await db.Database.SqlQuery<string>($"SELECT Diagnosis AS Value FROM MedicalRecords WHERE Id = {record.Id}").SingleAsync();
         Assert.DoesNotContain("چاقی", raw);
@@ -101,6 +119,15 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
 
         var page = await client.GetStringAsync($"/Admin/Records?patientId={patient.Id}");
         Assert.Contains("پنی‌سیلین", page);
+        Assert.Contains("دیابت", page);
+
+        // The edit form ticks what was saved, and the printable form shows every section.
+        var edit = await client.GetStringAsync(url);
+        Assert.Matches("value=\"Thyroid\"[^>]*checked", edit);
+        var print = await client.GetStringAsync($"/Admin/Records/Print?patientId={patient.Id}");
+        Assert.Contains("☑ دیابت", print);
+        Assert.Contains("پیگیری قند خون", print);
+        Assert.Contains("/img/logo", print);
     }
 
     private static string JalaliDateDigits(string latin) => Clinic.Application.Common.JalaliDate.ToPersianDigits(latin);
@@ -250,6 +277,12 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
         var html = await page.Content.ReadAsStringAsync();
         Assert.True(page.IsSuccessStatusCode, $"GET {url} returned {(int)page.StatusCode}: {html[..Math.Min(html.Length, 3000)]}");
         return TokenPattern().Match(html).Groups[1].Value;
+    }
+
+    private static async Task<HttpResponseMessage> PostPairsAsync(HttpClient client, string url, List<KeyValuePair<string, string>> fields)
+    {
+        fields.Add(new("__RequestVerificationToken", await TokenAsync(client, url)));
+        return await client.PostAsync(url, new FormUrlEncodedContent(fields));
     }
 
     private static async Task<HttpResponseMessage> PostFormAsync(HttpClient client, string url, Dictionary<string, string> fields)

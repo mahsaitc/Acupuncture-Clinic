@@ -18,7 +18,7 @@ public class SiteContent
     /// <summary>Image shown before the video loads, on slow connections and for visitors who prefer reduced motion.</summary>
     public string? HeroPosterPath { get; set; }
 
-    public string? Phone { get; set; }
+    public string? Phone { get; set; } = "07132346425";
     public string? AddressFa { get; set; }
     public string? AddressEn { get; set; }
     public string? Email { get; set; }

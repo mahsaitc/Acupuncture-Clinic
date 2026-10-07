@@ -43,6 +43,14 @@ public class PatientInput
     [Display(Name = "Marital status")]
     public MaritalStatus? MaritalStatus { get; set; }
 
+    [Range(0, 30, ErrorMessage = "{0} must be between {1} and {2}.")]
+    [Display(Name = "Number of children")]
+    public int? Children { get; set; }
+
+    [StringLength(20)]
+    [Display(Name = "Date of first visit")]
+    public string? FirstVisitDate { get; set; }
+
     [StringLength(100)]
     [Display(Name = "Father's name")]
     public string? FatherName { get; set; }
@@ -100,6 +108,8 @@ public class PatientInput
         BirthDate = DisplayFormat.DateInput(p?.BirthDate),
         Gender = p?.Gender,
         MaritalStatus = p?.MaritalStatus,
+        Children = p?.Children,
+        FirstVisitDate = DisplayFormat.DateInput(p?.FirstVisitDate),
         FatherName = p?.FatherName,
         Occupation = p?.Occupation,
         Education = p?.Education,
@@ -123,23 +133,13 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
 
     /// <summary>
     /// Checks what the attributes cannot: the dates, and that the mobile and email are not already in use.
-    /// Returns the parsed birth date.
+    /// Returns the parsed dates.
     /// </summary>
-    public async Task<DateOnly?> ValidateAsync(PatientInput input, ModelStateDictionary modelState, string? existingUserId)
+    public async Task<PatientDates> ValidateAsync(PatientInput input, ModelStateDictionary modelState, string? existingUserId)
     {
-        DateOnly? birth = null;
-        if (!string.IsNullOrWhiteSpace(input.BirthDate))
-        {
-            var today = DateOnly.FromDateTime(time.GetUtcNow().UtcDateTime);
-            if (!DisplayFormat.TryParseDateInput(input.BirthDate, out var parsed) || parsed > today || parsed.Year < today.Year - 120)
-            {
-                modelState.AddModelError("Input.BirthDate", l["Enter the date like {0}.", DisplayFormat.DateInputHint]);
-            }
-            else
-            {
-                birth = parsed;
-            }
-        }
+        var today = DateOnly.FromDateTime(time.GetUtcNow().UtcDateTime);
+        var birth = ParseDate(input.BirthDate, "Input.BirthDate", today.AddYears(-120), today, modelState);
+        var firstVisit = ParseDate(input.FirstVisitDate, "Input.FirstVisitDate", today.AddYears(-50), today.AddDays(1), modelState);
 
         var mobile = NormalizeMobile(input.Mobile);
         if (await db.Users.AnyAsync(u => u.PhoneNumber == mobile && u.Id != existingUserId))
@@ -154,14 +154,28 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
                 modelState.AddModelError("Input.Email", l["An account with this email already exists."]);
             }
         }
-        return birth;
+        return new PatientDates(birth, firstVisit);
+    }
+
+    private DateOnly? ParseDate(string? text, string key, DateOnly min, DateOnly max, ModelStateDictionary modelState)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return null;
+        }
+        if (DisplayFormat.TryParseDateInput(text, out var parsed) && parsed >= min && parsed <= max)
+        {
+            return parsed;
+        }
+        modelState.AddModelError(key, l["Enter the date like {0}.", DisplayFormat.DateInputHint]);
+        return null;
     }
 
     /// <summary>
     /// Creates a patient account without a password: the patient cannot sign in with it until the clinic
     /// gives them access, so nobody can claim the account just by knowing the mobile number.
     /// </summary>
-    public async Task<ApplicationUser?> CreateAsync(PatientInput input, DateOnly? birth, string staffUserId, ModelStateDictionary modelState)
+    public async Task<ApplicationUser?> CreateAsync(PatientInput input, PatientDates dates, string staffUserId, ModelStateDictionary modelState)
     {
         var mobile = NormalizeMobile(input.Mobile);
         var email = Clean(input.Email);
@@ -186,13 +200,13 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
 
         var now = time.GetUtcNow().UtcDateTime;
         var profile = new PatientProfile { UserId = user.Id, CreatedByUserId = staffUserId, CreatedUtc = now };
-        Apply(profile, input, birth, now);
+        Apply(profile, input, dates, now);
         db.PatientProfiles.Add(profile);
         await db.SaveChangesAsync();
         return user;
     }
 
-    public async Task<bool> UpdateAsync(ApplicationUser user, PatientInput input, DateOnly? birth, ModelStateDictionary modelState)
+    public async Task<bool> UpdateAsync(ApplicationUser user, PatientInput input, PatientDates dates, ModelStateDictionary modelState)
     {
         var email = Clean(input.Email);
         user.FullName = input.FullName.Trim();
@@ -229,15 +243,17 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
             profile = new PatientProfile { UserId = user.Id, CreatedUtc = now };
             db.PatientProfiles.Add(profile);
         }
-        Apply(profile, input, birth, now);
+        Apply(profile, input, dates, now);
         await db.SaveChangesAsync();
         return true;
     }
 
-    private static void Apply(PatientProfile p, PatientInput input, DateOnly? birth, DateTime now)
+    private static void Apply(PatientProfile p, PatientInput input, PatientDates dates, DateTime now)
     {
         p.NationalCode = Clean(JalaliDate.ToLatinDigits(input.NationalCode ?? ""));
-        p.BirthDate = birth;
+        p.BirthDate = dates.Birth;
+        p.FirstVisitDate = dates.FirstVisit;
+        p.Children = input.Children;
         p.Gender = input.Gender;
         p.MaritalStatus = input.MaritalStatus;
         p.FatherName = Clean(input.FatherName);
@@ -260,3 +276,5 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
 
 /// <summary>The model of the _ProfileSummary partial.</summary>
 public sealed record ProfileSummary(ApplicationUser Patient, PatientProfile? Profile);
+
+public readonly record struct PatientDates(DateOnly? Birth, DateOnly? FirstVisit);

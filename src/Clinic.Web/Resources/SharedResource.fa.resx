@@ -1446,4 +1446,361 @@
   <data name="Whole body" xml:space="preserve">
     <value>کل بدن</value>
   </data>
+  <data name="{0} sessions" xml:space="preserve">
+    <value>{0} جلسه</value>
+  </data>
+  <data name="Abdomen" xml:space="preserve">
+    <value>شکم</value>
+  </data>
+  <data name="Acupressure" xml:space="preserve">
+    <value>طب فشاری</value>
+  </data>
+  <data name="Acupuncture diagnosis (TCM)" xml:space="preserve">
+    <value>تشخیص طب سوزنی (TCM Diagnosis)</value>
+  </data>
+  <data name="Advice after treatment" xml:space="preserve">
+    <value>توصیه‌های بعد از درمان</value>
+  </data>
+  <data name="Aggressive" xml:space="preserve">
+    <value>پرخاشگر</value>
+  </data>
+  <data name="Allergy" xml:space="preserve">
+    <value>آلرژی</value>
+  </data>
+  <data name="Anemia" xml:space="preserve">
+    <value>کم‌خونی</value>
+  </data>
+  <data name="Anxiety" xml:space="preserve">
+    <value>اضطراب</value>
+  </data>
+  <data name="Anxious" xml:space="preserve">
+    <value>مضطرب</value>
+  </data>
+  <data name="Appetite" xml:space="preserve">
+    <value>اشتها</value>
+  </data>
+  <data name="Arm (cm)" xml:space="preserve">
+    <value>دور بازو (cm)</value>
+  </data>
+  <data name="Back to the record" xml:space="preserve">
+    <value>بازگشت به پرونده</value>
+  </data>
+  <data name="Bloating" xml:space="preserve">
+    <value>نفخ</value>
+  </data>
+  <data name="BMR" xml:space="preserve">
+    <value>BMR</value>
+  </data>
+  <data name="BMR needs the birth date and gender from the personal details." xml:space="preserve">
+    <value>برای محاسبهٔ BMR، تاریخ تولد و جنسیت در مشخصات فردی لازم است.</value>
+  </data>
+  <data name="Calm" xml:space="preserve">
+    <value>آرام</value>
+  </data>
+  <data name="Changes observed" xml:space="preserve">
+    <value>تغییرات مشاهده‌شده</value>
+  </data>
+  <data name="Conditions" xml:space="preserve">
+    <value>بیماری‌ها</value>
+  </data>
+  <data name="Constipation" xml:space="preserve">
+    <value>یبوست</value>
+  </data>
+  <data name="Craving for sweet, salty or sour" xml:space="preserve">
+    <value>میل به شیرینی/شوری/ترشی</value>
+  </data>
+  <data name="Date of first visit" xml:space="preserve">
+    <value>تاریخ مراجعه</value>
+  </data>
+  <data name="Decreased" xml:space="preserve">
+    <value>کم</value>
+  </data>
+  <data name="Depressed" xml:space="preserve">
+    <value>افسرده</value>
+  </data>
+  <data name="Depression" xml:space="preserve">
+    <value>افسردگی</value>
+  </data>
+  <data name="Diabetes" xml:space="preserve">
+    <value>دیابت</value>
+  </data>
+  <data name="DiscProblem" xml:space="preserve">
+    <value>دیسک</value>
+  </data>
+  <data name="Doctor's notes" xml:space="preserve">
+    <value>یادداشت پزشک</value>
+  </data>
+  <data name="Dr. Mahsa Hassani" xml:space="preserve">
+    <value>دکتر مهسا حسنی کبوترخانی</value>
+  </data>
+  <data name="Dr. Mahsa Hassani Acupuncture Clinic" xml:space="preserve">
+    <value>کلینیک طب سوزنی دکتر مهسا حسنی کبوترخانی</value>
+  </data>
+  <data name="Drug allergy" xml:space="preserve">
+    <value>حساسیت دارویی</value>
+  </data>
+  <data name="Drug or substance" xml:space="preserve">
+    <value>نوع دارو/ماده حساسیت‌زا</value>
+  </data>
+  <data name="e.g. 2 years" xml:space="preserve">
+    <value>مثلاً ۲ سال</value>
+  </data>
+  <data name="e.g. weekly" xml:space="preserve">
+    <value>مثلاً هفته‌ای یک بار</value>
+  </data>
+  <data name="Each session (date, weight, signs and the points used) is recorded on its own page from the New session tab." xml:space="preserve">
+    <value>هر جلسه (تاریخ، وزن و علائم، نقاط استفاده‌شده) در صفحهٔ خودش از زبانهٔ «جلسه جدید» ثبت می‌شود.</value>
+  </data>
+  <data name="Embedding" xml:space="preserve">
+    <value>امبدینگ</value>
+  </data>
+  <data name="Energy level" xml:space="preserve">
+    <value>سطح انرژی</value>
+  </data>
+  <data name="Entered at the front desk. The receptionist can change these from the patient's page." xml:space="preserve">
+    <value>این اطلاعات را منشی در پذیرش وارد می‌کند و از صفحهٔ بیمار قابل ویرایش است.</value>
+  </data>
+  <data name="Fair" xml:space="preserve">
+    <value>متوسط</value>
+  </data>
+  <data name="General state of the body" xml:space="preserve">
+    <value>وضعیت عمومی بدن</value>
+  </data>
+  <data name="Goals of the visit" xml:space="preserve">
+    <value>اهداف مراجعه</value>
+  </data>
+  <data name="Good" xml:space="preserve">
+    <value>خوب</value>
+  </data>
+  <data name="Has an allergy" xml:space="preserve">
+    <value>دارد</value>
+  </data>
+  <data name="HeartDisease" xml:space="preserve">
+    <value>قلبی</value>
+  </data>
+  <data name="High" xml:space="preserve">
+    <value>بالا</value>
+  </data>
+  <data name="Hips (cm)" xml:space="preserve">
+    <value>دور باسن (cm)</value>
+  </data>
+  <data name="HormonalProblem" xml:space="preserve">
+    <value>مشکلات هورمونی</value>
+  </data>
+  <data name="How long has it been going on?" xml:space="preserve">
+    <value>مدت زمان بروز مشکل</value>
+  </data>
+  <data name="Hyperlipidemia" xml:space="preserve">
+    <value>چربی خون</value>
+  </data>
+  <data name="Hypertension" xml:space="preserve">
+    <value>فشار خون</value>
+  </data>
+  <data name="I, {0}, fully informed about acupuncture and embedding treatment and aware that temporary bruising or pain may occur, consent to the treatment." xml:space="preserve">
+    <value>اینجانب {0}، با اطلاع کامل از روش درمان طب سوزنی و امبدینگ و آگاهی از احتمال بروز کبودی یا درد موقتی، رضایت خود را جهت انجام درمان اعلام می‌نمایم.</value>
+  </data>
+  <data name="Increased" xml:space="preserve">
+    <value>زیاد</value>
+  </data>
+  <data name="Indigestion" xml:space="preserve">
+    <value>سوءهاضمه</value>
+  </data>
+  <data name="Infertility" xml:space="preserve">
+    <value>ناباروری</value>
+  </data>
+  <data name="Insomnia" xml:space="preserve">
+    <value>بی‌خوابی</value>
+  </data>
+  <data name="Intake form" xml:space="preserve">
+    <value>فرم شرح حال</value>
+  </data>
+  <data name="Irregular" xml:space="preserve">
+    <value>نامنظم</value>
+  </data>
+  <data name="JointPain" xml:space="preserve">
+    <value>درد مفاصل</value>
+  </data>
+  <data name="kcal/day" xml:space="preserve">
+    <value>کیلوکالری در روز</value>
+  </data>
+  <data name="Laser" xml:space="preserve">
+    <value>لیزر</value>
+  </data>
+  <data name="Last menstrual period" xml:space="preserve">
+    <value>تاریخ آخرین قاعدگی</value>
+  </data>
+  <data name="Latest weight (kg)" xml:space="preserve">
+    <value>آخرین وزن (kg)</value>
+  </data>
+  <data name="Long-term goals" xml:space="preserve">
+    <value>اهداف بلندمدت</value>
+  </data>
+  <data name="Low" xml:space="preserve">
+    <value>پایین</value>
+  </data>
+  <data name="Measurements and body indices" xml:space="preserve">
+    <value>اندازه‌گیری‌ها و شاخص‌های بدن</value>
+  </data>
+  <data name="Medical diagnosis" xml:space="preserve">
+    <value>تشخیص پزشکی</value>
+  </data>
+  <data name="Medical history, medications and allergies" xml:space="preserve">
+    <value>سابقه پزشکی، دارویی و حساسیت‌ها</value>
+  </data>
+  <data name="Medium" xml:space="preserve">
+    <value>متوسط</value>
+  </data>
+  <data name="Menopause" xml:space="preserve">
+    <value>یائسگی</value>
+  </data>
+  <data name="Menstrual cycle (women)" xml:space="preserve">
+    <value>چرخه قاعدگی (برای خانم‌ها)</value>
+  </data>
+  <data name="Migraine" xml:space="preserve">
+    <value>میگرن</value>
+  </data>
+  <data name="Mood" xml:space="preserve">
+    <value>خلق و خو</value>
+  </data>
+  <data name="Moxibustion" xml:space="preserve">
+    <value>موکسا</value>
+  </data>
+  <data name="Needling" xml:space="preserve">
+    <value>سوزن</value>
+  </data>
+  <data name="No allergy" xml:space="preserve">
+    <value>ندارد</value>
+  </data>
+  <data name="Non-drug allergy" xml:space="preserve">
+    <value>حساسیت غیر دارویی</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>طبیعی</value>
+  </data>
+  <data name="Number of children" xml:space="preserve">
+    <value>تعداد فرزندان</value>
+  </data>
+  <data name="Other areas" xml:space="preserve">
+    <value>سایر نواحی</value>
+  </data>
+  <data name="Other conditions" xml:space="preserve">
+    <value>سایر بیماری‌ها</value>
+  </data>
+  <data name="Other goals" xml:space="preserve">
+    <value>سایر اهداف</value>
+  </data>
+  <data name="Painful" xml:space="preserve">
+    <value>دردناک</value>
+  </data>
+  <data name="Patient consent" xml:space="preserve">
+    <value>رضایت‌نامه بیمار</value>
+  </data>
+  <data name="Patient intake form: acupuncture and embedding" xml:space="preserve">
+    <value>فرم شرح حال اولیه بیمار – طب سوزنی و امبدینگ</value>
+  </data>
+  <data name="Patient's signature" xml:space="preserve">
+    <value>امضای بیمار</value>
+  </data>
+  <data name="Personal and contact details" xml:space="preserve">
+    <value>اطلاعات فردی و تماس</value>
+  </data>
+  <data name="Points used" xml:space="preserve">
+    <value>نقاط استفاده‌شده</value>
+  </data>
+  <data name="Poor" xml:space="preserve">
+    <value>بد</value>
+  </data>
+  <data name="Print form" xml:space="preserve">
+    <value>چاپ فرم</value>
+  </data>
+  <data name="Print or save as PDF" xml:space="preserve">
+    <value>چاپ یا ذخیره به صورت PDF</value>
+  </data>
+  <data name="Pulse" xml:space="preserve">
+    <value>نبض</value>
+  </data>
+  <data name="Rapid" xml:space="preserve">
+    <value>تند</value>
+  </data>
+  <data name="Reason for the visit and treatment goals" xml:space="preserve">
+    <value>علت مراجعه و هدف درمان</value>
+  </data>
+  <data name="Regular" xml:space="preserve">
+    <value>منظم</value>
+  </data>
+  <data name="Salty" xml:space="preserve">
+    <value>شوری</value>
+  </data>
+  <data name="Session" xml:space="preserve">
+    <value>جلسه</value>
+  </data>
+  <data name="Short-term goals" xml:space="preserve">
+    <value>اهداف کوتاه‌مدت</value>
+  </data>
+  <data name="SkinAndHair" xml:space="preserve">
+    <value>پوست و مو</value>
+  </data>
+  <data name="Sleep" xml:space="preserve">
+    <value>خواب</value>
+  </data>
+  <data name="Slow" xml:space="preserve">
+    <value>کند</value>
+  </data>
+  <data name="Sour" xml:space="preserve">
+    <value>ترشی</value>
+  </data>
+  <data name="Strong" xml:space="preserve">
+    <value>قوی</value>
+  </data>
+  <data name="Substance" xml:space="preserve">
+    <value>نوع ماده</value>
+  </data>
+  <data name="Suggested number of sessions" xml:space="preserve">
+    <value>تعداد جلسات پیشنهادی</value>
+  </data>
+  <data name="Sweet" xml:space="preserve">
+    <value>شیرینی</value>
+  </data>
+  <data name="Thigh (cm)" xml:space="preserve">
+    <value>دور ران (cm)</value>
+  </data>
+  <data name="Thyroid" xml:space="preserve">
+    <value>تیروئید</value>
+  </data>
+  <data name="Time between sessions" xml:space="preserve">
+    <value>فواصل بین جلسات</value>
+  </data>
+  <data name="Tongue coating" xml:space="preserve">
+    <value>پوشش زبان</value>
+  </data>
+  <data name="Tongue colour" xml:space="preserve">
+    <value>رنگ زبان</value>
+  </data>
+  <data name="Treatment areas" xml:space="preserve">
+    <value>نواحی درمان</value>
+  </data>
+  <data name="Treatment method" xml:space="preserve">
+    <value>روش درمان</value>
+  </data>
+  <data name="Type of imbalance" xml:space="preserve">
+    <value>نوع عدم تعادل</value>
+  </data>
+  <data name="Variable" xml:space="preserve">
+    <value>متغیر</value>
+  </data>
+  <data name="Weak" xml:space="preserve">
+    <value>ضعیف</value>
+  </data>
+  <data name="Weight / signs" xml:space="preserve">
+    <value>وزن / علائم</value>
+  </data>
+  <data name="Weight after treatment (kg)" xml:space="preserve">
+    <value>وزن بعد از درمان (kg)</value>
+  </data>
+  <data name="Weight before treatment (kg)" xml:space="preserve">
+    <value>وزن قبل از درمان (kg)</value>
+  </data>
+  <data name="WeightLoss" xml:space="preserve">
+    <value>کاهش وزن</value>
+  </data>
 </root>

@@ -1,0 +1,172 @@
+/* The printable intake form (Admin/Records/Print). A4, black on white, fits the paper form. */
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+:root {
+  --ink: #1f2a1c;
+  --line: #b9c2a5;
+  --head: #eef2e4;
+  --green: #215c3d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #e9ece2;
+  color: var(--ink);
+  font-family: Vazirmatn, Tahoma, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.7;
+}
+
+.sheet {
+  max-width: 210mm;
+  margin: 1rem auto;
+  padding: 14mm;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .12);
+}
+
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  padding: .75rem;
+}
+
+.toolbar button {
+  font: inherit;
+  padding: .45rem 1.2rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--green);
+  color: #fff;
+  cursor: pointer;
+}
+
+.toolbar a {
+  color: var(--green);
+}
+
+.form-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 2px solid var(--green);
+  padding-bottom: .5rem;
+  margin-bottom: .75rem;
+}
+
+.form-logo {
+  width: 72px;
+  height: auto;
+}
+
+.clinic-name {
+  color: var(--green);
+  font-weight: 700;
+  font-size: 12pt;
+}
+
+h1 {
+  font-size: 14pt;
+  margin: 0;
+}
+
+h2 {
+  font-size: 11pt;
+  margin: .9rem 0 .35rem;
+  padding: .15rem .5rem;
+  background: var(--head);
+  border-inline-start: 4px solid var(--green);
+}
+
+p {
+  margin: .2rem 0;
+}
+
+table.grid {
+  width: 100%;
+  border-collapse: collapse;
+  margin: .2rem 0 .4rem;
+}
+
+.grid th,
+.grid td {
+  border: 1px solid var(--line);
+  padding: .2rem .4rem;
+  text-align: start;
+  vertical-align: top;
+}
+
+.grid th {
+  background: #f7f8f2;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.grid.center th,
+.grid.center td,
+td.center {
+  text-align: center;
+}
+
+.sessions td {
+  height: 2.1em;
+}
+
+.sessions .points {
+  font-size: 9pt;
+}
+
+.sign {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.notes {
+  min-height: 6em;
+  white-space: pre-line;
+  border: 1px solid var(--line);
+  padding: .4rem;
+}
+
+.form-foot {
+  margin-top: 1rem;
+  padding-top: .4rem;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 9pt;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .sheet {
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    max-width: none;
+  }
+
+  .no-print {
+    display: none;
+  }
+
+  section {
+    break-inside: avoid;
+  }
+
+  .break-before {
+    break-before: page;
+  }
+}

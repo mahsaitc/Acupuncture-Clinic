@@ -173,6 +173,45 @@ h1, h2, h3, .h1, .h2, .h3 {
   color: var(--sand-300);
 }
 
+/* The clinic's logo: dark green on white, so on dark backgrounds it sits in a white disc. */
+.brand-logo {
+  width: 44px;
+  height: auto;
+  flex: none;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.brand-text small {
+  font-size: .72rem;
+  font-weight: 500;
+  color: var(--olive-700);
+}
+
+.brand-logo-chip {
+  display: grid;
+  place-items: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  flex: none;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.brand-logo-chip .brand-logo {
+  width: 38px;
+}
+
 .site-nav .nav-link {
   color: var(--ink);
   font-weight: 500;

@@ -41,6 +41,11 @@
                         </select>
                     </div>
                     <div class="col-sm-6">
+                        <label asp-for="Children" class="form-label"></label>
+                        <input asp-for="Children" type="text" inputmode="numeric" value="@Model.Children" class="form-control" dir="ltr" />
+                        <span asp-validation-for="Children" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
                         <label asp-for="Occupation" class="form-label"></label>
                         <input asp-for="Occupation" class="form-control" />
                     </div>
@@ -55,6 +60,11 @@
             <div class="card-body">
                 <h2 class="h5 mb-3"><i class="bi bi-people me-2 text-success"></i>@L["Referral and insurance"]</h2>
                 <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label asp-for="FirstVisitDate" class="form-label"></label>
+                        <input asp-for="FirstVisitDate" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" autocomplete="off" />
+                        <span asp-validation-for="FirstVisitDate" class="text-danger small"></span>
+                    </div>
                     <div class="col-sm-6">
                         <label asp-for="ReferralSource" class="form-label"></label>
                         <input asp-for="ReferralSource" class="form-control" placeholder="@L["e.g. Instagram, a friend, Dr. ..."]" />

@@ -21,6 +21,7 @@ public class PatientProfile
     public DateOnly? BirthDate { get; set; }
     public Gender? Gender { get; set; }
     public MaritalStatus? MaritalStatus { get; set; }
+    public int? Children { get; set; }
     public string? FatherName { get; set; }
     public string? Occupation { get; set; }
     public string? Education { get; set; }
@@ -29,6 +30,9 @@ public class PatientProfile
     public string? City { get; set; }
     public string? Address { get; set; }
     public string? PostalCode { get; set; }
+
+    /// <summary>The first visit to the clinic ("date of visit" on the intake form).</summary>
+    public DateOnly? FirstVisitDate { get; set; }
 
     public string? ReferralSource { get; set; }
     public string? InsuranceProvider { get; set; }

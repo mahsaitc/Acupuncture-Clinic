@@ -21,6 +21,10 @@ public class IndexModel(ClinicDbContext db, UserManager<ApplicationUser> users, 
     public List<MedicalFile> Files { get; private set; } = [];
     public Dictionary<string, string> DoctorNames { get; private set; } = [];
     public List<(DateTime Utc, double Kg)> Weights { get; private set; } = [];
+    public double? LatestWeight => Sessions.FirstOrDefault(s => s.WeightKg is not null)?.WeightKg;
+
+    /// <summary>1 for the first session, in date order (the list is newest first).</summary>
+    public int SessionNumber(TreatmentSession session) => Sessions.Count - Sessions.IndexOf(session);
 
     public async Task<IActionResult> OnGetAsync(string patientId)
     {

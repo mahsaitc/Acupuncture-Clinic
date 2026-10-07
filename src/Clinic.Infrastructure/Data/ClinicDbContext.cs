@@ -140,18 +140,24 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
             e.HasIndex(r => r.PatientUserId).IsUnique();
             e.HasOne<ApplicationUser>().WithMany().HasForeignKey(r => r.PatientUserId).OnDelete(DeleteBehavior.Restrict);
             e.Property(r => r.Diagnosis).HasConversion(encrypted).HasMaxLength(8000);
-            e.Property(r => r.ChiefComplaint).HasMaxLength(2000);
-            e.Property(r => r.PastMedicalHistory).HasMaxLength(4000);
-            e.Property(r => r.Surgeries).HasMaxLength(2000);
-            e.Property(r => r.Medications).HasMaxLength(2000);
-            e.Property(r => r.Allergies).HasMaxLength(1000);
-            e.Property(r => r.FamilyHistory).HasMaxLength(2000);
-            e.Property(r => r.BloodPressure).HasMaxLength(20);
-            e.Property(r => r.PulseDiagnosis).HasMaxLength(500);
-            e.Property(r => r.TongueDiagnosis).HasMaxLength(500);
-            e.Property(r => r.TcmPattern).HasMaxLength(500);
             e.Property(r => r.Icd10).HasMaxLength(50);
-            e.Property(r => r.TreatmentPlan).HasMaxLength(4000);
+            e.Property(r => r.ProblemDuration).HasMaxLength(200);
+            e.Property(r => r.TongueColor).HasMaxLength(200);
+            e.Property(r => r.TongueCoating).HasMaxLength(200);
+            e.Property(r => r.SessionInterval).HasMaxLength(200);
+            e.Property(r => r.OtherAreas).HasMaxLength(500);
+            e.Property(r => r.TcmPattern).HasMaxLength(1000);
+            foreach (var name in new[]
+            {
+                nameof(MedicalRecord.ChiefComplaint), nameof(MedicalRecord.GoalsNotes), nameof(MedicalRecord.OtherConditions),
+                nameof(MedicalRecord.Medications), nameof(MedicalRecord.Surgeries), nameof(MedicalRecord.DrugAllergies),
+                nameof(MedicalRecord.OtherAllergies), nameof(MedicalRecord.ObservedChanges), nameof(MedicalRecord.ShortTermGoals),
+                nameof(MedicalRecord.LongTermGoals), nameof(MedicalRecord.AfterCareAdvice),
+            })
+            {
+                e.Property(name).HasMaxLength(2000);
+            }
+            e.Property(r => r.DoctorNotes).HasMaxLength(8000);
         });
 
         builder.Entity<TreatmentSession>(e =>

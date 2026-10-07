@@ -31,6 +31,17 @@ public partial class LocalizationTests
         used.UnionWith(Enum.GetNames<Domain.Entities.FileCategory>());
         used.UnionWith(Enum.GetNames<Domain.Entities.AuditAction>());
         used.UnionWith(Enum.GetNames<Domain.Entities.MaritalStatus>());
+        foreach (var flags in new[]
+        {
+            typeof(Domain.Entities.TreatmentGoal), typeof(Domain.Entities.MedicalCondition), typeof(Domain.Entities.SleepQuality),
+            typeof(Domain.Entities.AppetiteLevel), typeof(Domain.Entities.EnergyLevel), typeof(Domain.Entities.TasteCraving),
+            typeof(Domain.Entities.DigestionState), typeof(Domain.Entities.MenstrualState), typeof(Domain.Entities.Mood),
+            typeof(Domain.Entities.PulseQuality), typeof(Domain.Entities.TreatmentArea), typeof(Domain.Entities.TreatmentMethod),
+        })
+        {
+            used.UnionWith(Enum.GetNames(flags).Where(n => n != "None"));
+        }
+        used.UnionWith(["No allergy", "Has an allergy"]);
         used.UnionWith(Enum.GetNames<Domain.Entities.PointSide>());
         used.UnionWith(Application.Acupuncture.AcupointLibrary.Pages.Select(Web.Clinical.ChartText.Page));
         used.UnionWith(Application.Acupuncture.AcupointLibrary.Views.Select(v => Web.Clinical.ChartText.View(v.Key)));

@@ -44,7 +44,10 @@ them to contact the clinic instead of creating a second account.
 
 Doctors open a patient's record from **Patients → patient → Open medical record**. Receptionists never see clinical data.
 
-- **Record**: history, medications, allergies, first-visit measurements, pulse and tongue diagnosis, TCM pattern, ICD-10 diagnosis, plan and consent.
+- **Record**: follows the clinic's paper intake form, section by section: reason for the visit and goals, conditions checklist,
+  medications, surgeries and allergies, general state (sleep, appetite, cravings, digestion, energy, cycle, mood), measurements with
+  live BMI and BMR, TCM diagnosis (pulse, tongue, imbalance), treatment plan, consent and the doctor's notes.
+  **Print form** lays the record out as the A4 form with the session table, ready to print or save as PDF.
   The national code and the diagnosis are encrypted in the database.
 - **Treatment sessions**: date, type (acupuncture, catgut embedding, electroacupuncture, cupping, auricular, consultation), weight, waist, pain score
   and the points used. Type a point's code or name (about 190 points, ear points included) and it is marked on every chart it appears on:

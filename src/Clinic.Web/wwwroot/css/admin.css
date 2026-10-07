@@ -515,3 +515,103 @@ a.kpi:hover {
   margin: 0;
   overflow-wrap: anywhere;
 }
+
+/* Medical record: the clinic's intake form, one card per numbered section. */
+.intake-form {
+  max-width: 1100px;
+}
+
+.intake-section {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, .06);
+  border-radius: 1rem;
+  padding: 1.1rem 1.25rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
+}
+
+.intake-section > h2 {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: .9rem;
+  color: var(--olive-900);
+}
+
+.intake-no {
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--olive-600);
+  color: #fff;
+  font-size: .9rem;
+}
+
+.intake-section .card {
+  box-shadow: none;
+  margin-bottom: 0 !important;
+}
+
+.intake-section .form-label {
+  font-weight: 500;
+}
+
+.check-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+}
+
+.check-chip {
+  border: 1px solid var(--olive-200, #d5dbc4);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--olive-900);
+  padding: .25rem .8rem;
+}
+
+.check-chip:hover {
+  background: var(--olive-50);
+}
+
+.btn-check:checked + .check-chip {
+  background: var(--olive-600);
+  border-color: var(--olive-600);
+  color: #fff;
+}
+
+.btn-check:focus-visible + .check-chip {
+  outline: 2px solid var(--olive-600);
+  outline-offset: 2px;
+}
+
+.index-box {
+  padding: .45rem .75rem;
+  border-radius: .5rem;
+  background: var(--olive-50);
+  min-height: calc(1.5em + .75rem + 2px);
+}
+
+.consent-text {
+  padding: .75rem 1rem;
+  border-radius: .6rem;
+  background: var(--olive-50);
+  line-height: 1.9;
+}
+
+.session-no {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  margin-inline-end: .35rem;
+  border-radius: 50%;
+  background: var(--olive-50);
+  color: var(--olive-700);
+  font-size: .8rem;
+}

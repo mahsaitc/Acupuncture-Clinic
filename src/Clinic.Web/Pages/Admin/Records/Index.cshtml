@@ -23,28 +23,41 @@
                 }
                 else
                 {
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
                         <h2 class="h5 mb-0">@L["Summary"]</h2>
-                        <a class="btn btn-sm btn-outline-success" asp-page="./Edit" asp-route-patientId="@Model.Patient.Id"><i class="bi bi-pencil me-1"></i>@L["Edit"]</a>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-sm btn-outline-success" asp-page="./Print" asp-route-patientId="@Model.Patient.Id" target="_blank"><i class="bi bi-printer me-1"></i>@L["Print form"]</a>
+                            <a class="btn btn-sm btn-outline-success" asp-page="./Edit" asp-route-patientId="@Model.Patient.Id"><i class="bi bi-pencil me-1"></i>@L["Edit"]</a>
+                        </div>
                     </div>
-                    @if (!string.IsNullOrWhiteSpace(r.Allergies))
+                    @if (r.HasAllergies)
                     {
-                        <div class="alert alert-danger py-2 small"><i class="bi bi-exclamation-triangle me-1"></i><strong>@L["Allergies"]:</strong> @r.Allergies</div>
+                        <div class="alert alert-danger py-2 small"><i class="bi bi-exclamation-triangle me-1"></i><strong>@L["Allergies"]:</strong>
+                            @string.Join("، ", new[] { r.DrugAllergies, r.OtherAllergies }.Where(a => a is not null).DefaultIfEmpty(L["Has an allergy"].Value))
+                        </div>
                     }
                     <div class="record-vitals">
                         <div><span>@L["Age"]</span><strong>@(Model.Age is int a ? Fmt.Number(a) : "-")</strong></div>
                         <div><span>@L["Gender"]</span><strong>@(Model.Profile?.Gender is Gender g ? L[g.ToString()] : "-")</strong></div>
                         <div><span>@L["Height (cm)"]</span><strong>@(r.HeightCm is double h ? Fmt.Number(h) : "-")</strong></div>
-                        <div><span>@L["Weight (kg)"]</span><strong>@(r.WeightKg is double w ? Fmt.Number(w) : "-")</strong></div>
+                        <div><span>@L["Weight before treatment (kg)"]</span><strong>@(r.WeightKg is double w ? Fmt.Number(w) : "-")</strong></div>
+                        <div><span>@L["Latest weight (kg)"]</span><strong>@(Model.LatestWeight is double lw ? Fmt.Number(lw) : "-")</strong></div>
                         <div><span>@L["BMI"]</span><strong>@(r.Bmi is double bmi ? Fmt.Number(bmi) : "-")</strong></div>
-                        <div><span>@L["Blood pressure"]</span><strong dir="ltr">@(r.BloodPressure is { } bp ? Fmt.Number(bp) : "-")</strong></div>
+                        <div><span>@L["BMR"]</span><strong>@(r.Bmr(Model.Age, Model.Profile?.Gender) is int bmr ? Fmt.Number(bmr) : "-")</strong></div>
+                        <div><span>@L["Waist (cm)"]</span><strong>@(r.WaistCm is double wc ? Fmt.Number(wc) : "-")</strong></div>
                     </div>
                     <dl class="record-dl mt-3 mb-0">
-                        @if (r.ChiefComplaint is { } cc) { <dt>@L["Chief complaint"]</dt><dd>@cc</dd> }
-                        @if (r.Diagnosis is { } dx) { <dt>@L["Diagnosis"]</dt><dd>@dx @if (r.Icd10 is { } icd) { <span class="badge text-bg-light border" dir="ltr">@icd</span> }</dd> }
-                        @if (r.TcmPattern is { } tcm) { <dt>@L["TCM pattern"]</dt><dd>@tcm</dd> }
+                        @if (r.ChiefComplaint is { } cc) { <dt>@L["Chief complaint"]</dt><dd>@cc @if (r.ProblemDuration is { } dur) { <span class="text-muted">(@dur)</span> }</dd> }
+                        @if (r.Goals != TreatmentGoal.None || r.GoalsNotes is not null) { <dt>@L["Goals of the visit"]</dt><dd>@Join(Clinic.Web.Clinical.CheckGroup.Split(r.Goals), r.GoalsNotes)</dd> }
+                        @if (r.Conditions != MedicalCondition.None || r.OtherConditions is not null) { <dt>@L["Conditions"]</dt><dd>@Join(Clinic.Web.Clinical.CheckGroup.Split(r.Conditions), r.OtherConditions)</dd> }
                         @if (r.Medications is { } meds) { <dt>@L["Current medications"]</dt><dd>@meds</dd> }
-                        @if (r.TreatmentPlan is { } plan) { <dt>@L["Treatment plan"]</dt><dd style="white-space: pre-line">@plan</dd> }
+                        @if (r.TcmPattern is { } tcm) { <dt>@L["Type of imbalance"]</dt><dd>@tcm</dd> }
+                        @if (r.Diagnosis is { } dx) { <dt>@L["Medical diagnosis"]</dt><dd>@dx @if (r.Icd10 is { } icd) { <span class="badge text-bg-light border" dir="ltr">@icd</span> }</dd> }
+                        @if (r.Methods != TreatmentMethod.None || r.PlannedSessions is not null)
+                        {
+                            <dt>@L["Treatment plan"]</dt>
+                            <dd>@Join(Clinic.Web.Clinical.CheckGroup.Split(r.Methods), null)@if (r.PlannedSessions is int ps) { <span> · @L["{0} sessions", Fmt.Number(ps)]</span> }@if (r.SessionInterval is { } every) { <span> · @every</span> }</dd>
+                        }
                     </dl>
                     <div class="small text-muted mt-3">
                         @L["Last updated"]: @Fmt.Date(r.UpdatedUtc)
@@ -123,7 +136,7 @@
                             <li>
                                 <a class="session-item" asp-page="./Session" asp-route-patientId="@Model.Patient.Id" asp-route-id="@s.Id">
                                     <div class="d-flex justify-content-between flex-wrap gap-2">
-                                        <strong>@L[s.Type.ToString()]</strong>
+                                        <strong><span class="session-no">@Fmt.Number(Model.SessionNumber(s))</span> @L[s.Type.ToString()]</strong>
                                         <span class="small text-muted">@Fmt.DateTime(s.DateUtc)</span>
                                     </div>
                                     <div class="small text-muted">@DoctorName(s.DoctorUserId)</div>
@@ -155,4 +168,7 @@
 
 @functions {
     private string DoctorName(string id) => Model.DoctorNames.GetValueOrDefault(id) ?? "";
+
+    private string Join<T>(IEnumerable<T> ticked, string? other) where T : struct, Enum =>
+        string.Join("، ", ticked.Select(t => L[t.ToString()].Value).Append(other).Where(x => !string.IsNullOrEmpty(x)));
 }

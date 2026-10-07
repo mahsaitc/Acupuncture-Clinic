@@ -20,6 +20,8 @@
             @if (p?.BirthDate is DateOnly b) { <div><dt>@L["Birth date"]</dt><dd>@Fmt.Day(b) <span class="text-muted">(@L["{0} years", Fmt.Number(age ?? 0)])</span></dd></div> }
             @if (p?.Gender is Gender g) { <div><dt>@L["Gender"]</dt><dd>@L[g.ToString()]</dd></div> }
             @if (p?.MaritalStatus is MaritalStatus m) { <div><dt>@L["Marital status"]</dt><dd>@L[m.ToString()]</dd></div> }
+            @if (p?.Children is int kids) { <div><dt>@L["Number of children"]</dt><dd>@Fmt.Number(kids)</dd></div> }
+            @if (p?.FirstVisitDate is DateOnly fv) { <div><dt>@L["Date of first visit"]</dt><dd>@Fmt.Day(fv)</dd></div> }
             @if (p?.FatherName is { } father) { <div><dt>@L["Father's name"]</dt><dd>@father</dd></div> }
             @if (p?.Occupation is { } job) { <div><dt>@L["Occupation"]</dt><dd>@job</dd></div> }
             @if (p?.Education is { } edu) { <div><dt>@L["Education"]</dt><dd>@edu</dd></div> }

@@ -8,6 +8,9 @@ public enum SessionType
     Cupping = 3,
     AuricularTherapy = 4,
     Consultation = 5,
+    Moxibustion = 6,
+    Laser = 7,
+    Acupressure = 8,
 }
 
 public class TreatmentSession
