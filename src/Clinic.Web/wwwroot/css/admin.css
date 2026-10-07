@@ -328,13 +328,55 @@ a.kpi:hover {
   stroke-width: 2;
 }
 
-/* Body diagram */
-.body-map {
+/* Point charts */
+.chart-pages {
+  gap: .35rem;
+  flex-wrap: wrap;
+}
+
+.chart-pages .nav-link {
+  padding: .35rem .8rem;
+  border-radius: 999px;
+  color: var(--olive-700);
+  background: var(--olive-50);
+}
+
+.chart-pages .nav-link.active {
+  background: var(--olive-600);
+  color: #fff;
+}
+
+.chart-count {
+  background: rgba(0, 0, 0, .08);
+  color: inherit;
+  font-weight: 600;
+}
+
+.chart-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  max-width: 560px;
+  gap: .75rem;
   margin-inline: auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 520px;
+}
+
+.chart-row-body {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 640px;
+}
+
+.chart-row-head {
+  max-width: 600px;
+}
+
+.chart-row-arm,
+.chart-row-leg {
+  max-width: 400px;
+}
+
+.chart-row-ear {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 340px;
 }
 
 .body-view {
@@ -356,41 +398,9 @@ a.kpi:hover {
 
 .body-view figcaption {
   font-weight: 600;
+  font-size: .9rem;
   margin-top: .35rem;
   color: var(--olive-700);
-}
-
-.figure .outline * {
-  fill: #9aa57f;
-  stroke: #9aa57f;
-  stroke-linecap: round;
-}
-
-.figure .outline ellipse,
-.figure .outline path {
-  stroke-width: 3;
-}
-
-.figure .fill * {
-  fill: #f6efe1;
-  stroke: #f6efe1;
-  stroke-linecap: round;
-}
-
-.figure .fill ellipse,
-.figure .fill path {
-  stroke-width: 0;
-}
-
-.figure .detail * {
-  fill: none;
-  stroke: #b9b39c;
-  stroke-width: 1;
-  stroke-linecap: round;
-}
-
-.figure .detail circle {
-  fill: #b9b39c;
 }
 
 .body-map .side-label {
@@ -421,6 +431,20 @@ a.kpi:hover {
 .body-map .marker.selected circle {
   fill: var(--olive-600);
   r: 5.5;
+}
+
+.body-map .marker.pulse circle {
+  animation: marker-pulse 1.4s ease-out 2;
+}
+
+@keyframes marker-pulse {
+  0% { stroke-width: 1.4; stroke: #fff; }
+  40% { stroke-width: 7; stroke: rgba(194, 69, 45, .35); }
+  100% { stroke-width: 1.4; stroke: #fff; }
+}
+
+.point-locate {
+  color: var(--olive-700);
 }
 
 .point-list {
@@ -457,9 +481,37 @@ a.kpi:hover {
 }
 
 @media (max-width: 575.98px) {
-  /* Full width diagrams are easier to tap on a phone. */
-  .body-map {
-    grid-template-columns: 1fr;
+  /* Bigger charts are easier to tap on a phone. */
+  .chart-row-body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chart-row-head {
+    grid-template-columns: minmax(0, 1fr);
     max-width: 340px;
   }
+}
+
+
+/* Patient personal details: label above value, two columns on wider screens. */
+.profile-dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: .75rem 1.25rem;
+  margin: 0;
+}
+
+.profile-dl .wide {
+  grid-column: 1 / -1;
+}
+
+.profile-dl dt {
+  font-size: .8rem;
+  font-weight: 500;
+  color: var(--bs-secondary-color);
+}
+
+.profile-dl dd {
+  margin: 0;
+  overflow-wrap: anywhere;
 }

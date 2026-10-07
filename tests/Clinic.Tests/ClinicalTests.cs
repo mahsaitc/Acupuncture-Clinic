@@ -35,7 +35,46 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
     }
 
     [Fact]
-    public async Task Doctor_saves_record_with_persian_digits_and_national_code_is_encrypted()
+    public async Task Receptionist_registers_a_patient_with_personal_details()
+    {
+        var client = await LoginAsync(await CreateUserAsync(Roles.Receptionist));
+        var mobile = $"0912{Random.Shared.Next(1000000, 9999999)}";
+
+        var response = await PostFormAsync(client, "/Admin/Patients/Create", new()
+        {
+            ["Input.FullName"] = "مریم کریمی",
+            ["Input.Mobile"] = JalaliDateDigits(mobile),
+            ["Input.NationalCode"] = "۰۰۱۲۳۴۵۶۷۸",
+            ["Input.BirthDate"] = "۱۳۶۵/۰۴/۱۲",
+            ["Input.Gender"] = nameof(Gender.Female),
+            ["Input.City"] = "تهران",
+            ["Input.Address"] = "خیابان ولیعصر",
+            ["Input.ReferralSource"] = "اینستاگرام",
+        });
+
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+        var user = await db.Users.SingleAsync(u => u.PhoneNumber == mobile);
+        Assert.Null(user.Email);
+        Assert.Null(user.PasswordHash);
+        var profile = await db.PatientProfiles.SingleAsync(p => p.UserId == user.Id);
+        Assert.Equal("0012345678", profile.NationalCode);
+        Assert.Equal(new DateOnly(1986, 7, 3), profile.BirthDate);
+        var raw = await db.Database.SqlQuery<string>($"SELECT NationalCode AS Value FROM PatientProfiles WHERE Id = {profile.Id}").SingleAsync();
+        Assert.DoesNotContain("0012345678", raw);
+
+        var details = await client.GetStringAsync($"/Admin/Patients/Details?id={user.Id}");
+        Assert.Contains("اینستاگرام", details);
+        Assert.DoesNotContain("/Admin/Records", details);
+
+        var again = await PostFormAsync(client, "/Admin/Patients/Create", new() { ["Input.FullName"] = "تکراری", ["Input.Mobile"] = mobile });
+        Assert.Equal(HttpStatusCode.OK, again.StatusCode);
+        Assert.Equal(1, await db.Users.CountAsync(u => u.PhoneNumber == mobile));
+    }
+
+    [Fact]
+    public async Task Doctor_saves_record_with_persian_digits_and_diagnosis_is_encrypted()
     {
         var patient = await CreateUserAsync(Roles.Patient);
         var client = await LoginAsync(await CreateUserAsync(Roles.Doctor));
@@ -43,8 +82,6 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
 
         var response = await PostFormAsync(client, url, new()
         {
-            ["Input.NationalCode"] = "۰۰۱۲۳۴۵۶۷۸",
-            ["Input.BirthDate"] = "۱۳۶۵/۰۴/۱۲",
             ["Input.WeightKg"] = "۸۲٫۵",
             ["Input.HeightCm"] = "165",
             ["Input.Diagnosis"] = "چاقی",
@@ -55,28 +92,27 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
         using var scope = factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
         var record = await db.MedicalRecords.SingleAsync(r => r.PatientUserId == patient.Id);
-        Assert.Equal("0012345678", record.NationalCode);
         Assert.Equal(82.5, record.WeightKg);
-        Assert.Equal(new DateOnly(1986, 7, 3), record.BirthDate);
         Assert.Equal("چاقی", record.Diagnosis);
 
-        var raw = await db.Database.SqlQuery<string>($"SELECT NationalCode AS Value FROM MedicalRecords WHERE Id = {record.Id}").SingleAsync();
-        Assert.DoesNotContain("0012345678", raw);
+        var raw = await db.Database.SqlQuery<string>($"SELECT Diagnosis AS Value FROM MedicalRecords WHERE Id = {record.Id}").SingleAsync();
+        Assert.DoesNotContain("چاقی", raw);
         Assert.Contains(db.AuditEntries, a => a.PatientUserId == patient.Id && a.Action == AuditAction.UpdateRecord);
 
         var page = await client.GetStringAsync($"/Admin/Records?patientId={patient.Id}");
         Assert.Contains("پنی‌سیلین", page);
     }
 
+    private static string JalaliDateDigits(string latin) => Clinic.Application.Common.JalaliDate.ToPersianDigits(latin);
+
     [Fact]
     public async Task Doctor_records_a_session_with_points()
     {
         var patient = await CreateUserAsync(Roles.Patient);
         var client = await LoginAsync(await CreateUserAsync(Roles.Doctor));
-        var st36 = AcupointLibrary.Find("ST36")!;
-        var json = $$"""
-            [{"code":"ST36","label":"ST36 Zusanli","view":"Front","side":"Right","x":{{AcupointLibrary.X(st36, PointSide.Right, BodyView.Front)}},"y":{{st36.Y}}},
-             {"code":"EAR-1","label":"Shenmen ear","view":"Front","side":"Left","x":500,"y":40,"note":"seed"}]
+        var json = """
+            [{"code":"ST36","label":"ST36 Zusanli","side":"Right"},
+             {"code":"EAR-1","label":"Shenmen ear","view":"ear","side":"Left","x":500,"y":40,"note":"seed"}]
             """;
 
         var response = await PostFormAsync(client, $"/Admin/Records/Session?patientId={patient.Id}", new()
@@ -96,7 +132,7 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
         Assert.Equal(new DateTime(2026, 10, 6, 13, 0, 0), session.DateUtc);
         Assert.Collection(session.Points.OrderBy(p => p.Id),
             p => { Assert.Equal("ST36", p.Code); Assert.Equal(PointSide.Right, p.Side); },
-            p => { Assert.Null(p.Code); Assert.Equal(200, p.X); Assert.Equal(PointSide.Left, p.Side); Assert.Equal("seed", p.Note); });
+            p => { Assert.Null(p.Code); Assert.Equal("ear", p.View); Assert.Equal(200, p.X); Assert.Equal(PointSide.Left, p.Side); Assert.Equal("seed", p.Note); });
 
         var page = await client.GetStringAsync($"/Admin/Records?patientId={patient.Id}");
         Assert.Contains("ST36", page);

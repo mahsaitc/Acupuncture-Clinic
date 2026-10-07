@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Clinic.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ClinicDbContext))]
-    [Migration("20261006213051_InitialCreate")]
+    [Migration("20261007134143_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -282,15 +282,8 @@ namespace Clinic.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Address")
-                        .HasMaxLength(300)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Allergies")
                         .HasMaxLength(1000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateOnly?>("BirthDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("BloodPressure")
@@ -315,9 +308,6 @@ namespace Clinic.Infrastructure.Data.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("Gender")
-                        .HasColumnType("INTEGER");
-
                     b.Property<double?>("HeightCm")
                         .HasColumnType("REAL");
 
@@ -327,14 +317,6 @@ namespace Clinic.Infrastructure.Data.Migrations
 
                     b.Property<string>("Medications")
                         .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NationalCode")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Occupation")
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PastMedicalHistory")
@@ -350,10 +332,6 @@ namespace Clinic.Infrastructure.Data.Migrations
 
                     b.Property<string>("PulseDiagnosis")
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ReferralSource")
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Surgeries")
@@ -387,6 +365,94 @@ namespace Clinic.Infrastructure.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("MedicalRecords");
+                });
+
+            modelBuilder.Entity("Clinic.Domain.Entities.PatientProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(400)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("BirthDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Education")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EmergencyContactName")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EmergencyContactPhone")
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FatherName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Gender")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("InsuranceProvider")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LandlinePhone")
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("MaritalStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("NationalCode")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Occupation")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ReferralSource")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("PatientProfiles");
                 });
 
             modelBuilder.Entity("Clinic.Domain.Entities.Post", b =>
@@ -488,13 +554,14 @@ namespace Clinic.Infrastructure.Data.Migrations
                     b.Property<int>("TreatmentSessionId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("View")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("View")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
 
-                    b.Property<double>("X")
+                    b.Property<double?>("X")
                         .HasColumnType("REAL");
 
-                    b.Property<double>("Y")
+                    b.Property<double?>("Y")
                         .HasColumnType("REAL");
 
                     b.HasKey("Id");
@@ -944,6 +1011,15 @@ namespace Clinic.Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("PatientUserId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clinic.Domain.Entities.PatientProfile", b =>
+                {
+                    b.HasOne("Clinic.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

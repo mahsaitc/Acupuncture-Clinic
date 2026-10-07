@@ -312,12 +312,6 @@ namespace Clinic.Infrastructure.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     PatientUserId = table.Column<string>(type: "TEXT", nullable: false),
-                    NationalCode = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    BirthDate = table.Column<DateOnly>(type: "TEXT", nullable: true),
-                    Gender = table.Column<int>(type: "INTEGER", nullable: true),
-                    Occupation = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
-                    Address = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
-                    ReferralSource = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
                     ChiefComplaint = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
                     PastMedicalHistory = table.Column<string>(type: "TEXT", maxLength: 4000, nullable: true),
                     Surgeries = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
@@ -348,6 +342,44 @@ namespace Clinic.Infrastructure.Data.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatientProfiles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    NationalCode = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    BirthDate = table.Column<DateOnly>(type: "TEXT", nullable: true),
+                    Gender = table.Column<int>(type: "INTEGER", nullable: true),
+                    MaritalStatus = table.Column<int>(type: "INTEGER", nullable: true),
+                    FatherName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Occupation = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Education = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    LandlinePhone = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
+                    City = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Address = table.Column<string>(type: "TEXT", maxLength: 400, nullable: true),
+                    PostalCode = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    ReferralSource = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    InsuranceProvider = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    EmergencyContactName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    EmergencyContactPhone = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    CreatedByUserId = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatientProfiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PatientProfiles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -490,10 +522,10 @@ namespace Clinic.Infrastructure.Data.Migrations
                     TreatmentSessionId = table.Column<int>(type: "INTEGER", nullable: false),
                     Code = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
                     Label = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    View = table.Column<int>(type: "INTEGER", nullable: false),
                     Side = table.Column<int>(type: "INTEGER", nullable: false),
-                    X = table.Column<double>(type: "REAL", nullable: false),
-                    Y = table.Column<double>(type: "REAL", nullable: false),
+                    View = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    X = table.Column<double>(type: "REAL", nullable: true),
+                    Y = table.Column<double>(type: "REAL", nullable: true),
                     Note = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true)
                 },
                 constraints: table =>
@@ -603,6 +635,12 @@ namespace Clinic.Infrastructure.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_PatientProfiles_UserId",
+                table: "PatientProfiles",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Posts_AuthorUserId",
                 table: "Posts",
                 column: "AuthorUserId");
@@ -671,6 +709,9 @@ namespace Clinic.Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "MedicalRecords");
+
+            migrationBuilder.DropTable(
+                name: "PatientProfiles");
 
             migrationBuilder.DropTable(
                 name: "Posts");

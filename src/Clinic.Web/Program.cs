@@ -29,6 +29,7 @@ builder.Services.AddScoped<IdentityErrorDescriber, LocalizedIdentityErrorDescrib
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<Clinic.Web.Clinical.PrivateFileStore>();
 builder.Services.AddScoped<Clinic.Web.Clinical.AuditLog>();
+builder.Services.AddScoped<Clinic.Web.Pages.Admin.Patients.PatientRegistration>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddRazorPages(options =>

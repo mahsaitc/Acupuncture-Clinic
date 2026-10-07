@@ -11,10 +11,12 @@ using Microsoft.EntityFrameworkCore;
 namespace Clinic.Web.Pages.Admin.Records;
 
 [Authorize(Policy = Policies.Doctor)]
-public class IndexModel(ClinicDbContext db, UserManager<ApplicationUser> users, AuditLog audit) : PageModel
+public class IndexModel(ClinicDbContext db, UserManager<ApplicationUser> users, AuditLog audit, TimeProvider time) : PageModel
 {
     public ApplicationUser Patient { get; private set; } = default!;
     public MedicalRecord? Record { get; private set; }
+    public PatientProfile? Profile { get; private set; }
+    public int? Age { get; private set; }
     public List<TreatmentSession> Sessions { get; private set; } = [];
     public List<MedicalFile> Files { get; private set; } = [];
     public Dictionary<string, string> DoctorNames { get; private set; } = [];
@@ -30,6 +32,8 @@ public class IndexModel(ClinicDbContext db, UserManager<ApplicationUser> users, 
         Patient = patient;
 
         Record = await db.MedicalRecords.AsNoTracking().FirstOrDefaultAsync(r => r.PatientUserId == patientId);
+        Profile = await db.PatientProfiles.AsNoTracking().FirstOrDefaultAsync(p => p.UserId == patientId);
+        Age = Profile?.AgeOn(DateOnly.FromDateTime(time.GetUtcNow().UtcDateTime));
         Sessions = await db.TreatmentSessions.AsNoTracking()
             .Include(s => s.Points)
             .Where(s => s.PatientUserId == patientId)

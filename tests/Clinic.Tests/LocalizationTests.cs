@@ -30,12 +30,14 @@ public partial class LocalizationTests
         used.UnionWith(Enum.GetNames<Domain.Entities.SessionType>());
         used.UnionWith(Enum.GetNames<Domain.Entities.FileCategory>());
         used.UnionWith(Enum.GetNames<Domain.Entities.AuditAction>());
-        used.UnionWith(Enum.GetNames<Domain.Entities.BodyView>());
+        used.UnionWith(Enum.GetNames<Domain.Entities.MaritalStatus>());
         used.UnionWith(Enum.GetNames<Domain.Entities.PointSide>());
-        used.UnionWith(Enum.GetNames<Application.Acupuncture.BodyRegion>());
+        used.UnionWith(Application.Acupuncture.AcupointLibrary.Pages.Select(Web.Clinical.ChartText.Page));
+        used.UnionWith(Application.Acupuncture.AcupointLibrary.Views.Select(v => Web.Clinical.ChartText.View(v.Key)));
         used.UnionWith(Application.Acupuncture.AcupointLibrary.Protocols.Select(p => p.Name));
 
-        Assert.Empty(used.Except(translated).Order());
+        var missing = used.Except(translated).Order().ToList();
+        Assert.True(missing.Count == 0, "Missing Persian translations:\n" + string.Join("\n", missing));
     }
 
     private static string RepoRoot()

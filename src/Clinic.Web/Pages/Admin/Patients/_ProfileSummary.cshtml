@@ -1,0 +1,41 @@
+@using Clinic.Domain.Entities
+@model Clinic.Web.Pages.Admin.Patients.ProfileSummary
+@inject TimeProvider Time
+@{
+    var p = Model.Profile;
+    var u = Model.Patient;
+    var age = p?.AgeOn(DateOnly.FromDateTime(Time.GetUtcNow().UtcDateTime));
+}
+<section class="card card-soft mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 mb-0"><i class="bi bi-person-vcard me-2 text-success"></i>@L["Personal details"]</h2>
+            <a class="btn btn-sm btn-outline-success" asp-page="/Admin/Patients/Edit" asp-route-id="@u.Id"><i class="bi bi-pencil me-1"></i>@L["Edit"]</a>
+        </div>
+        <dl class="profile-dl mb-0">
+            <div><dt>@L["Mobile number"]</dt><dd dir="ltr"><a href="tel:@u.PhoneNumber">@u.PhoneNumber</a></dd></div>
+            @if (p?.LandlinePhone is { } tel) { <div><dt>@L["Landline phone"]</dt><dd dir="ltr"><a href="tel:@tel">@tel</a></dd></div> }
+            @if (u.Email is { } email) { <div><dt>@L["Email"]</dt><dd dir="ltr" class="text-break">@email</dd></div> }
+            @if (p?.NationalCode is { } nc) { <div><dt>@L["National code"]</dt><dd dir="ltr">@Fmt.Number(nc)</dd></div> }
+            @if (p?.BirthDate is DateOnly b) { <div><dt>@L["Birth date"]</dt><dd>@Fmt.Day(b) <span class="text-muted">(@L["{0} years", Fmt.Number(age ?? 0)])</span></dd></div> }
+            @if (p?.Gender is Gender g) { <div><dt>@L["Gender"]</dt><dd>@L[g.ToString()]</dd></div> }
+            @if (p?.MaritalStatus is MaritalStatus m) { <div><dt>@L["Marital status"]</dt><dd>@L[m.ToString()]</dd></div> }
+            @if (p?.FatherName is { } father) { <div><dt>@L["Father's name"]</dt><dd>@father</dd></div> }
+            @if (p?.Occupation is { } job) { <div><dt>@L["Occupation"]</dt><dd>@job</dd></div> }
+            @if (p?.Education is { } edu) { <div><dt>@L["Education"]</dt><dd>@edu</dd></div> }
+            @if (p?.City is not null || p?.Address is not null) { <div class="wide"><dt>@L["Address"]</dt><dd>@p!.City@(p.City is not null && p.Address is not null ? "، " : "")@p.Address @if (p.PostalCode is { } zip) { <span class="text-muted" dir="ltr">(@zip)</span> }</dd></div> }
+            @if (p?.ReferralSource is { } refby) { <div><dt>@L["Referred by"]</dt><dd>@refby</dd></div> }
+            @if (p?.InsuranceProvider is { } ins) { <div><dt>@L["Insurance"]</dt><dd>@ins</dd></div> }
+            @if (p?.EmergencyContactName is not null || p?.EmergencyContactPhone is not null) { <div class="wide"><dt>@L["Emergency contact"]</dt><dd>@p!.EmergencyContactName <span dir="ltr">@p.EmergencyContactPhone</span></dd></div> }
+            @if (p?.Notes is { } notes) { <div class="wide"><dt>@L["Front desk notes"]</dt><dd style="white-space: pre-line">@notes</dd></div> }
+        </dl>
+        @if (p is null)
+        {
+            <p class="small text-muted mt-3 mb-0">@L["Personal details have not been entered yet."]</p>
+        }
+        @if (u.PasswordHash is null)
+        {
+            <p class="small text-muted mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>@L["Registered at the clinic; this patient has no online login yet."]</p>
+        }
+    </div>
+</section>

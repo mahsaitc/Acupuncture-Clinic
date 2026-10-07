@@ -38,7 +38,7 @@ public class RegisterDoctorModel(UserManager<ApplicationUser> userManager, Clini
             return Page();
         }
 
-        var user = await RegisterModel.CreateUserAsync(userManager, Input, ModelState, Roles.Patient);
+        var user = await RegisterModel.CreateUserAsync(userManager, Input, ModelState, Roles.Patient, l);
         if (user is null)
         {
             return Page();

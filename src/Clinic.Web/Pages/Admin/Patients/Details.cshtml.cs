@@ -14,6 +14,7 @@ public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userM
     public ApplicationUser Patient { get; private set; } = default!;
     public List<Appointment> Appointments { get; private set; } = [];
     public List<ContactMessage> Messages { get; private set; } = [];
+    public PatientProfile? Profile { get; private set; }
 
     /// <summary>Counts only, and only for doctors; receptionists never see clinical data.</summary>
     public ClinicalSummary? Clinical { get; private set; }
@@ -28,6 +29,7 @@ public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userM
             return NotFound();
         }
         Patient = user;
+        Profile = await db.PatientProfiles.AsNoTracking().FirstOrDefaultAsync(p => p.UserId == id);
 
         Appointments = await db.Appointments.AsNoTracking()
             .Include(a => a.Service)

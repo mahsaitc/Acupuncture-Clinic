@@ -1299,4 +1299,151 @@
   <data name="sessions" xml:space="preserve">
     <value>جلسه</value>
   </data>
+  <data name="{0} years" xml:space="preserve">
+    <value>{0} سال</value>
+  </data>
+  <data name="A patient with this mobile number is already registered." xml:space="preserve">
+    <value>بیماری با این شماره موبایل قبلاً ثبت شده است.</value>
+  </data>
+  <data name="Arm and hand" xml:space="preserve">
+    <value>دست و بازو</value>
+  </data>
+  <data name="Both" xml:space="preserve">
+    <value>هر دو طرف</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>شهر</value>
+  </data>
+  <data name="Click a chart to add a point of your own." xml:space="preserve">
+    <value>برای افزودن نقطهٔ دلخواه، روی تصویر کلیک کنید.</value>
+  </data>
+  <data name="Do not write medical information here; it belongs in the medical record." xml:space="preserve">
+    <value>اطلاعات پزشکی را اینجا ننویسید؛ جای آن در پروندهٔ پزشکی است.</value>
+  </data>
+  <data name="e.g. Instagram, a friend, Dr. ..." xml:space="preserve">
+    <value>مثلاً اینستاگرام، یکی از دوستان، دکتر ...</value>
+  </data>
+  <data name="e.g. prefers afternoon appointments" xml:space="preserve">
+    <value>مثلاً نوبت عصر را ترجیح می‌دهد</value>
+  </data>
+  <data name="Ear" xml:space="preserve">
+    <value>گوش</value>
+  </data>
+  <data name="Edit patient details" xml:space="preserve">
+    <value>ویرایش مشخصات بیمار</value>
+  </data>
+  <data name="Education" xml:space="preserve">
+    <value>تحصیلات</value>
+  </data>
+  <data name="Emergency contact" xml:space="preserve">
+    <value>تماس اضطراری</value>
+  </data>
+  <data name="Emergency contact phone" xml:space="preserve">
+    <value>تلفن تماس اضطراری</value>
+  </data>
+  <data name="Face" xml:space="preserve">
+    <value>صورت</value>
+  </data>
+  <data name="Father's name" xml:space="preserve">
+    <value>نام پدر</value>
+  </data>
+  <data name="Front desk notes" xml:space="preserve">
+    <value>یادداشت پذیرش</value>
+  </data>
+  <data name="Head and face" xml:space="preserve">
+    <value>سر و صورت</value>
+  </data>
+  <data name="Head, side" xml:space="preserve">
+    <value>سر، نمای جانبی</value>
+  </data>
+  <data name="Inner arm (palm side)" xml:space="preserve">
+    <value>دست، سمت داخلی (کف دست)</value>
+  </data>
+  <data name="Inner leg" xml:space="preserve">
+    <value>پا، سمت داخلی</value>
+  </data>
+  <data name="Insurance" xml:space="preserve">
+    <value>بیمه</value>
+  </data>
+  <data name="Knee pain" xml:space="preserve">
+    <value>زانو درد</value>
+  </data>
+  <data name="Landline phone" xml:space="preserve">
+    <value>تلفن ثابت</value>
+  </data>
+  <data name="Leg and foot" xml:space="preserve">
+    <value>ساق و پا</value>
+  </data>
+  <data name="Marital status" xml:space="preserve">
+    <value>وضعیت تأهل</value>
+  </data>
+  <data name="Married" xml:space="preserve">
+    <value>متأهل</value>
+  </data>
+  <data name="Name and relation" xml:space="preserve">
+    <value>نام و نسبت</value>
+  </data>
+  <data name="Neck and shoulder pain" xml:space="preserve">
+    <value>گردن و شانه درد</value>
+  </data>
+  <data name="New patient" xml:space="preserve">
+    <value>بیمار جدید</value>
+  </data>
+  <data name="No standard point has that name. Pick one from the list, or click a chart to place your own point." xml:space="preserve">
+    <value>نقطهٔ استانداردی با این نام نیست. از فهرست انتخاب کنید یا برای ثبت نقطهٔ دلخواه روی تصویر کلیک کنید.</value>
+  </data>
+  <data name="Outer arm (back of the hand)" xml:space="preserve">
+    <value>دست، سمت خارجی (پشت دست)</value>
+  </data>
+  <data name="Outer leg" xml:space="preserve">
+    <value>پا، سمت خارجی</value>
+  </data>
+  <data name="Personal details have not been entered yet." xml:space="preserve">
+    <value>مشخصات فردی هنوز ثبت نشده است.</value>
+  </data>
+  <data name="Point positions on the charts are approximate and meant for recording only." xml:space="preserve">
+    <value>جای نقاط روی تصاویر تقریبی است و فقط برای ثبت به کار می‌رود.</value>
+  </data>
+  <data name="Postal code" xml:space="preserve">
+    <value>کد پستی</value>
+  </data>
+  <data name="Referral and insurance" xml:space="preserve">
+    <value>معرف و بیمه</value>
+  </data>
+  <data name="Register a patient at the front desk. Only the name and mobile number are required." xml:space="preserve">
+    <value>ثبت‌نام بیمار در پذیرش. فقط نام و شماره موبایل الزامی است.</value>
+  </data>
+  <data name="Register patient" xml:space="preserve">
+    <value>ثبت بیمار</value>
+  </data>
+  <data name="Registered at the clinic; this patient has no online login yet." xml:space="preserve">
+    <value>در کلینیک ثبت شده؛ این بیمار هنوز حساب ورود آنلاین ندارد.</value>
+  </data>
+  <data name="Show on the chart" xml:space="preserve">
+    <value>نمایش روی تصویر</value>
+  </data>
+  <data name="Single" xml:space="preserve">
+    <value>مجرد</value>
+  </data>
+  <data name="The patient was registered." xml:space="preserve">
+    <value>بیمار ثبت شد.</value>
+  </data>
+  <data name="The patient's details were saved." xml:space="preserve">
+    <value>مشخصات بیمار ذخیره شد.</value>
+  </data>
+  <data name="This mobile number is already registered at the clinic. Please call the clinic to activate your online account." xml:space="preserve">
+    <value>این شماره موبایل قبلاً در کلینیک ثبت شده است. برای فعال‌کردن حساب آنلاین خود با کلینیک تماس بگیرید.</value>
+  </data>
+  <data name="This patient signs in with their email, so it cannot be removed." xml:space="preserve">
+    <value>این بیمار با ایمیل وارد می‌شود، بنابراین ایمیل حذف‌شدنی نیست.</value>
+  </data>
+  <data name="Type a point's code or name; it is marked on every chart it appears on." xml:space="preserve">
+    <value>کد یا نام نقطه را بنویسید؛ روی همهٔ تصاویری که آن نقطه را دارند علامت می‌خورد.</value>
+  </data>
+  <data name="Weight loss, ear" xml:space="preserve">
+    <value>کاهش وزن، گوش</value>
+  </data>
+  <data name="Whole body" xml:space="preserve">
+    <value>کل بدن</value>
+  </data>
 </root>

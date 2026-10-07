@@ -5,7 +5,6 @@
     ViewData["Title"] = L["Medical record"];
     var header = new Clinic.Web.Pages.Admin.Records.RecordHeader(Model.Patient, L["Medical record"], "record");
     var r = Model.Record;
-    int? age = r?.BirthDate is DateOnly b ? (int)((DateTime.Today - b.ToDateTime(TimeOnly.MinValue)).TotalDays / 365.25) : null;
 }
 
 <partial name="_RecordHeader" model="header" />
@@ -33,8 +32,8 @@
                         <div class="alert alert-danger py-2 small"><i class="bi bi-exclamation-triangle me-1"></i><strong>@L["Allergies"]:</strong> @r.Allergies</div>
                     }
                     <div class="record-vitals">
-                        <div><span>@L["Age"]</span><strong>@(age is int a ? Fmt.Number(a) : "-")</strong></div>
-                        <div><span>@L["Gender"]</span><strong>@(r.Gender is Gender g ? L[g.ToString()] : "-")</strong></div>
+                        <div><span>@L["Age"]</span><strong>@(Model.Age is int a ? Fmt.Number(a) : "-")</strong></div>
+                        <div><span>@L["Gender"]</span><strong>@(Model.Profile?.Gender is Gender g ? L[g.ToString()] : "-")</strong></div>
                         <div><span>@L["Height (cm)"]</span><strong>@(r.HeightCm is double h ? Fmt.Number(h) : "-")</strong></div>
                         <div><span>@L["Weight (kg)"]</span><strong>@(r.WeightKg is double w ? Fmt.Number(w) : "-")</strong></div>
                         <div><span>@L["BMI"]</span><strong>@(r.Bmi is double bmi ? Fmt.Number(bmi) : "-")</strong></div>

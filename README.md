@@ -37,13 +37,19 @@ Blog posts and articles are written in Markdown. Raw HTML is not allowed and the
 
 ## Medical records and patient files
 
+Receptionists register patients from **Patients → New patient**: name and mobile are required; personal details (national code,
+birth date, marital status, father's name, job, education, phones, address, referrer, insurance, emergency contact, front desk notes)
+are optional and editable later. A patient registered at the front desk has no password, and online sign-up with the same mobile asks
+them to contact the clinic instead of creating a second account.
+
 Doctors open a patient's record from **Patients → patient → Open medical record**. Receptionists never see clinical data.
 
 - **Record**: history, medications, allergies, first-visit measurements, pulse and tongue diagnosis, TCM pattern, ICD-10 diagnosis, plan and consent.
   The national code and the diagnosis are encrypted in the database.
 - **Treatment sessions**: date, type (acupuncture, catgut embedding, electroacupuncture, cupping, auricular, consultation), weight, waist, pain score
-  and the points used, marked on a front and back body diagram. Pick standard points from the list, load a protocol, copy the last session,
-  or click the diagram for a point of your own. Diagram positions are approximate.
+  and the points used. Type a point's code or name (about 190 points, ear points included) and it is marked on every chart it appears on:
+  whole body (front, back, side), face and head, inner and outer arm, inner and outer leg, and ear. Points are saved by code and side.
+  You can also load a protocol, copy the last session, or click a chart for a point of your own. Chart positions are approximate.
 - **Files**: radiology, lab results and photos (JPG, PNG, WebP, PDF, DICOM, up to 50 MB). The doctor chooses which ones the patient can see;
   patients can send their own results from **My files**.
 - **Access log** (admin): every opening and change of a record or file, with user, time and IP.
@@ -56,6 +62,18 @@ Doctors open a patient's record from **Patients → patient → Open medical rec
 | `PrivateFiles:Root` | `private-files/` | Patient files. Never put this folder under `wwwroot` or `media`. |
 
 Keep both outside the web root on the server and include them in every backup.
+
+### Point charts
+
+The chart drawings and the point library are generated from `tools/charts/` (Python 3, no packages):
+`figures.py` draws the charts, `points.py` lists every point with its place on each chart, and
+
+```bash
+python3 tools/charts/generate.py
+```
+
+writes `src/Clinic.Web/wwwroot/img/charts/*.svg` and `src/Clinic.Application/Acupuncture/AcupointLibrary.Data.g.cs`.
+`python3 tools/charts/preview.py sheet.html` draws all charts on one page for checking.
 
 ## Tests
 

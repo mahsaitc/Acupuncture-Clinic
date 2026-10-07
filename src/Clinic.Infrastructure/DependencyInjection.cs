@@ -30,7 +30,8 @@ public static class DependencyInjection
 
         services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                options.User.RequireUniqueEmail = true;
+                // Patients registered at the front desk may have no email; uniqueness is checked where accounts are created.
+                options.User.RequireUniqueEmail = false;
                 options.Password.RequiredLength = 8;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Lockout.MaxFailedAccessAttempts = 5;

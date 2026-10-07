@@ -5,11 +5,12 @@ using Clinic.Web.Localization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 
 namespace Clinic.Web.Pages.Account;
 
 /// <summary>Patient self-registration.</summary>
-public class RegisterModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager) : PageModel
+public class RegisterModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStringLocalizer<SharedResource> l) : PageModel
 {
     [BindProperty]
     public RegisterInput Input { get; set; } = new();
@@ -25,7 +26,7 @@ public class RegisterModel(UserManager<ApplicationUser> userManager, SignInManag
             return Page();
         }
 
-        var user = await CreateUserAsync(userManager, Input, ModelState, Roles.Patient);
+        var user = await CreateUserAsync(userManager, Input, ModelState, Roles.Patient, l);
         if (user is null)
         {
             return Page();
@@ -37,8 +38,21 @@ public class RegisterModel(UserManager<ApplicationUser> userManager, SignInManag
 
     internal static async Task<ApplicationUser?> CreateUserAsync(
         UserManager<ApplicationUser> userManager, RegisterInput input,
-        Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary modelState, string role)
+        Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary modelState, string role, IStringLocalizer<SharedResource> l)
     {
+        if (await userManager.FindByEmailAsync(input.Email) is not null)
+        {
+            modelState.AddModelError(string.Empty, userManager.ErrorDescriber.DuplicateEmail(input.Email).Description);
+            return null;
+        }
+        // A patient the clinic registered at the front desk has no login yet. Taking it over needs the
+        // clinic's help until sign-in by SMS exists, otherwise anyone who knows the number could claim it.
+        if (userManager.Users.Any(u => u.PhoneNumber == input.PhoneNumber && u.PasswordHash == null))
+        {
+            modelState.AddModelError(string.Empty, l["This mobile number is already registered at the clinic. Please call the clinic to activate your online account."]);
+            return null;
+        }
+
         var user = new ApplicationUser
         {
             UserName = input.Email,

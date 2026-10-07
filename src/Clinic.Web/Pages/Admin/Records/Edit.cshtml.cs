@@ -17,6 +17,7 @@ namespace Clinic.Web.Pages.Admin.Records;
 public class EditModel(ClinicDbContext db, UserManager<ApplicationUser> users, AuditLog audit, TimeProvider time, IStringLocalizer<SharedResource> l) : PageModel
 {
     public ApplicationUser Patient { get; private set; } = default!;
+    public PatientProfile? Profile { get; private set; }
     public bool IsNew { get; private set; }
 
     [BindProperty]
@@ -24,29 +25,6 @@ public class EditModel(ClinicDbContext db, UserManager<ApplicationUser> users, A
 
     public class RecordInput
     {
-        [StringLength(10, MinimumLength = 10, ErrorMessage = "The national code has 10 digits.")]
-        [RegularExpression("^[0-9۰-۹]{10}$", ErrorMessage = "The national code has 10 digits.")]
-        [Display(Name = "National code")]
-        public string? NationalCode { get; set; }
-
-        [Display(Name = "Birth date")]
-        public string? BirthDate { get; set; }
-
-        [Display(Name = "Gender")]
-        public Gender? Gender { get; set; }
-
-        [StringLength(100)]
-        [Display(Name = "Occupation")]
-        public string? Occupation { get; set; }
-
-        [StringLength(300)]
-        [Display(Name = "Address")]
-        public string? Address { get; set; }
-
-        [StringLength(100)]
-        [Display(Name = "Referred by")]
-        public string? ReferralSource { get; set; }
-
         [StringLength(2000)]
         [Display(Name = "Chief complaint")]
         public string? ChiefComplaint { get; set; }
@@ -133,12 +111,6 @@ public class EditModel(ClinicDbContext db, UserManager<ApplicationUser> users, A
         {
             Input = new RecordInput
             {
-                NationalCode = record.NationalCode,
-                BirthDate = DisplayFormat.DateInput(record.BirthDate),
-                Gender = record.Gender,
-                Occupation = record.Occupation,
-                Address = record.Address,
-                ReferralSource = record.ReferralSource,
                 ChiefComplaint = record.ChiefComplaint,
                 PastMedicalHistory = record.PastMedicalHistory,
                 Surgeries = record.Surgeries,
@@ -169,20 +141,6 @@ public class EditModel(ClinicDbContext db, UserManager<ApplicationUser> users, A
             return NotFound();
         }
 
-        DateOnly? birth = null;
-        if (!string.IsNullOrWhiteSpace(Input.BirthDate))
-        {
-            var today = DateOnly.FromDateTime(time.GetUtcNow().UtcDateTime);
-            if (!DisplayFormat.TryParseDateInput(Input.BirthDate, out var parsed) || parsed > today || parsed.Year < today.Year - 120)
-            {
-                ModelState.AddModelError("Input.BirthDate", l["Enter the date like {0}.", DisplayFormat.DateInputHint]);
-            }
-            else
-            {
-                birth = parsed;
-            }
-        }
-
         var record = await db.MedicalRecords.FirstOrDefaultAsync(r => r.PatientUserId == patientId);
         IsNew = record is null;
         if (!ModelState.IsValid)
@@ -197,12 +155,6 @@ public class EditModel(ClinicDbContext db, UserManager<ApplicationUser> users, A
             db.MedicalRecords.Add(record);
         }
 
-        record.NationalCode = Clean(Clinic.Application.Common.JalaliDate.ToLatinDigits(Input.NationalCode ?? ""));
-        record.BirthDate = birth;
-        record.Gender = Input.Gender;
-        record.Occupation = Clean(Input.Occupation);
-        record.Address = Clean(Input.Address);
-        record.ReferralSource = Clean(Input.ReferralSource);
         record.ChiefComplaint = Clean(Input.ChiefComplaint);
         record.PastMedicalHistory = Clean(Input.PastMedicalHistory);
         record.Surgeries = Clean(Input.Surgeries);
@@ -238,6 +190,7 @@ public class EditModel(ClinicDbContext db, UserManager<ApplicationUser> users, A
             return false;
         }
         Patient = patient;
+        Profile = await db.PatientProfiles.AsNoTracking().FirstOrDefaultAsync(p => p.UserId == patientId);
         return true;
     }
 

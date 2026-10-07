@@ -12,13 +12,7 @@ public class MedicalRecord
     public int Id { get; set; }
     public string PatientUserId { get; set; } = default!;
 
-    // Identity and background. NationalCode is encrypted at rest.
-    public string? NationalCode { get; set; }
-    public DateOnly? BirthDate { get; set; }
-    public Gender? Gender { get; set; }
-    public string? Occupation { get; set; }
-    public string? Address { get; set; }
-    public string? ReferralSource { get; set; }
+    // Personal details (national code, birth date, address...) are in PatientProfile.
 
     // History.
     public string? ChiefComplaint { get; set; }

@@ -12,60 +12,115 @@ public class BodyMapTests
     {
         Assert.Equal(AcupointLibrary.Points.Count, AcupointLibrary.Points.Select(p => p.Code).Distinct().Count());
         Assert.All(AcupointLibrary.Protocols.SelectMany(p => p.Codes), code => Assert.NotNull(AcupointLibrary.Find(code)));
+        Assert.True(AcupointLibrary.Points.Count > 150);
+        Assert.Equal(["body", "head", "arm", "leg", "ear"], AcupointLibrary.Pages);
     }
 
     [Fact]
-    public void Every_point_lands_on_the_diagram_on_the_side_it_belongs_to()
+    public void Every_point_is_on_a_chart_and_lands_inside_it_on_the_right_side()
     {
         foreach (var point in AcupointLibrary.Points)
         {
-            Assert.InRange(point.Y, 0, AcupointLibrary.Height);
-            var sides = point.Bilateral ? new[] { PointSide.Right, PointSide.Left } : [PointSide.Midline];
-            foreach (var side in sides)
+            Assert.NotEmpty(point.Placements);
+            foreach (var place in point.Placements)
             {
-                var x = AcupointLibrary.X(point, side, point.View);
-                Assert.InRange(x, 0, AcupointLibrary.Width);
-                Assert.Equal(side, AcupointLibrary.SideOf(x, point.View));
+                var view = AcupointLibrary.FindView(place.View);
+                Assert.NotNull(view);
+                var recorded = new SessionPoint { Code = point.Code, Side = point.Midline ? PointSide.Midline : PointSide.Both };
+                var markers = AcupointLibrary.Markers(recorded, view).ToList();
+                Assert.Equal(view.Symmetric && place.X > 0 ? 2 : 1, markers.Count);
+                foreach (var m in markers)
+                {
+                    Assert.InRange(m.X, 0, view.Width);
+                    Assert.InRange(m.Y, 0, view.Height);
+                    if (view.Symmetric)
+                    {
+                        Assert.Equal(m.Side, AcupointLibrary.SideOf(m.X, view));
+                    }
+                }
             }
         }
     }
 
     [Fact]
+    public void A_point_chosen_by_name_shows_on_every_chart_it_belongs_to()
+    {
+        var st36 = new SessionPoint { Code = "ST36", Side = PointSide.Right };
+
+        var shownOn = AcupointLibrary.Views.Where(v => AcupointLibrary.Markers(st36, v).Any()).Select(v => v.Key);
+
+        Assert.Equal(["front", "side", "leg-outer"], shownOn);
+        // From the front the patient's right leg is on the viewer's left.
+        Assert.True(Assert.Single(AcupointLibrary.Markers(st36, AcupointLibrary.FindView("front")!)).X < 100);
+        var both = new SessionPoint { Code = "BL23", Side = PointSide.Both };
+        Assert.Equal(2, AcupointLibrary.Markers(both, AcupointLibrary.FindView("back")!).Count());
+    }
+
+    [Fact]
     public void Patients_right_is_on_the_viewers_left_from_the_front_only()
     {
-        Assert.Equal(PointSide.Right, AcupointLibrary.SideOf(60, BodyView.Front));
-        Assert.Equal(PointSide.Left, AcupointLibrary.SideOf(60, BodyView.Back));
-        Assert.Equal(PointSide.Midline, AcupointLibrary.SideOf(100.5, BodyView.Back));
+        Assert.Equal(PointSide.Right, AcupointLibrary.SideOf(60, AcupointLibrary.FindView("front")!));
+        Assert.Equal(PointSide.Left, AcupointLibrary.SideOf(60, AcupointLibrary.FindView("back")!));
+        Assert.Equal(PointSide.Right, AcupointLibrary.SideOf(100, AcupointLibrary.FindView("head-front")!));
+        Assert.Equal(PointSide.Midline, AcupointLibrary.SideOf(100.5, AcupointLibrary.FindView("back")!));
     }
 
     [Fact]
     public void Parse_rejects_broken_or_oversized_input()
     {
         Assert.Null(BodyMapPoints.Parse("{not json"));
-        Assert.Null(BodyMapPoints.Parse("""[{"label":"x","view":"Side","x":1,"y":1}]"""));
-        var many = "[" + string.Join(",", Enumerable.Repeat("""{"label":"x","view":"Front","x":1,"y":1}""", BodyMapPoints.MaxPoints + 1)) + "]";
+        Assert.Null(BodyMapPoints.Parse("""[{"label":"x","view":"top","x":1,"y":1}]"""));
+        Assert.Null(BodyMapPoints.Parse("""[{"label":"x","view":"front"}]"""));
+        var many = "[" + string.Join(",", Enumerable.Repeat("""{"label":"x","view":"front","x":1,"y":1}""", BodyMapPoints.MaxPoints + 1)) + "]";
         Assert.Null(BodyMapPoints.Parse(many));
         Assert.Empty(BodyMapPoints.Parse("")!);
     }
 
     [Fact]
-    public void Parse_trusts_the_position_not_the_claimed_side()
+    public void Parse_stores_a_standard_point_by_name_and_merges_its_sides()
     {
-        var points = BodyMapPoints.Parse("""[{"code":"st36","label":"","view":"Front","side":"Left","x":74,"y":370,"note":"  "}]""")!;
+        var points = BodyMapPoints.Parse("""
+            [{"code":"st36","label":"","side":"Right","view":"front","x":3,"y":4,"note":"  "},
+             {"code":"ST36","side":"Left"},
+             {"code":"CV12","side":"Left"}]
+            """)!;
 
-        var p = Assert.Single(points);
-        Assert.Equal("ST36", p.Code);
-        Assert.Equal("ST36 Zusanli", p.Label);
-        Assert.Equal(PointSide.Right, p.Side);
-        Assert.Null(p.Note);
+        Assert.Collection(points,
+            p =>
+            {
+                Assert.Equal("ST36", p.Code);
+                Assert.Equal("ST36 Zusanli", p.Label);
+                Assert.Equal(PointSide.Both, p.Side);
+                Assert.Null(p.View);
+                Assert.Null(p.X);
+                Assert.Null(p.Note);
+            },
+            p => { Assert.Equal("CV12", p.Code); Assert.Equal(PointSide.Midline, p.Side); });
+    }
+
+    [Fact]
+    public void Parse_trusts_the_position_of_a_hand_placed_point_not_the_claimed_side()
+    {
+        var points = BodyMapPoints.Parse("""
+            [{"label":"Ashi","view":"FRONT","side":"Left","x":60,"y":900},
+             {"label":"Ear seed","view":"ear","side":"Left","x":100,"y":100}]
+            """)!;
+
+        Assert.Collection(points,
+            p => { Assert.Equal("front", p.View); Assert.Equal(PointSide.Right, p.Side); Assert.Equal(480, p.Y); },
+            p => { Assert.Equal("ear", p.View); Assert.Equal(PointSide.Left, p.Side); });
     }
 
     [Fact]
     public void Round_trips_through_json()
     {
-        var original = new SessionPoint { Code = "LI4", Label = "LI4 Hegu", View = BodyView.Front, Side = PointSide.Left, X = 173, Y = 276, Note = "strong" };
+        SessionPoint[] original =
+        [
+            new() { Code = "LI4", Label = "LI4 Hegu", Side = PointSide.Left, Note = "strong" },
+            new() { Label = "Scar", View = "back", Side = PointSide.Left, X = 80, Y = 200 },
+        ];
 
-        var back = Assert.Single(BodyMapPoints.Parse(BodyMapPoints.ToJson([original]))!);
+        var back = BodyMapPoints.Parse(BodyMapPoints.ToJson(original))!;
 
         Assert.Equivalent(original, back);
     }

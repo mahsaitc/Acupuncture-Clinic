@@ -20,6 +20,7 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
     public DbSet<SiteContent> SiteContent => Set<SiteContent>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
     public DbSet<Post> Posts => Set<Post>();
+    public DbSet<PatientProfile> PatientProfiles => Set<PatientProfile>();
     public DbSet<MedicalRecord> MedicalRecords => Set<MedicalRecord>();
     public DbSet<TreatmentSession> TreatmentSessions => Set<TreatmentSession>();
     public DbSet<SessionPoint> SessionPoints => Set<SessionPoint>();
@@ -115,15 +116,30 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
             v => v == null ? null : protector.Protect(v),
             v => v == null ? null : protector.Unprotect(v));
 
+        builder.Entity<PatientProfile>(e =>
+        {
+            e.HasIndex(p => p.UserId).IsUnique();
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.Property(p => p.NationalCode).HasConversion(encrypted).HasMaxLength(500);
+            e.Property(p => p.FatherName).HasMaxLength(100);
+            e.Property(p => p.Occupation).HasMaxLength(100);
+            e.Property(p => p.Education).HasMaxLength(100);
+            e.Property(p => p.LandlinePhone).HasMaxLength(30);
+            e.Property(p => p.City).HasMaxLength(100);
+            e.Property(p => p.Address).HasMaxLength(400);
+            e.Property(p => p.PostalCode).HasMaxLength(20);
+            e.Property(p => p.ReferralSource).HasMaxLength(200);
+            e.Property(p => p.InsuranceProvider).HasMaxLength(100);
+            e.Property(p => p.EmergencyContactName).HasMaxLength(200);
+            e.Property(p => p.EmergencyContactPhone).HasMaxLength(30);
+            e.Property(p => p.Notes).HasMaxLength(2000);
+        });
+
         builder.Entity<MedicalRecord>(e =>
         {
             e.HasIndex(r => r.PatientUserId).IsUnique();
             e.HasOne<ApplicationUser>().WithMany().HasForeignKey(r => r.PatientUserId).OnDelete(DeleteBehavior.Restrict);
-            e.Property(r => r.NationalCode).HasConversion(encrypted).HasMaxLength(500);
             e.Property(r => r.Diagnosis).HasConversion(encrypted).HasMaxLength(8000);
-            e.Property(r => r.Occupation).HasMaxLength(100);
-            e.Property(r => r.Address).HasMaxLength(300);
-            e.Property(r => r.ReferralSource).HasMaxLength(100);
             e.Property(r => r.ChiefComplaint).HasMaxLength(2000);
             e.Property(r => r.PastMedicalHistory).HasMaxLength(4000);
             e.Property(r => r.Surgeries).HasMaxLength(2000);
@@ -154,6 +170,7 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
         {
             e.Property(p => p.Code).HasMaxLength(20);
             e.Property(p => p.Label).HasMaxLength(100).IsRequired();
+            e.Property(p => p.View).HasMaxLength(20);
             e.Property(p => p.Note).HasMaxLength(200);
         });
 

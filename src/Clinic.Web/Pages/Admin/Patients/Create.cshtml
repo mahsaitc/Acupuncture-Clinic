@@ -1,0 +1,22 @@
+@page
+@model Clinic.Web.Pages.Admin.Patients.CreateModel
+@{
+    ViewData["Title"] = L["New patient"];
+    var english = CulturePath.IsEnglish;
+}
+
+<div class="page-head">
+    <div>
+        <a class="small" asp-page="./Index"><i class="bi @(english ? "bi-arrow-left" : "bi-arrow-right") me-1"></i>@L["Patients"]</a>
+        <h1 class="h3 mt-1">@L["New patient"]</h1>
+        <div class="text-muted small">@L["Register a patient at the front desk. Only the name and mobile number are required."]</div>
+    </div>
+</div>
+
+<form method="post">
+    <partial name="_PatientFields" for="Input" />
+    <div class="sticky-actions">
+        <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-person-plus me-1"></i>@L["Register patient"]</button>
+        <a class="btn btn-light btn-lg" asp-page="./Index">@L["Cancel"]</a>
+    </div>
+</form>

@@ -16,24 +16,11 @@
 
 <div class="row g-4">
     <div class="col-lg-4">
-        <div class="card card-soft">
-            <div class="card-body">
-                <h2 class="h6 text-muted mb-3">@L["Contact"]</h2>
-                <dl class="mb-0">
-                    <dt>@L["Mobile number"]</dt>
-                    <dd dir="ltr" class="text-start"><a href="tel:@p.PhoneNumber">@p.PhoneNumber</a></dd>
-                    <dt>@L["Email"]</dt>
-                    <dd dir="ltr" class="text-start"><a href="mailto:@p.Email">@p.Email</a></dd>
-                    <dt>@L["Registered on"]</dt>
-                    <dd>@Fmt.Date(p.CreatedUtc)</dd>
-                    <dt>@L["Status"]</dt>
-                    <dd>@(p.IsActive ? L["Active"] : L["Deactivated"])</dd>
-                </dl>
-            </div>
-        </div>
+        <partial name="_ProfileSummary" model="new Clinic.Web.Pages.Admin.Patients.ProfileSummary(Model.Patient, Model.Profile)" />
+        <div class="small text-muted mb-3">@L["Registered on"] @Fmt.Date(p.CreatedUtc) · @(p.IsActive ? L["Active"] : L["Deactivated"])</div>
         @if (User.IsInRole(Roles.Doctor))
         {
-            <div class="card card-soft mt-3 record-cta">
+            <div class="card card-soft record-cta">
                 <div class="card-body">
                     <h2 class="h6 text-muted mb-3">@L["Medical record"]</h2>
                     @if (Model.Clinical is { } c)

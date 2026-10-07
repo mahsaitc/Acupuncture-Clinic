@@ -37,20 +37,19 @@ public class TreatmentSession
     public DateTime UpdatedUtc { get; set; }
 }
 
-public enum BodyView
-{
-    Front = 0,
-    Back = 1,
-}
-
 public enum PointSide
 {
     Midline = 0,
     Left = 1,
     Right = 2,
+    Both = 3,
 }
 
-/// <summary>A point marked on the body diagram. X and Y are in diagram units (200 x 480).</summary>
+/// <summary>
+/// A point recorded in a session. A standard point is stored by its code and side and is drawn from the
+/// point library on every chart it appears on. A point the doctor placed by hand has no code and keeps
+/// the chart and position it was placed at.
+/// </summary>
 public class SessionPoint
 {
     public int Id { get; set; }
@@ -59,9 +58,12 @@ public class SessionPoint
     /// <summary>Standard code such as ST36, or null for a point the doctor placed freely.</summary>
     public string? Code { get; set; }
     public string Label { get; set; } = "";
-    public BodyView View { get; set; }
     public PointSide Side { get; set; }
-    public double X { get; set; }
-    public double Y { get; set; }
+
+    /// <summary>Chart key (such as "front" or "ear") and position, for hand-placed points only.</summary>
+    public string? View { get; set; }
+    public double? X { get; set; }
+    public double? Y { get; set; }
+
     public string? Note { get; set; }
 }

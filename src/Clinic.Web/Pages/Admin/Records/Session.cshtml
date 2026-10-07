@@ -22,30 +22,27 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
                         <h2 class="h5 mb-0"><i class="bi bi-person-arms-up me-2 text-success"></i>@L["Acupuncture points"]</h2>
-                        <span class="small text-muted">@L["Click the diagram to add a point of your own."]</span>
+                        <span class="small text-muted">@L["Click a chart to add a point of your own."]</span>
                     </div>
 
                     <div class="point-tools mb-3">
+                        <label class="form-label small text-muted mb-1" for="point-search">@L["Type a point's code or name; it is marked on every chart it appears on."]</label>
                         <div class="input-group">
-                            <select class="form-select" id="point-select" aria-label="@L["Standard point"]">
-                                <option value="">@L["Add a standard point..."]</option>
-                                @foreach (var region in AcupointLibrary.Points.GroupBy(p => p.Region))
+                            <input class="form-control" id="point-search" list="point-names" dir="ltr" autocomplete="off" placeholder="ST36 · Zusanli · TF4 Shenmen" />
+                            <datalist id="point-names">
+                                @foreach (var p in AcupointLibrary.Points)
                                 {
-                                    <optgroup label="@L[region.Key.ToString()]">
-                                        @foreach (var p in region)
-                                        {
-                                            <option value="@p.Code" dir="ltr">@p.Label</option>
-                                        }
-                                    </optgroup>
+                                    <option value="@p.Label"></option>
                                 }
-                            </select>
+                            </datalist>
                             <select class="form-select flex-grow-0 w-auto" id="point-side" aria-label="@L["Side"]">
                                 <option value="Both">@L["Both sides"]</option>
                                 <option value="Right">@L["Right"]</option>
                                 <option value="Left">@L["Left"]</option>
                             </select>
-                            <button type="button" class="btn btn-success" id="point-add"><i class="bi bi-plus-lg"></i><span class="visually-hidden">@L["Add"]</span></button>
+                            <button type="button" class="btn btn-success" id="point-add"><i class="bi bi-plus-lg me-1"></i>@L["Add"]</button>
                         </div>
+                        <div class="small text-danger mt-1" id="point-unknown" hidden>@L["No standard point has that name. Pick one from the list, or click a chart to place your own point."]</div>
                         <div class="d-flex flex-wrap gap-2 mt-2">
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="bi bi-collection me-1"></i>@L["Load a protocol"]</button>
@@ -65,7 +62,7 @@
                     </div>
 
                     <partial name="_BodyMap" model="new Clinic.Web.Clinical.BodyMap(points, true)" />
-                    <p class="small text-muted mt-2 mb-0"><i class="bi bi-info-circle me-1"></i>@L["Point positions on the diagram are approximate and meant for recording only."]</p>
+                    <p class="small text-muted mt-2 mb-0"><i class="bi bi-info-circle me-1"></i>@L["Point positions on the charts are approximate and meant for recording only."]</p>
                 </div>
             </section>
         </div>
@@ -159,7 +156,13 @@
             <input class="form-control form-control-sm point-label" maxlength="100" aria-label="@L["Point name"]" dir="auto" />
             <input class="form-control form-control-sm point-note mt-1" maxlength="200" placeholder="@L["Note (optional)"]" aria-label="@L["Note (optional)"]" dir="auto" />
         </div>
+        <select class="form-select form-select-sm point-side-select w-auto" aria-label="@L["Side"]">
+            <option value="Both">@L["Both sides"]</option>
+            <option value="Right">@L["Right"]</option>
+            <option value="Left">@L["Left"]</option>
+        </select>
         <span class="point-side small text-muted"></span>
+        <button type="button" class="btn btn-sm btn-link point-locate" aria-label="@L["Show on the chart"]" title="@L["Show on the chart"]"><i class="bi bi-crosshair"></i></button>
         <button type="button" class="btn btn-sm btn-link text-danger point-remove" aria-label="@L["Remove"]"><i class="bi bi-x-lg"></i></button>
     </li>
 </template>
@@ -172,7 +175,7 @@
     }
     <script id="body-map-text" type="application/json">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(new
     {
-        Right = L["Right"].Value, Left = L["Left"].Value, Midline = L["Midline"].Value,
+        Right = L["Right"].Value, Left = L["Left"].Value, Midline = L["Midline"].Value, Both = L["Both sides"].Value,
         custom = L["Point {0}"].Value, replace = L["Replace the current points?"].Value, clear = L["Remove all points?"].Value,
     }))</script>
     <script src="~/js/bodymap.js" asp-append-version="true"></script>
