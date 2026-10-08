@@ -1803,4 +1803,10 @@
   <data name="WeightLoss" xml:space="preserve">
     <value>کاهش وزن</value>
   </data>
+  <data name="Body images" xml:space="preserve">
+    <value>تصاویر بدن</value>
+  </data>
+  <data name="Rendered from a free 3D model and edited for this clinic" xml:space="preserve">
+    <value>رندرشده از یک مدل سه‌بعدی آزاد و ویرایش‌شده برای این کلینیک</value>
+  </data>
 </root>
