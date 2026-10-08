@@ -111,13 +111,22 @@ def _old_runs(poly, y):
     return []
 
 
+def _row_runs(row):
+    """A row of the silhouette file: a list of [x0, x1] runs, or (older files) just [left, right]."""
+    if not row:
+        return []
+    if isinstance(row[0], (int, float)):
+        return [(row[0], row[1])]
+    return [tuple(run) for run in row]
+
+
 def _new_runs(view, y):
     rows = _load()[1][view]["rows"]
     r = min(max(int(y), 0), len(rows) - 1)
     for d in range(0, 16):
         for rr in (r - d, r + d):
             if 0 <= rr < len(rows) and rows[rr]:
-                return [tuple(run) for run in rows[rr]]
+                return _row_runs(rows[rr])
     return []
 
 
