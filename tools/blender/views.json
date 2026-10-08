@@ -1,0 +1,383 @@
+{
+  "_comment": "Boxes are fractions [x0,x1,y0,y1,z0,z1] of the body bounding box; x is symmetric around the midline x=0 (0.5 = midline). Blender axes: subject's right = -X, subject's left = +X, anterior = -Y, up = +Z. Values are starting guesses for a model in anatomical position: tune them after a preview render. For limb regions the camera sits on the near face of the box, so anything outside the box (trunk, other limb) is clipped away; this is how medial views are possible.",
+  "directions": {
+    "front": {
+      "dir": [
+        0,
+        1,
+        0
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ]
+    },
+    "back": {
+      "dir": [
+        0,
+        -1,
+        0
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ]
+    },
+    "right": {
+      "dir": [
+        1,
+        0,
+        0
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ]
+    },
+    "left": {
+      "dir": [
+        -1,
+        0,
+        0
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ]
+    },
+    "top": {
+      "dir": [
+        0,
+        0,
+        -1
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ]
+    },
+    "bottom": {
+      "dir": [
+        0,
+        0,
+        1
+      ],
+      "up": [
+        0,
+        -1,
+        0
+      ]
+    }
+  },
+  "regions": {
+    "body": {
+      "box": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "views": [
+        "front",
+        "back",
+        "right",
+        "left"
+      ]
+    },
+    "head": {
+      "box": [
+        0.3,
+        0.7,
+        0,
+        1,
+        0.86,
+        1
+      ],
+      "views": [
+        "front",
+        "back",
+        "right",
+        "left",
+        "top"
+      ]
+    },
+    "neck": {
+      "box": [
+        0.41,
+        0.59,
+        0,
+        1,
+        0.82,
+        0.88
+      ],
+      "views": [
+        "front",
+        "back",
+        "right",
+        "left"
+      ]
+    },
+    "torso": {
+      "box": [
+        0.18,
+        0.82,
+        0,
+        1,
+        0.48,
+        0.84
+      ],
+      "views": [
+        "front",
+        "back"
+      ]
+    },
+    "right_arm": {
+      "box": [
+        0.0,
+        0.283,
+        0.2,
+        0.8,
+        0.44,
+        0.84
+      ],
+      "views": [
+        "front",
+        "back",
+        "right",
+        "left"
+      ],
+      "aliases": {
+        "right": "lateral",
+        "left": "medial"
+      },
+      "view_boxes": {
+        "front": [
+          0.0,
+          0.32,
+          0,
+          1,
+          0.44,
+          0.84
+        ],
+        "back": [
+          0.0,
+          0.32,
+          0,
+          1,
+          0.44,
+          0.84
+        ]
+      }
+    },
+    "left_arm": {
+      "box": [
+        0.717,
+        1.0,
+        0.2,
+        0.8,
+        0.44,
+        0.84
+      ],
+      "views": [
+        "front",
+        "back",
+        "right",
+        "left"
+      ],
+      "aliases": {
+        "right": "medial",
+        "left": "lateral"
+      },
+      "view_boxes": {
+        "front": [
+          0.68,
+          1.0,
+          0,
+          1,
+          0.44,
+          0.84
+        ],
+        "back": [
+          0.68,
+          1.0,
+          0,
+          1,
+          0.44,
+          0.84
+        ]
+      }
+    },
+    "right_hand": {
+      "box": [
+        0.054,
+        0.271,
+        0.12,
+        0.88,
+        0.38,
+        0.49
+      ],
+      "views": [
+        "front",
+        "back",
+        "right",
+        "left"
+      ],
+      "aliases": {
+        "front": "palmar",
+        "back": "dorsal",
+        "right": "lateral",
+        "left": "medial"
+      },
+      "view_boxes": {
+        "front": [
+          0.054,
+          0.271,
+          0,
+          1,
+          0.38,
+          0.49
+        ],
+        "back": [
+          0.054,
+          0.271,
+          0,
+          1,
+          0.38,
+          0.49
+        ]
+      }
+    },
+    "left_hand": {
+      "box": [
+        0.729,
+        0.946,
+        0.12,
+        0.88,
+        0.38,
+        0.49
+      ],
+      "views": [
+        "front",
+        "back",
+        "right",
+        "left"
+      ],
+      "aliases": {
+        "front": "palmar",
+        "back": "dorsal",
+        "right": "medial",
+        "left": "lateral"
+      },
+      "view_boxes": {
+        "front": [
+          0.729,
+          0.946,
+          0,
+          1,
+          0.38,
+          0.49
+        ],
+        "back": [
+          0.729,
+          0.946,
+          0,
+          1,
+          0.38,
+          0.49
+        ]
+      }
+    },
+    "right_leg": {
+      "box": [
+        0.22,
+        0.5,
+        0,
+        1,
+        0.05,
+        0.46
+      ],
+      "views": [
+        "front",
+        "back",
+        "right",
+        "left"
+      ],
+      "aliases": {
+        "right": "lateral",
+        "left": "medial"
+      }
+    },
+    "left_leg": {
+      "box": [
+        0.5,
+        0.78,
+        0,
+        1,
+        0.05,
+        0.46
+      ],
+      "views": [
+        "front",
+        "back",
+        "right",
+        "left"
+      ],
+      "aliases": {
+        "right": "medial",
+        "left": "lateral"
+      }
+    },
+    "right_foot": {
+      "box": [
+        0.18,
+        0.5,
+        0,
+        1,
+        0.0,
+        0.07
+      ],
+      "views": [
+        "top",
+        "bottom",
+        "right",
+        "left"
+      ],
+      "aliases": {
+        "top": "dorsal",
+        "bottom": "plantar",
+        "right": "lateral",
+        "left": "medial"
+      }
+    },
+    "left_foot": {
+      "box": [
+        0.5,
+        0.82,
+        0,
+        1,
+        0.0,
+        0.07
+      ],
+      "views": [
+        "top",
+        "bottom",
+        "right",
+        "left"
+      ],
+      "aliases": {
+        "top": "dorsal",
+        "bottom": "plantar",
+        "right": "medial",
+        "left": "lateral"
+      }
+    }
+  },
+  "x_half_width": 0.415
+}

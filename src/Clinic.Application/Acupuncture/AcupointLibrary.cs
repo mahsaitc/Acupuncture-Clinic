@@ -7,11 +7,11 @@ namespace Clinic.Application.Acupuncture;
 /// distance from the midline, and a point on both sides shows twice. FacesViewer means the patient's right
 /// is on the viewer's left.
 /// </summary>
-public sealed record ChartView(string Key, string Page, double Width, double Height, bool Symmetric, bool FacesViewer)
+public sealed record ChartView(string Key, string Page, double Width, double Height, bool Symmetric, bool FacesViewer, string Extension = "svg")
 {
     public double Midline => Width / 2;
 
-    public string Image => $"/img/charts/{Key}.svg?v={AcupointLibrary.ChartsVersion}";
+    public string Image => $"/img/charts/{Key}.{Extension}?v={AcupointLibrary.ChartsVersion}";
 }
 
 /// <summary>Where a point sits on one chart. X is the distance from the midline on symmetric charts.</summary>

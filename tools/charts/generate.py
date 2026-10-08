@@ -9,8 +9,9 @@ src/Clinic.Application/Acupuncture/AcupointLibrary.Data.g.cs. Edit figures.py (d
 import hashlib
 import os
 
+import photo
 from figures import VIEWS as FIGURES
-from points import POINTS, PROTOCOLS, VIEWS
+from points import POINTS as DRAWN_POINTS, PROTOCOLS, VIEWS
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 CHARTS = os.path.join(ROOT, "src", "Clinic.Web", "wwwroot", "img", "charts")
@@ -24,6 +25,30 @@ def num(v):
 
 def cs(text):
     return '"' + text.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
+PHOTO = photo.available()
+PHOTO_VIEWS = set(photo.VIEWS) if PHOTO else set()
+
+
+def placed(points):
+    """The points with their positions on the charts as shown: moved onto the photo charts when those are in use."""
+    if not PHOTO:
+        return points
+    out = []
+    for code, name, meridian, views in points:
+        out.append((code, name, meridian, {v: photo.remap(v, x, y, code) if v in PHOTO_VIEWS else (x, y) for v, (x, y) in views.items()}))
+    return out
+
+
+POINTS = placed(DRAWN_POINTS)
+
+
+def photo_files():
+    for key in sorted(PHOTO_VIEWS):
+        path = os.path.join(CHARTS, f"{key}.png")
+        assert os.path.exists(path), f"{path} is missing: copy the rendered charts into wwwroot/img/charts"
+        yield path
 
 
 def check():
@@ -54,6 +79,9 @@ def main():
         digest.update(svg.encode())
         with open(os.path.join(CHARTS, f"{key}.svg"), "w", encoding="utf-8") as f:
             f.write(svg)
+    for path in photo_files():
+        with open(path, "rb") as f:
+            digest.update(f.read())
 
     symmetric = {v[0]: v[2] for v in VIEWS}
     lines = [
@@ -70,7 +98,8 @@ def main():
     ]
     for key, page, sym, faces in VIEWS:
         w, h, _ = FIGURES[key]
-        lines.append(f"        new({cs(key)}, {cs(page)}, {w}, {h}, {str(sym).lower()}, {str(faces).lower()}),")
+        ext = ', "png"' if key in PHOTO_VIEWS else ""
+        lines.append(f"        new({cs(key)}, {cs(page)}, {w}, {h}, {str(sym).lower()}, {str(faces).lower()}{ext}),")
     lines += ["    ];", "", "    private static readonly Acupoint[] PointData =", "    ["]
     for code, name, meridian, views in POINTS:
         sym_views = [xy for v, xy in views.items() if symmetric[v]]
@@ -83,7 +112,7 @@ def main():
     lines += ["    ];", "}", ""]
     with open(DATA, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
-    print(f"{len(FIGURES)} charts, {len(POINTS)} points, {len(PROTOCOLS)} protocols")
+    print(f"{len(FIGURES)} charts ({len(PHOTO_VIEWS)} from photos), {len(POINTS)} points, {len(PROTOCOLS)} protocols")
 
 
 if __name__ == "__main__":
