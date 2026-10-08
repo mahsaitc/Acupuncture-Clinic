@@ -102,7 +102,7 @@
                 </div>
                 <div class="col-md-4">
                     <label asp-for="Input.LastMenstrualPeriod" class="form-label"></label>
-                    <input asp-for="Input.LastMenstrualPeriod" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" autocomplete="off" />
+                    <input asp-for="Input.LastMenstrualPeriod" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
                     <span asp-validation-for="Input.LastMenstrualPeriod" class="text-danger small"></span>
                 </div>
             }

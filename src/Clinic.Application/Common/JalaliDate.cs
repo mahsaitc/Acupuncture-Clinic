@@ -26,6 +26,14 @@ public static class JalaliDate
 
     public static int Year(DateTime date) => Calendar.GetYear(date);
 
+    public static int DayOfMonth(DateTime date) => Calendar.GetDayOfMonth(date);
+
+    public static string DayName(DayOfWeek day) => DayNames[day];
+
+    /// <summary>e.g. مهر ۱۴۰۵</summary>
+    public static string MonthAndYear(DateTime date) =>
+        ToPersianDigits($"{MonthNames[Calendar.GetMonth(date) - 1]} {Calendar.GetYear(date)}");
+
     /// <summary>e.g. 1405/07/14</summary>
     public static string ToShortString(DateTime date) => ToPersianDigits(
         $"{Calendar.GetYear(date):0000}/{Calendar.GetMonth(date):00}/{Calendar.GetDayOfMonth(date):00}");

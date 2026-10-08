@@ -26,7 +26,7 @@
             @if (p?.Occupation is { } job) { <div><dt>@L["Occupation"]</dt><dd>@job</dd></div> }
             @if (p?.Education is { } edu) { <div><dt>@L["Education"]</dt><dd>@edu</dd></div> }
             @if (p?.City is not null || p?.Address is not null) { <div class="wide"><dt>@L["Address"]</dt><dd>@p!.City@(p.City is not null && p.Address is not null ? "، " : "")@p.Address @if (p.PostalCode is { } zip) { <span class="text-muted" dir="ltr">(@zip)</span> }</dd></div> }
-            @if (p?.ReferralSource is { } refby) { <div><dt>@L["Referred by"]</dt><dd>@refby</dd></div> }
+            @if (p?.Referral is not null || p?.ReferralSource is not null) { <div><dt>@L["Referred by"]</dt><dd>@(p!.Referral is ReferralChannel rc ? L[rc.ToString()] : "")@(p.Referral is not null && p.ReferralSource is not null ? " - " : "")@p.ReferralSource</dd></div> }
             @if (p?.InsuranceProvider is { } ins) { <div><dt>@L["Insurance"]</dt><dd>@ins</dd></div> }
             @if (p?.EmergencyContactName is not null || p?.EmergencyContactPhone is not null) { <div class="wide"><dt>@L["Emergency contact"]</dt><dd>@p!.EmergencyContactName <span dir="ltr">@p.EmergencyContactPhone</span></dd></div> }
             @if (p?.Notes is { } notes) { <div class="wide"><dt>@L["Front desk notes"]</dt><dd style="white-space: pre-line">@notes</dd></div> }

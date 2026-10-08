@@ -1,0 +1,13 @@
+@{
+    var formText = new
+    {
+        fixThese = L["Please fix these before saving:"].Value,
+        today = L["Today"].Value,
+        clear = L["Clear"].Value,
+        pickDate = L["Choose from the calendar"].Value,
+        previousMonth = L["Previous month"].Value,
+        nextMonth = L["Next month"].Value,
+    };
+}
+<script id="form-text" type="application/json">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(formText))</script>
+<script src="~/js/forms.js" asp-append-version="true"></script>

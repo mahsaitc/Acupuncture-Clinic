@@ -96,7 +96,7 @@ public class FilesModel(
         var saved = await store.SaveAsync(file!);
         if (saved.Error != PrivateFileStore.SaveError.None)
         {
-            ModelState.AddModelError(string.Empty, l["The file must be a JPG, PNG, WebP, PDF or DICOM file of at most 50 MB."]);
+            ModelState.AddModelError(string.Empty, l["The file must be a JPG, PNG, WebP, PDF or DICOM file of at most 200 KB."]);
             return Page();
         }
 

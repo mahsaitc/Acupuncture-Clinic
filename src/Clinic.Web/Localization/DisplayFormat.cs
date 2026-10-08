@@ -21,6 +21,20 @@ public class DisplayFormat(ClinicTime clinicTime)
 
     public string Day(DateOnly date) => DateOnly(date.ToDateTime(TimeOnly.MinValue));
 
+    /// <summary>The day of the month in the page's calendar, e.g. ۱۴.</summary>
+    public string DayOfMonth(DateOnly date) => CulturePath.IsEnglish
+        ? date.Day.ToString(CultureInfo.InvariantCulture)
+        : Number(JalaliDate.DayOfMonth(date.ToDateTime(TimeOnly.MinValue)));
+
+    /// <summary>e.g. مهر ۱۴۰۵, or October 2026.</summary>
+    public string MonthAndYear(DateOnly date) => CulturePath.IsEnglish
+        ? date.ToString("MMMM yyyy", CultureInfo.InvariantCulture)
+        : JalaliDate.MonthAndYear(date.ToDateTime(TimeOnly.MinValue));
+
+    public string DayName(DateOnly date) => CulturePath.IsEnglish
+        ? date.ToString("ddd", CultureInfo.InvariantCulture)
+        : JalaliDate.DayName(date.DayOfWeek);
+
     public string Time(DateTime utc) => Number(clinicTime.ToLocal(utc).ToString("HH:mm", CultureInfo.InvariantCulture));
 
     public string DateTime(DateTime utc) => $"{Date(utc)} - {Time(utc)}";

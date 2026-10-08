@@ -49,7 +49,8 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
             ["Input.Gender"] = nameof(Gender.Female),
             ["Input.City"] = "تهران",
             ["Input.Address"] = "خیابان ولیعصر",
-            ["Input.ReferralSource"] = "اینستاگرام",
+            ["Input.Referral"] = nameof(ReferralChannel.Instagram),
+            ["Input.ReferralSource"] = "صفحه کلینیک",
         });
 
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
@@ -65,7 +66,8 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
         Assert.DoesNotContain("0012345678", raw);
 
         var details = await client.GetStringAsync($"/Admin/Patients/Details?id={user.Id}");
-        Assert.Contains("اینستاگرام", details);
+        Assert.Contains("اینستاگرام - صفحه کلینیک", details);
+        Assert.Equal(ReferralChannel.Instagram, profile.Referral);
         Assert.DoesNotContain("/Admin/Records", details);
 
         var again = await PostFormAsync(client, "/Admin/Patients/Create", new() { ["Input.FullName"] = "تکراری", ["Input.Mobile"] = mobile });
@@ -91,6 +93,76 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
         using var scope = factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
         Assert.False(await db.Users.AnyAsync(u => u.FullName == name));
+    }
+
+    [Theory]
+    [InlineData("Input.NationalCode", "۰۰۱۲۳۴۵۶۷", "کد ملی باید دقیقاً ۱۰ رقم باشد.")]
+    [InlineData("Input.LandlinePhone", "0713234642", "با کد شهر")]
+    [InlineData("Input.PostalCode", "71345", "کد پستی باید دقیقاً ۱۰ رقم باشد.")]
+    [InlineData("Input.Mobile", "091212345678", "شماره موبایل را ۱۱ رقمی وارد کنید")]
+    public async Task Patient_form_rejects_wrong_digit_counts(string field, string value, string message)
+    {
+        var client = await LoginAsync(await CreateUserAsync(Roles.Receptionist));
+        var form = new Dictionary<string, string>
+        {
+            ["Input.FullName"] = "آزمون",
+            ["Input.Mobile"] = $"0912{Random.Shared.Next(1000000, 9999999)}",
+        };
+        form[field] = value;
+
+        var response = await PostFormAsync(client, "/Admin/Patients/Create", form);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Contains(message, await response.Content.ReadAsStringAsync());
+    }
+
+    [Fact]
+    public async Task Patient_form_marks_required_fields_and_offers_a_calendar()
+    {
+        var client = await LoginAsync(await CreateUserAsync(Roles.Receptionist));
+        var html = await client.GetStringAsync("/Admin/Patients/Create");
+
+        Assert.Matches("<label class=\"form-label required\" for=\"Input_FullName\"", html);
+        Assert.Matches("<label class=\"form-label required\" for=\"Input_Mobile\"", html);
+        Assert.DoesNotMatch("<label class=\"form-label required\" for=\"Input_City\"", html);
+        Assert.Matches("<input(?=[^>]*data-date)(?=[^>]*name=\"Input.BirthDate\")", html);
+        Assert.Contains("/js/forms", html);
+        Assert.Contains("value=\"Website\"", html);
+    }
+
+    [Theory]
+    [InlineData("day")]
+    [InlineData("week")]
+    [InlineData("month")]
+    public async Task Clinic_calendar_has_day_week_and_month_views(string view)
+    {
+        var client = await LoginAsync(await CreateUserAsync(Roles.Receptionist));
+        var html = await client.GetStringAsync($"/Admin/Appointments?View={view}&Date=2026-10-06");
+
+        switch (view)
+        {
+            case "week":
+                Assert.Contains("week-grid", html);
+                Assert.Contains("۱۱ مهر ۱۴۰۵", html); // the week starts on Saturday 1405/07/11
+                break;
+            case "month":
+                Assert.Contains("month-grid", html);
+                Assert.Contains("مهر ۱۴۰۵", html);
+                break;
+        }
+    }
+
+    [Fact]
+    public async Task Medical_files_over_200_kb_are_refused()
+    {
+        var client = await LoginAsync(await CreateUserAsync(Roles.Patient));
+        var big = new byte[201 * 1024];
+        "%PDF-1.7"u8.CopyTo(big);
+
+        var response = await UploadAsync(client, "/Files", "scan.pdf", "application/pdf", big, "Upload.Title", "Scan");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Contains("۲۰۰ کیلوبایت", await response.Content.ReadAsStringAsync());
     }
 
     [Fact]

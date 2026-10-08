@@ -34,7 +34,7 @@ public class ContactModel(
         public string Name { get; set; } = "";
 
         [Required(ErrorMessage = "{0} is required.")]
-        [RegularExpression(@"^09\d{9}$|^\+\d{8,15}$|^0\d{9,10}$", ErrorMessage = "Enter a mobile number like 09121234567.")]
+        [RegularExpression(@"^\s*[0۰][0-9۰-۹]{10}\s*$", ErrorMessage = "Enter an 11-digit phone number like 09121234567.")]
         [Display(Name = "Mobile number")]
         public string Phone { get; set; } = "";
 
@@ -79,7 +79,7 @@ public class ContactModel(
         db.ContactMessages.Add(new ContactMessage
         {
             Name = Input.Name.Trim(),
-            Phone = Input.Phone.Trim(),
+            Phone = Clinic.Application.Common.JalaliDate.ToLatinDigits(Input.Phone).Trim(),
             Email = string.IsNullOrWhiteSpace(Input.Email) ? null : Input.Email.Trim(),
             Subject = Input.Subject.Trim(),
             Body = Input.Body.Trim(),

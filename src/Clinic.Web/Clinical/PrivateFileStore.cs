@@ -6,7 +6,7 @@ namespace Clinic.Web.Clinical;
 /// </summary>
 public class PrivateFileStore(IConfiguration config, IWebHostEnvironment env)
 {
-    public const long MaxBytes = 50L * 1024 * 1024;
+    public const long MaxBytes = 200L * 1024;
 
     /// <summary>The value for an input's accept attribute.</summary>
     public const string Accept = ".jpg,.jpeg,.png,.webp,.pdf,.dcm";

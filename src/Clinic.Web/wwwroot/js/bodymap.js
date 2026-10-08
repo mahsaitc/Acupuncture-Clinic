@@ -1,6 +1,7 @@
 // Point chart editor for a treatment session. Points live in a hidden JSON field that the server re-validates.
 // A standard point is kept as code + side and drawn from the library on every chart it appears on;
-// a point placed by clicking a chart keeps that chart and position.
+// a point of the doctor's own is placed by clicking a chart, named, and keeps that chart and position.
+// Nothing is added until the Add button is pressed.
 (function () {
     'use strict';
     const form = document.getElementById('session-form');
@@ -18,11 +19,13 @@
     const search = document.getElementById('point-search');
     const sideSelect = document.getElementById('point-side');
     const unknown = document.getElementById('point-unknown');
+    const pendingNote = document.getElementById('point-pending');
     const svgNS = 'http://www.w3.org/2000/svg';
 
     let points = [];
     try { points = JSON.parse(field.value || '[]'); } catch { points = []; }
     let selected = -1;
+    let pending = null; // a place clicked on a chart, waiting for a name and the Add button
 
     const round = v => Math.round(v * 10) / 10;
     const known = p => p.code ? byCode.get(p.code.toUpperCase()) : null;
@@ -90,7 +93,19 @@
                 g.addEventListener('click', e => { e.stopPropagation(); select(i, true); });
                 layer.append(g);
             }));
+            if (pending && pending.view === view.key) {
+                const g = document.createElementNS(svgNS, 'g');
+                g.classList.add('marker', 'pending');
+                const c = document.createElementNS(svgNS, 'circle');
+                c.setAttribute('cx', pending.x); c.setAttribute('cy', pending.y); c.setAttribute('r', 5);
+                const t = document.createElementNS(svgNS, 'text');
+                t.setAttribute('x', pending.x + 7); t.setAttribute('y', pending.y + 2.4);
+                t.textContent = search.value.trim() || '?';
+                g.append(c, t);
+                layer.append(g);
+            }
         });
+        pendingNote.hidden = !pending;
 
         document.querySelectorAll('[data-page-count]').forEach(badge => {
             badge.textContent = points.filter(p => pagesOf(p).includes(badge.dataset.pageCount)).length;
@@ -184,10 +199,23 @@
     }
 
     function addTyped() {
-        const lib = findTyped(search.value);
-        unknown.hidden = !!lib || !search.value.trim();
-        if (!lib) return;
-        const i = addStandard(lib, sideSelect.value);
+        const typed = search.value.trim();
+        const lib = findTyped(typed);
+        let i;
+        if (lib) {
+            i = addStandard(lib, sideSelect.value);
+        } else if (pending) {
+            // A point of the doctor's own, at the place clicked on the chart, under the name typed.
+            const custom = points.filter(p => !p.code).length + 1;
+            const side = views.get(pending.view).symmetric ? pending.side : sideSelect.value;
+            points.push({ code: null, label: typed || text.custom.replace('{0}', custom), side: side, view: pending.view, x: pending.x, y: pending.y, note: null });
+            i = points.length - 1;
+        } else {
+            unknown.hidden = !typed;
+            return;
+        }
+        unknown.hidden = true;
+        pending = null;
         search.value = '';
         save();
         select(i, false);
@@ -195,14 +223,16 @@
     }
 
     document.getElementById('point-add').addEventListener('click', addTyped);
+    // Enter must not send the whole form; points are added only with the Add button.
     search.addEventListener('keydown', e => {
-        if (e.key === 'Enter') { e.preventDefault(); addTyped(); }
+        if (e.key === 'Enter') e.preventDefault();
+        if (e.key === 'Escape' && pending) { pending = null; render(); }
     });
-    // Choosing from the browser's suggestion list adds the point straight away.
-    search.addEventListener('input', e => {
+    search.addEventListener('input', () => {
         unknown.hidden = true;
-        if (e.inputType === 'insertReplacementText') addTyped();
+        if (pending) render();
     });
+    document.getElementById('point-pending-cancel').addEventListener('click', () => { pending = null; render(); });
 
     document.querySelectorAll('[data-protocol]').forEach(button => button.addEventListener('click', () => {
         const protocol = library.protocols.find(p => p.key === button.dataset.protocol);
@@ -229,7 +259,8 @@
         }
     });
 
-    // A click on a chart adds a free point there (local points, catgut sites, points not in the library).
+    // A click on a chart marks the place of a point of the doctor's own; it is added, with the name typed
+    // in the search box, when Add is pressed.
     document.querySelectorAll('.body-map svg[data-view]').forEach(svg => svg.addEventListener('click', e => {
         const view = views.get(svg.dataset.view);
         const pt = svg.createSVGPoint();
@@ -237,12 +268,10 @@
         const local = pt.matrixTransform(svg.getScreenCTM().inverse());
         if (local.x < 0 || local.x > view.width || local.y < 0 || local.y > view.height) return;
         const x = round(local.x), y = round(local.y);
-        const side = view.symmetric ? sideOf(x, view) : sideSelect.value;
-        const custom = points.filter(p => !p.code).length + 1;
-        points.push({ code: null, label: text.custom.replace('{0}', custom), side: side, view: view.key, x: x, y: y, note: null });
-        save();
-        select(points.length - 1, true);
-        list.children[points.length - 1]?.querySelector('.point-label').select();
+        pending = { view: view.key, x: x, y: y, side: view.symmetric ? sideOf(x, view) : sideSelect.value };
+        unknown.hidden = true;
+        render();
+        search.focus();
     }));
 
     form.addEventListener('submit', save);

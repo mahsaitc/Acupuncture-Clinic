@@ -21,7 +21,7 @@ public class PatientInput
     public string FullName { get; set; } = "";
 
     [Required(ErrorMessage = "{0} is required.")]
-    [RegularExpression(@"^\s*(09|۰۹)[0-9۰-۹]{9}\s*$|^\+\d{8,15}$", ErrorMessage = "Enter a mobile number like 09121234567.")]
+    [RegularExpression(@"^\s*(09|۰۹)[0-9۰-۹]{9}\s*$", ErrorMessage = "Enter an 11-digit mobile number like 09121234567.")]
     [Display(Name = "Mobile number")]
     public string Mobile { get; set; } = "";
 
@@ -30,7 +30,7 @@ public class PatientInput
     [Display(Name = "Email (optional)")]
     public string? Email { get; set; }
 
-    [RegularExpression("^[0-9۰-۹]{10}$", ErrorMessage = "The national code has 10 digits.")]
+    [RegularExpression(@"^\s*[0-9۰-۹]{10}\s*$", ErrorMessage = "The national code must have exactly 10 digits.")]
     [Display(Name = "National code")]
     public string? NationalCode { get; set; }
 
@@ -63,7 +63,7 @@ public class PatientInput
     [Display(Name = "Education")]
     public string? Education { get; set; }
 
-    [StringLength(30)]
+    [RegularExpression(@"^\s*[0۰][0-9۰-۹]{10}\s*$", ErrorMessage = "Enter an 11-digit phone number with the area code, like 07132346425.")]
     [Display(Name = "Landline phone")]
     public string? LandlinePhone { get; set; }
 
@@ -75,12 +75,15 @@ public class PatientInput
     [Display(Name = "Address")]
     public string? Address { get; set; }
 
-    [StringLength(20)]
+    [RegularExpression(@"^\s*[0-9۰-۹]{10}\s*$", ErrorMessage = "The postal code must have exactly 10 digits.")]
     [Display(Name = "Postal code")]
     public string? PostalCode { get; set; }
 
-    [StringLength(200)]
     [Display(Name = "Referred by")]
+    public ReferralChannel? Referral { get; set; }
+
+    [StringLength(200)]
+    [Display(Name = "Referral details")]
     public string? ReferralSource { get; set; }
 
     [StringLength(100)]
@@ -91,7 +94,7 @@ public class PatientInput
     [Display(Name = "Emergency contact")]
     public string? EmergencyContactName { get; set; }
 
-    [StringLength(30)]
+    [RegularExpression(@"^\s*[0۰][0-9۰-۹]{10}\s*$", ErrorMessage = "Enter an 11-digit phone number with the area code, like 07132346425.")]
     [Display(Name = "Emergency contact phone")]
     public string? EmergencyContactPhone { get; set; }
 
@@ -117,6 +120,7 @@ public class PatientInput
         City = p?.City,
         Address = p?.Address,
         PostalCode = p?.PostalCode,
+        Referral = p?.Referral,
         ReferralSource = p?.ReferralSource,
         InsuranceProvider = p?.InsuranceProvider,
         EmergencyContactName = p?.EmergencyContactName,
@@ -263,6 +267,7 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
         p.City = Clean(input.City);
         p.Address = Clean(input.Address);
         p.PostalCode = Clean(JalaliDate.ToLatinDigits(input.PostalCode ?? ""));
+        p.Referral = input.Referral;
         p.ReferralSource = Clean(input.ReferralSource);
         p.InsuranceProvider = Clean(input.InsuranceProvider);
         p.EmergencyContactName = Clean(input.EmergencyContactName);
