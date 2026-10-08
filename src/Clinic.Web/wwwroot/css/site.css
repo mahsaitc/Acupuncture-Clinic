@@ -115,6 +115,14 @@ h1, h2, h3, .h1, .h2, .h3 {
   background-color: #fff;
 }
 
+/* Hints inside empty fields: pale and small so they never look like an entered value. */
+.form-control::placeholder {
+  color: #b9bdb0;
+  opacity: 1;
+  font-size: .85em;
+  font-weight: 300;
+}
+
 .form-control:focus,
 .form-select:focus {
   border-color: var(--olive-500);
