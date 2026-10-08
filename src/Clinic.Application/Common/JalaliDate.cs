@@ -51,8 +51,12 @@ public static class JalaliDate
         return true;
     }
 
-    public static string ToLatinDigits(string text)
+    public static string ToLatinDigits(string? text)
     {
+        if (string.IsNullOrEmpty(text))
+        {
+            return "";
+        }
         var chars = text.ToCharArray();
         for (var i = 0; i < chars.Length; i++)
         {

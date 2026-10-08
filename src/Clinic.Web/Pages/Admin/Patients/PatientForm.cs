@@ -129,7 +129,7 @@ public class PatientInput
 public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser> users, TimeProvider time, IStringLocalizer<SharedResource> l)
 {
     /// <summary>Normalises a mobile number to Latin digits without spaces.</summary>
-    public static string NormalizeMobile(string mobile) => JalaliDate.ToLatinDigits(mobile).Trim().Replace(" ", "");
+    public static string NormalizeMobile(string? mobile) => JalaliDate.ToLatinDigits(mobile).Trim().Replace(" ", "");
 
     /// <summary>
     /// Checks what the attributes cannot: the dates, and that the mobile and email are not already in use.
@@ -142,7 +142,7 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
         var firstVisit = ParseDate(input.FirstVisitDate, "Input.FirstVisitDate", today.AddYears(-50), today.AddDays(1), modelState);
 
         var mobile = NormalizeMobile(input.Mobile);
-        if (await db.Users.AnyAsync(u => u.PhoneNumber == mobile && u.Id != existingUserId))
+        if (mobile.Length > 0 && await db.Users.AnyAsync(u => u.PhoneNumber == mobile && u.Id != existingUserId))
         {
             modelState.AddModelError("Input.Mobile", l["A patient with this mobile number is already registered."]);
         }

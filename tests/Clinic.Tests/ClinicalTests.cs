@@ -74,6 +74,26 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
     }
 
     [Fact]
+    public async Task Registering_a_patient_without_mobile_shows_the_form_again()
+    {
+        var client = await LoginAsync(await CreateUserAsync(Roles.Receptionist));
+        var name = $"بدون موبایل {Guid.NewGuid():N}";
+
+        var response = await PostFormAsync(client, "/Admin/Patients/Create", new()
+        {
+            ["Input.FullName"] = name,
+            ["Input.Mobile"] = "",
+            ["Input.LandlinePhone"] = "",
+        });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Contains("وارد کردن شماره موبایل الزامی است.", await response.Content.ReadAsStringAsync());
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+        Assert.False(await db.Users.AnyAsync(u => u.FullName == name));
+    }
+
+    [Fact]
     public async Task Doctor_saves_record_with_persian_digits_and_diagnosis_is_encrypted()
     {
         var patient = await CreateUserAsync(Roles.Patient);
