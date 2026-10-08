@@ -4,7 +4,7 @@ namespace Clinic.Application.Acupuncture;
 public static partial class AcupointLibrary
 {
     /// <summary>Changes whenever a chart drawing changes, so browsers fetch the new images.</summary>
-    public const string ChartsVersion = "47c830fee9";
+    public const string ChartsVersion = "78454f354d";
 
     private static readonly ChartView[] ViewData =
     [
