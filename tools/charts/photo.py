@@ -28,7 +28,7 @@ ADJUST = {}
 
 # Heights on the model, metres above the floor (Z-Anatomy region boxes).
 Z = {
-    "head_top": 1.743, "brow": 1.617, "eye": 1.5905, "nose_tip": 1.558, "mouth": 1.531, "chin": 1.486,
+    "head_top": 1.709,  # the scalp, not the tips of the hair (1.743) "brow": 1.617, "eye": 1.5905, "nose_tip": 1.558, "mouth": 1.531, "chin": 1.486,
     "neck_base": 1.431, "notch": 1.403, "xiphoid": 1.222, "navel": 1.017, "pubis": 0.835,
     "shoulder": 1.42, "elbow": 1.125, "wrist": 0.8465, "knuckles": 0.769, "fingertip": 0.699,
     "hip": 0.92, "knee": 0.443, "ankle": 0.0765, "sole": 0.0,
