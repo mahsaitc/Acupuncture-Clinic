@@ -12,6 +12,13 @@ public class DoctorProfile
     public string? BioFa { get; set; }
     public string? BioEn { get; set; }
 
+    /// <summary>Stored encrypted. Kept unique across all accounts through ApplicationUser.NationalCodeHash.</summary>
+    public string? NationalCode { get; set; }
+
+    public DateTime? RequestedUtc { get; set; }
+
+    public List<DoctorDocument> Documents { get; set; } = [];
+
     /// <summary>Doctors self-register but cannot work until an admin approves them.</summary>
     public bool IsApproved { get; set; }
 

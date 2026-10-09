@@ -7,7 +7,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Clinic.Web.Pages.Account;
 
-public class LoginModel(SignInManager<ApplicationUser> signInManager, IStringLocalizer<SharedResource> l) : PageModel
+public class LoginModel(SignInManager<ApplicationUser> signInManager, Clinic.Infrastructure.Data.ClinicDbContext db, IStringLocalizer<SharedResource> l) : PageModel
 {
     [BindProperty]
     public InputModel Input { get; set; } = new();
@@ -44,6 +44,15 @@ public class LoginModel(SignInManager<ApplicationUser> signInManager, IStringLoc
         if (user is null || !user.IsActive)
         {
             ModelState.AddModelError(string.Empty, l["Email or password is incorrect."]);
+            return Page();
+        }
+
+        // A doctor who signed up waits for the admin: until then the account has no role and cannot sign in.
+        if (await signInManager.UserManager.CheckPasswordAsync(user, Input.Password)
+            && db.Doctors.Any(d => d.UserId == user.Id && !d.IsApproved)
+            && (await signInManager.UserManager.GetRolesAsync(user)).Count == 0)
+        {
+            ModelState.AddModelError(string.Empty, l["Your doctor account is waiting for the clinic admin to check your documents."]);
             return Page();
         }
 

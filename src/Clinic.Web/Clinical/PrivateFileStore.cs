@@ -23,14 +23,22 @@ public class PrivateFileStore(IConfiguration config, IWebHostEnvironment env)
 
     public string Root => Path.GetFullPath(config["PrivateFiles:Root"] ?? Path.Combine(env.ContentRootPath, "private-files"));
 
-    public async Task<SaveResult> SaveAsync(IFormFile file, CancellationToken ct = default)
+    /// <summary>Larger limit for the documents a doctor uploads when signing up (licence, ID card).</summary>
+    public const long DocumentMaxBytes = 2L * 1024 * 1024;
+
+    /// <summary>The value for an input's accept attribute for a doctor's documents.</summary>
+    public const string DocumentAccept = ".jpg,.jpeg,.png,.webp,.pdf";
+
+    public Task<SaveResult> SaveAsync(IFormFile file, CancellationToken ct = default) => SaveAsync(file, MaxBytes, ct);
+
+    public async Task<SaveResult> SaveAsync(IFormFile file, long maxBytes, CancellationToken ct = default)
     {
         // Browsers send DICOM files with all sorts of content types, so the extension and the signature decide.
         if (!Types.TryGetValue(Path.GetExtension(file.FileName), out var contentType))
         {
             return SaveResult.Fail(SaveError.WrongType);
         }
-        if (file.Length == 0 || file.Length > MaxBytes)
+        if (file.Length == 0 || file.Length > maxBytes)
         {
             return SaveResult.Fail(SaveError.TooLarge);
         }

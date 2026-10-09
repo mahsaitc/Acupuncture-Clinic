@@ -338,3 +338,22 @@
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 })();
+
+// A field with a suggestion list and data-fill-empty: picking a listed value also fills the named field when it is
+// still empty, e.g. an ICD-10 code fills in the diagnosis.
+(() => {
+    document.querySelectorAll('input[list][data-fill-empty]').forEach(input => {
+        const list = document.getElementById(input.getAttribute('list'));
+        const target = document.querySelector(input.dataset.fillEmpty);
+        if (!list || !target) return;
+        const sync = () => {
+            const code = input.value.trim().toUpperCase();
+            const option = [...list.options].find(o => o.value.toUpperCase() === code);
+            if (!option) return;
+            input.value = option.value;
+            if (!target.value.trim()) target.value = option.dataset.name || '';
+        };
+        input.addEventListener('change', sync);
+        input.addEventListener('input', () => { if (input.value.length >= 3) sync(); });
+    });
+})();

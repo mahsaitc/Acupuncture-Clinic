@@ -142,7 +142,7 @@
             label.addEventListener('change', render);
             note.addEventListener('input', () => { p.note = note.value || null; save(); });
             label.addEventListener('focus', () => highlight(i));
-            row.querySelector('.point-locate').addEventListener('click', () => { select(i, false); reveal(i); });
+            row.querySelector('.point-locate').addEventListener('click', () => { select(i, false); reveal(i, true); });
             row.querySelector('.point-remove').addEventListener('click', () => {
                 points.splice(i, 1);
                 selected = -1;
@@ -171,11 +171,17 @@
         if (tab && !tab.classList.contains('active')) bootstrap.Tab.getOrCreateInstance(tab).show();
     }
 
-    // Switches to a chart page that shows the point (unless the current one does) and makes its markers pulse.
-    function reveal(i) {
+    // The first page is the whole body; the others are close-ups (head, arm, leg, ear).
+    const overviewPage = document.querySelector('.chart-pages [data-page]')?.dataset.page;
+
+    // Switches to a chart page that shows the point and makes its markers pulse. With closeUp, a point picked while
+    // the whole body is shown opens the close-up chart where it can be seen clearly (LI4 opens the arm charts).
+    function reveal(i, closeUp) {
         const current = document.querySelector('.chart-pages .nav-link.active')?.dataset.page;
         const pages = pagesOf(points[i]);
-        if (!pages.includes(current)) showPage(pages[0]);
+        const closeUps = pages.filter(pg => pg !== overviewPage);
+        if (closeUp && closeUps.length && !closeUps.includes(current)) showPage(closeUps[0]);
+        else if (!pages.includes(current)) showPage(pages[0]);
         document.querySelectorAll(`.body-map .marker[data-index="${i}"]`).forEach(m => {
             m.classList.remove('pulse');
             void m.getBoundingClientRect();
@@ -232,7 +238,7 @@
         search.value = '';
         save();
         select(i, false);
-        reveal(i);
+        reveal(i, true);
     }
 
     document.getElementById('point-add').addEventListener('click', addTyped);

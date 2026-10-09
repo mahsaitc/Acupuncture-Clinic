@@ -14,6 +14,7 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
     public const string ProtectionPurpose = "Clinic.MedicalRecord.v1";
 
     public DbSet<DoctorProfile> Doctors => Set<DoctorProfile>();
+    public DbSet<DoctorDocument> DoctorDocuments => Set<DoctorDocument>();
     public DbSet<WorkingHour> WorkingHours => Set<WorkingHour>();
     public DbSet<ClinicService> Services => Set<ClinicService>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
@@ -35,6 +36,8 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
         {
             e.Property(u => u.FullName).HasMaxLength(200).IsRequired();
             e.Property(u => u.PreferredLanguage).HasMaxLength(5);
+            e.Property(u => u.NationalCodeHash).HasMaxLength(64);
+            e.HasIndex(u => u.NationalCodeHash).IsUnique();
         });
 
         builder.Entity<DoctorProfile>(e =>
@@ -43,6 +46,13 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
             e.HasOne<ApplicationUser>().WithMany().HasForeignKey(d => d.UserId).OnDelete(DeleteBehavior.Restrict);
             e.Property(d => d.MedicalCouncilNumber).HasMaxLength(20).IsRequired();
             e.HasMany(d => d.WorkingHours).WithOne().HasForeignKey(w => w.DoctorProfileId).OnDelete(DeleteBehavior.Cascade);
+            e.HasMany(d => d.Documents).WithOne().HasForeignKey(x => x.DoctorProfileId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<DoctorDocument>(e =>
+        {
+            e.Property(x => x.StoredName).HasMaxLength(100).IsRequired();
+            e.Property(x => x.ContentType).HasMaxLength(100).IsRequired();
         });
 
         builder.Entity<ClinicService>(e =>
@@ -117,6 +127,8 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
         var encrypted = new ValueConverter<string?, string?>(
             v => v == null ? null : protector.Protect(v),
             v => v == null ? null : protector.Unprotect(v));
+
+        builder.Entity<DoctorProfile>().Property(d => d.NationalCode).HasConversion(encrypted).HasMaxLength(500);
 
         builder.Entity<PatientProfile>(e =>
         {

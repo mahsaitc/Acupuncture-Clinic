@@ -51,11 +51,19 @@
                     </div>
                     <div class="col-sm-6">
                         <label asp-for="Occupation" class="form-label"></label>
-                        <input asp-for="Occupation" class="form-control" />
+                        <select asp-for="Occupation" class="form-select">
+                            <option value="">-</option>
+                            @foreach (var o in Clinic.Web.Pages.Admin.Patients.PatientInput.Occupations) { <option value="@o">@L[o]</option> }
+                            @if (Model.Occupation is { } oldJob && !Clinic.Web.Pages.Admin.Patients.PatientInput.Occupations.Contains(oldJob)) { <option value="@oldJob">@oldJob</option> }
+                        </select>
                     </div>
                     <div class="col-sm-6">
                         <label asp-for="Education" class="form-label"></label>
-                        <input asp-for="Education" class="form-control" />
+                        <select asp-for="Education" class="form-select">
+                            <option value="">-</option>
+                            @foreach (var o in Clinic.Web.Pages.Admin.Patients.PatientInput.EducationLevels) { <option value="@o">@L[o]</option> }
+                            @if (Model.Education is { } oldEdu && !Clinic.Web.Pages.Admin.Patients.PatientInput.EducationLevels.Contains(oldEdu)) { <option value="@oldEdu">@oldEdu</option> }
+                        </select>
                     </div>
                 </div>
             </div>

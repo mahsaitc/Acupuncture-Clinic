@@ -72,7 +72,7 @@ public partial class ClinicalTests
             new("Input.FullName", "دکتر نمونه"), new("Input.Email", email), new("Input.PhoneNumber", "09" + Random.Shared.Next(100000000, 999999999).ToString(CultureInfo.InvariantCulture)),
             new("Input.Password", Password), new("Input.ConfirmPassword", Password),
             new("SelectedRoles", Roles.Doctor), new("SelectedRoles", Roles.Receptionist),
-            new("MedicalCouncilNumber", "۱۲۳۴۵"), new("SpecialtyFa", "طب سوزنی"),
+            new("MedicalCouncilNumber", "۱۲۳۴۵"), new("SpecialtyFa", "طب سوزنی"), new("NationalCode", NewNationalCode()),
         ]);
 
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
@@ -124,5 +124,113 @@ public partial class ClinicalTests
         Assert.Equal(doctorId, message.DoctorProfileId);
         Assert.NotNull(message.AppointmentId);
         Assert.Contains("رژیم", await (await LoginAsync(doctor)).GetStringAsync("/Admin/Messages"));
+    }
+
+    [Fact]
+    public async Task Doctor_signs_up_with_documents_and_waits_for_the_admin()
+    {
+        var email = $"signup-{Guid.NewGuid():N}@test";
+        var client = factory.CreateClient(new() { AllowAutoRedirect = false });
+        var response = await DoctorSignUpAsync(client, email, NewNationalCode());
+
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        string userId;
+        using (var scope = factory.Services.CreateScope())
+        {
+            var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+            var user = (await users.FindByEmailAsync(email))!;
+            userId = user.Id;
+            Assert.Empty(await users.GetRolesAsync(user));
+            var profile = await db.Doctors.Include(d => d.Documents).SingleAsync(d => d.UserId == user.Id);
+            Assert.False(profile.IsApproved);
+            Assert.Equal([DoctorDocumentKind.MedicalLicense, DoctorDocumentKind.NationalIdCard], profile.Documents.Select(d => d.Kind).Order());
+        }
+
+        // No dashboard until the admin approves.
+        var refused = await PostFormAsync(client, "/Account/Login", new() { ["Input.Email"] = email, ["Input.Password"] = Password });
+        Assert.Equal(HttpStatusCode.OK, refused.StatusCode);
+        Assert.Contains("در انتظار بررسی مدارک", await refused.Content.ReadAsStringAsync());
+
+        var admin = await LoginAsync(await CreateUserAsync(Roles.Admin));
+        var requests = await admin.GetStringAsync("/Admin/DoctorRequests");
+        Assert.Contains("دکتر متقاضی", requests);
+        Assert.Contains("کارت ملی", requests);
+        var approve = await PostFormAsync(admin, $"/Admin/DoctorRequests?handler=Approve&id={userId}", []);
+        Assert.Equal(HttpStatusCode.Redirect, approve.StatusCode);
+
+        var signedIn = await PostFormAsync(client, "/Account/Login", new() { ["Input.Email"] = email, ["Input.Password"] = Password });
+        Assert.Equal(HttpStatusCode.Redirect, signedIn.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/Admin")).StatusCode);
+    }
+
+    [Fact]
+    public async Task National_code_is_unique_across_every_role()
+    {
+        var code = NewNationalCode();
+        var reception = await LoginAsync(await CreateUserAsync(Roles.Receptionist));
+        var patient = await PostFormAsync(reception, "/Admin/Patients/Create", new()
+        {
+            ["Input.FullName"] = "بیمار کد ملی",
+            ["Input.Mobile"] = "09" + Random.Shared.Next(100000000, 999999999).ToString(CultureInfo.InvariantCulture),
+            ["Input.NationalCode"] = code,
+        });
+        Assert.Equal(HttpStatusCode.Redirect, patient.StatusCode);
+
+        var twin = await PostFormAsync(reception, "/Admin/Patients/Create", new()
+        {
+            ["Input.FullName"] = "بیمار دوم",
+            ["Input.Mobile"] = "09" + Random.Shared.Next(100000000, 999999999).ToString(CultureInfo.InvariantCulture),
+            ["Input.NationalCode"] = code,
+        });
+        Assert.Equal(HttpStatusCode.OK, twin.StatusCode);
+
+        var email = $"twin-{Guid.NewGuid():N}@test";
+        var doctor = await DoctorSignUpAsync(factory.CreateClient(new() { AllowAutoRedirect = false }), email, code);
+        Assert.Equal(HttpStatusCode.OK, doctor.StatusCode);
+        Assert.Contains("این کد ملی قبلاً برای شخص دیگری ثبت شده است", await doctor.Content.ReadAsStringAsync());
+        using var scope = factory.Services.CreateScope();
+        Assert.Null(await scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>().FindByEmailAsync(email));
+    }
+
+    [Fact]
+    public async Task Patient_form_lists_occupations_and_the_record_suggests_icd10_codes()
+    {
+        var patient = await CreateUserAsync(Roles.Patient);
+        var client = await LoginAsync(await AssignAsync(await CreateUserAsync(Roles.Doctor), patient));
+
+        var form = await client.GetStringAsync("/Admin/Patients/Create");
+        Assert.Contains(">بیکار<", form);
+        Assert.Contains(">بی‌سواد<", form);
+
+        var record = await client.GetStringAsync($"/Admin/Records/Edit?patientId={patient.Id}");
+        Assert.Contains("list=\"icd10-list\"", record);
+        Assert.Contains("<option value=\"E66.9\"", record);
+        Assert.Contains("میگرن", record);
+    }
+
+    private static string NewNationalCode() => Random.Shared.NextInt64(1_000_000_000, 9_999_999_999).ToString(CultureInfo.InvariantCulture);
+
+    private static async Task<HttpResponseMessage> DoctorSignUpAsync(HttpClient client, string email, string nationalCode)
+    {
+        var token = await TokenAsync(client, "/Account/RegisterDoctor");
+        using var form = new MultipartFormDataContent
+        {
+            { new StringContent(token), "__RequestVerificationToken" },
+            { new StringContent("دکتر متقاضی"), "Input.FullName" },
+            { new StringContent(email), "Input.Email" },
+            { new StringContent("09" + Random.Shared.Next(100000000, 999999999).ToString(CultureInfo.InvariantCulture)), "Input.PhoneNumber" },
+            { new StringContent(Password), "Input.Password" },
+            { new StringContent(Password), "Input.ConfirmPassword" },
+            { new StringContent(nationalCode), "NationalCode" },
+            { new StringContent("98765"), "MedicalCouncilNumber" },
+        };
+        foreach (var field in new[] { "MedicalLicense", "NationalIdCard" })
+        {
+            var file = new ByteArrayContent(Png);
+            file.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
+            form.Add(file, field, field + ".png");
+        }
+        return await client.PostAsync("/Account/RegisterDoctor", form);
     }
 }

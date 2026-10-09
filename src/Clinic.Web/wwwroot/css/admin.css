@@ -828,3 +828,14 @@ a.kpi:hover {
     break-inside: avoid;
   }
 }
+
+/* Doctor request documents */
+.doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: .75rem; }
+.doc-tile {
+    display: flex; flex-direction: column; gap: .25rem; padding: .5rem; border: 1px solid var(--bs-border-color);
+    border-radius: .75rem; background: #fff; color: inherit; text-decoration: none;
+}
+.doc-tile:hover { border-color: var(--bs-success); }
+.doc-tile img { width: 100%; height: 7rem; object-fit: cover; border-radius: .5rem; background: #f3f3ef; }
+.doc-icon { display: grid; place-items: center; height: 7rem; font-size: 2.5rem; color: #b33; background: #f8f3f3; border-radius: .5rem; }
+.doc-name { font-weight: 600; font-size: .9rem; }

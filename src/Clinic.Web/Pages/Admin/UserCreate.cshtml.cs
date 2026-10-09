@@ -14,13 +14,18 @@ namespace Clinic.Web.Pages.Admin;
 
 /// <summary>The admin creates an account, such as a doctor or a receptionist, and gives it its roles.</summary>
 [Authorize(Policy = Policies.Admin)]
-public class UserCreateModel(ClinicDbContext db, UserManager<ApplicationUser> userManager, IStringLocalizer<SharedResource> l) : PageModel
+public class UserCreateModel(ClinicDbContext db, UserManager<ApplicationUser> userManager, Clinic.Web.Clinical.NationalCodeIndex nationalCodes, TimeProvider time, IStringLocalizer<SharedResource> l) : PageModel
 {
     [BindProperty]
     public RegisterInput Input { get; set; } = new();
 
     [BindProperty]
     public List<string> SelectedRoles { get; set; } = [Roles.Doctor];
+
+    [BindProperty]
+    [RegularExpression(@"^\s*[0-9۰-۹]{10}\s*$", ErrorMessage = "The national code must have exactly 10 digits.")]
+    [Display(Name = "National code")]
+    public string? NationalCode { get; set; }
 
     [BindProperty]
     [RegularExpression(@"^\s*[0-9۰-۹]{3,10}\s*$", ErrorMessage = "Enter digits only.")]
@@ -53,12 +58,20 @@ public class UserCreateModel(ClinicDbContext db, UserManager<ApplicationUser> us
         {
             ModelState.AddModelError(nameof(MedicalCouncilNumber), l["{0} is required.", l["Medical Council number"]]);
         }
+        if (isDoctor && string.IsNullOrWhiteSpace(NationalCode))
+        {
+            ModelState.AddModelError(nameof(NationalCode), l["{0} is required.", l["National code"]]);
+        }
+        if (await nationalCodes.InUseAsync(NationalCode, exceptUserId: null))
+        {
+            ModelState.AddModelError(nameof(NationalCode), l["This national code is already registered for another person."]);
+        }
         if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        var user = await RegisterModel.CreateUserAsync(userManager, Input, ModelState, SelectedRoles[0], l);
+        var user = await RegisterModel.CreateUserAsync(userManager, Input, ModelState, SelectedRoles[0], l, nationalCodes.Hash(NationalCode));
         if (user is null)
         {
             return Page();
@@ -69,6 +82,12 @@ public class UserCreateModel(ClinicDbContext db, UserManager<ApplicationUser> us
         {
             await userManager.AddToRoleAsync(user, role);
         }
+        if (SelectedRoles.Contains(Roles.Patient))
+        {
+            var now = time.GetUtcNow().UtcDateTime;
+            db.PatientProfiles.Add(new PatientProfile { UserId = user.Id, NationalCode = Clinic.Web.Clinical.NationalCodeIndex.Normalize(NationalCode), CreatedUtc = now, UpdatedUtc = now });
+            await db.SaveChangesAsync();
+        }
 
         if (isDoctor)
         {
@@ -76,6 +95,8 @@ public class UserCreateModel(ClinicDbContext db, UserManager<ApplicationUser> us
             db.Doctors.Add(new DoctorProfile
             {
                 UserId = user.Id,
+                NationalCode = Clinic.Web.Clinical.NationalCodeIndex.Normalize(NationalCode),
+                RequestedUtc = time.GetUtcNow().UtcDateTime,
                 MedicalCouncilNumber = Clinic.Application.Common.JalaliDate.ToLatinDigits(MedicalCouncilNumber).Trim(),
                 SpecialtyFa = Clean(SpecialtyFa),
                 SpecialtyEn = Clean(SpecialtyEn) ?? Clean(SpecialtyFa),

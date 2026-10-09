@@ -50,7 +50,7 @@
                 <tr>
                     <th>@L["Marital status"]</th><td>@(p?.MaritalStatus is MaritalStatus m ? L[m.ToString()] : "")</td>
                     <th>@L["Number of children"]</th><td>@(p?.Children is int kids ? Fmt.Number(kids) : "")</td>
-                    <th>@L["Occupation"]</th><td>@p?.Occupation</td>
+                    <th>@L["Occupation"]</th><td>@(p?.Occupation is { } job ? L[job] : "")</td>
                 </tr>
                 <tr>
                     <th>@L["Phone"]</th><td dir="ltr">@u.PhoneNumber @(p?.LandlinePhone is { } tel ? " / " + tel : "")</td>

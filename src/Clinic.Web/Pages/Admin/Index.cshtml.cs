@@ -46,7 +46,7 @@ public class IndexModel(ClinicDbContext db, Clinic.Web.Clinical.StaffScope scope
         PatientCount = await patients.CountAsync();
         var messages = await scope.MessagesAsync(db.ContactMessages);
         UnreadMessages = await messages.CountAsync(m => m.ReadUtc == null && !m.IsArchived);
-        PendingDoctors = await db.Doctors.CountAsync(d => !d.IsApproved);
+        PendingDoctors = await db.Doctors.CountAsync(d => !d.IsApproved && db.Users.Any(u => u.Id == d.UserId && u.IsActive));
         PublishedPosts = await db.Posts.CountAsync(p => p.IsPublished);
 
         Today = await (

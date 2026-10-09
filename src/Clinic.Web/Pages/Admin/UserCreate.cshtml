@@ -16,6 +16,12 @@
                 <h2 class="h5 mb-3"><i class="bi bi-person-plus me-2 text-success"></i>@L["Account"]</h2>
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                 <partial name="/Pages/Account/_RegisterFields.cshtml" for="Input" />
+                <div class="mb-3">
+                    <label asp-for="NationalCode" class="form-label"></label>
+                    <input asp-for="NationalCode" class="form-control" dir="ltr" inputmode="numeric" maxlength="10" autocomplete="off" />
+                    <div class="form-text">@L["Required for doctors. No two people can have the same national code."]</div>
+                    <span asp-validation-for="NationalCode" class="text-danger small"></span>
+                </div>
             </div>
         </section>
     </div>

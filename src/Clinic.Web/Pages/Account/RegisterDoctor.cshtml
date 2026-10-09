@@ -2,26 +2,60 @@
 @model Clinic.Web.Pages.Account.RegisterDoctorModel
 @{
     ViewData["Title"] = L["Doctor sign up"];
+    var accept = Clinic.Web.Clinical.PrivateFileStore.DocumentAccept;
+    var maxBytes = Clinic.Web.Clinical.PrivateFileStore.DocumentMaxBytes;
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-7 col-lg-6">
+    <div class="col-md-8 col-lg-7">
         <h1 class="h3 mb-2">@L["Doctor sign up"]</h1>
-        <p class="text-muted mb-4">@L["Doctor accounts are activated after the clinic admin checks your Medical Council number."]</p>
-        <form method="post">
+        <p class="text-muted mb-1">@L["Doctor accounts are activated after the clinic admin checks your documents."]</p>
+        <p class="text-muted small mb-4">@L["Are you a patient?"] <a asp-page="./Register">@L["Patient sign up"]</a></p>
+        <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <partial name="_RegisterFields" for="Input" />
-            <div class="mb-3">
-                <label asp-for="MedicalCouncilNumber" class="form-label"></label>
-                <input asp-for="MedicalCouncilNumber" class="form-control" dir="ltr" inputmode="numeric" />
-                <span asp-validation-for="MedicalCouncilNumber" class="text-danger small"></span>
+            <div class="row g-3 mb-3">
+                <div class="col-sm-6">
+                    <label asp-for="NationalCode" class="form-label"></label>
+                    <input asp-for="NationalCode" class="form-control" dir="ltr" inputmode="numeric" maxlength="10" autocomplete="off" />
+                    <span asp-validation-for="NationalCode" class="text-danger small"></span>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="MedicalCouncilNumber" class="form-label"></label>
+                    <input asp-for="MedicalCouncilNumber" class="form-control" dir="ltr" inputmode="numeric" />
+                    <span asp-validation-for="MedicalCouncilNumber" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Specialty" class="form-label"></label>
+                    <input asp-for="Specialty" class="form-control" />
+                </div>
             </div>
-            <div class="mb-3">
-                <label asp-for="Specialty" class="form-label"></label>
-                <input asp-for="Specialty" class="form-control" />
-                <span asp-validation-for="Specialty" class="text-danger small"></span>
+
+            <fieldset class="card card-soft mb-4">
+                <div class="card-body">
+                    <legend class="h6">@L["Documents"]</legend>
+                    <p class="small text-muted">@L["JPG, PNG, WEBP or PDF, up to 2 MB each. Only the clinic admin sees them."]</p>
+                    <div class="mb-3">
+                        <label asp-for="MedicalLicense" class="form-label required"></label>
+                        <input asp-for="MedicalLicense" type="file" class="form-control" accept="@accept" required data-max-bytes="@maxBytes" data-max-bytes-msg="@L["The file is larger than 2 MB."]" />
+                        <span asp-validation-for="MedicalLicense" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NationalIdCard" class="form-label required"></label>
+                        <input asp-for="NationalIdCard" type="file" class="form-control" accept="@accept" required data-max-bytes="@maxBytes" data-max-bytes-msg="@L["The file is larger than 2 MB."]" />
+                        <span asp-validation-for="NationalIdCard" class="text-danger small"></span>
+                    </div>
+                    <div>
+                        <label asp-for="OtherDocuments" class="form-label"></label>
+                        <input asp-for="OtherDocuments" type="file" class="form-control" accept="@accept" multiple data-max-bytes="@maxBytes" data-max-bytes-msg="@L["The file is larger than 2 MB."]" />
+                        <div class="form-text">@L["For example your specialty certificate or acupuncture certificate (up to {0} files).", Fmt.Number(Clinic.Web.Pages.Account.RegisterDoctorModel.MaxOtherDocuments)]</div>
+                        <span asp-validation-for="OtherDocuments" class="text-danger small"></span>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="sticky-actions">
+                <button type="submit" class="btn btn-success w-100">@L["Send request"]</button>
             </div>
-            <button type="submit" class="btn btn-success w-100">@L["Send request"]</button>
         </form>
     </div>
 </div>

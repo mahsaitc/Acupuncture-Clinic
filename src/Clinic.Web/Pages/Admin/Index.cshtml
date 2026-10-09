@@ -42,7 +42,7 @@
     @if (isAdmin)
     {
         <div class="col-sm-6 col-xl-4">
-            <a class="kpi" asp-page="./Users">
+            <a class="kpi" asp-page="./DoctorRequests">
                 <div class="stat-icon"><i class="bi bi-person-check"></i></div>
                 <div><div class="kpi-value">@Fmt.Number(Model.PendingDoctors)</div><div class="kpi-label">@L["Doctors waiting for approval"]</div></div>
             </a>

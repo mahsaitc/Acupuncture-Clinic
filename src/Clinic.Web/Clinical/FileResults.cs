@@ -10,22 +10,26 @@ public static class FileResults
     /// A medical file response that browsers and proxies do not cache, and that cannot be sniffed into
     /// something else. Only images and PDFs open in the browser; everything else downloads.
     /// </summary>
-    public static FileStreamResult Private(HttpResponse response, Stream stream, MedicalFile file, bool download)
+    public static FileStreamResult Private(HttpResponse response, Stream stream, MedicalFile file, bool download) =>
+        Private(response, stream, file.ContentType, file.Title, download);
+
+    public static FileStreamResult Private(HttpResponse response, Stream stream, string contentType, string title, bool download)
     {
+        var isImage = contentType.StartsWith("image/", StringComparison.Ordinal);
         response.Headers.CacheControl = "no-store, private";
         response.Headers.XContentTypeOptions = "nosniff";
-        if (file.IsImage)
+        if (isImage)
         {
             // Not for PDFs: a sandboxing policy stops the browser's own PDF viewer.
             response.Headers.ContentSecurityPolicy = "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox";
         }
 
-        var inline = !download && (file.IsImage || file.ContentType == "application/pdf");
-        var name = $"{Safe(file.Title)}{Extension(file.ContentType)}";
+        var inline = !download && (isImage || contentType == "application/pdf");
+        var name = $"{Safe(title)}{Extension(contentType)}";
         var disposition = new ContentDispositionHeaderValue(inline ? "inline" : "attachment");
         disposition.SetHttpFileName(name);
         response.Headers.ContentDisposition = disposition.ToString();
-        return new FileStreamResult(stream, file.ContentType) { EnableRangeProcessing = true };
+        return new FileStreamResult(stream, contentType) { EnableRangeProcessing = true };
     }
 
     private static string Safe(string title)

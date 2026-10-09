@@ -42,6 +42,9 @@ public partial class LocalizationTests
             used.UnionWith(Enum.GetNames(flags).Where(n => n != "None"));
         }
         used.UnionWith(["No allergy", "Has an allergy", "Has it", "Does not have it"]);
+        used.UnionWith(Web.Pages.Admin.Patients.PatientInput.Occupations);
+        used.UnionWith(Web.Pages.Admin.Patients.PatientInput.EducationLevels);
+        used.UnionWith(Enum.GetValues<Domain.Entities.DoctorDocumentKind>().Select(Web.Pages.Admin.DoctorRequestsModel.KindName));
         used.UnionWith(Enum.GetValues<Domain.Entities.BasicInsurance>().Select(Web.Pages.Admin.Patients.PatientInput.InsuranceName));
         used.UnionWith(Enum.GetNames<Domain.Entities.PointSide>());
         used.UnionWith(Application.Acupuncture.AcupointLibrary.Pages.Select(Web.Clinical.ChartText.Page));

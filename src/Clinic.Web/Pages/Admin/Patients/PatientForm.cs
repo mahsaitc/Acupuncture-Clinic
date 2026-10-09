@@ -89,6 +89,20 @@ public class PatientInput
     [Display(Name = "Treating doctor")]
     public int? DoctorId { get; set; }
 
+    /// <summary>Occupation choices, stored by their resource key (English text).</summary>
+    public static readonly string[] Occupations =
+    [
+        "Employee", "Self-employed", "Housewife", "Student", "Teacher", "Healthcare worker",
+        "Worker", "Farmer", "Driver", "Retired", "Unemployed", "Other",
+    ];
+
+    /// <summary>Education choices, stored by their resource key (English text).</summary>
+    public static readonly string[] EducationLevels =
+    [
+        "Illiterate", "Primary school", "Middle school", "High school diploma", "Associate degree",
+        "Bachelor's degree", "Master's degree", "Doctorate", "Other",
+    ];
+
     /// <summary>The order of the insurance list.</summary>
     public static readonly BasicInsurance[] InsuranceOrder =
     [
@@ -156,7 +170,7 @@ public class PatientInput
 }
 
 /// <summary>Creates and updates patients from the management panel.</summary>
-public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser> users, TimeProvider time, IStringLocalizer<SharedResource> l)
+public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser> users, Clinic.Web.Clinical.NationalCodeIndex nationalCodes, TimeProvider time, IStringLocalizer<SharedResource> l)
 {
     /// <summary>Normalises a mobile number to Latin digits without spaces.</summary>
     public static string NormalizeMobile(string? mobile) => JalaliDate.ToLatinDigits(mobile).Trim().Replace(" ", "");
@@ -179,6 +193,10 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
         if (input.DoctorId is int doctorId && !await db.Doctors.AnyAsync(d => d.Id == doctorId && d.IsApproved))
         {
             input.DoctorId = null;
+        }
+        if (await nationalCodes.InUseAsync(input.NationalCode, existingUserId))
+        {
+            modelState.AddModelError("Input.NationalCode", l["This national code is already registered for another person."]);
         }
         if (!string.IsNullOrWhiteSpace(input.Email))
         {
@@ -220,6 +238,7 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
             PhoneNumber = mobile,
             FullName = input.FullName.Trim(),
             PreferredLanguage = CulturePath.Persian,
+            NationalCodeHash = nationalCodes.Hash(input.NationalCode),
         };
         var result = await users.CreateAsync(user);
         if (!result.Succeeded)
@@ -245,6 +264,7 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
         var email = Clean(input.Email);
         user.FullName = input.FullName.Trim();
         user.PhoneNumber = NormalizeMobile(input.Mobile);
+        user.NationalCodeHash = nationalCodes.Hash(input.NationalCode);
         if (!string.Equals(user.Email, email, StringComparison.OrdinalIgnoreCase))
         {
             // Self-registered patients sign in with their email, which is also their user name.

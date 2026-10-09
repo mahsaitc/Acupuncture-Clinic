@@ -30,6 +30,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<Clinic.Web.Clinical.PrivateFileStore>();
 builder.Services.AddScoped<Clinic.Web.Clinical.AuditLog>();
 builder.Services.AddScoped<Clinic.Web.Clinical.StaffScope>();
+builder.Services.AddScoped<Clinic.Web.Clinical.NationalCodeIndex>();
 builder.Services.AddScoped<Clinic.Web.Pages.Admin.Patients.PatientRegistration>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
@@ -89,6 +90,10 @@ if (app.Configuration.GetValue("Database:MigrateOnStartup", true))
         await scope.ServiceProvider.GetRequiredService<ClinicDbContext>().Database.MigrateAsync();
     }
     await DbSeeder.SeedAsync(app.Services);
+    using (var scope = app.Services.CreateScope())
+    {
+        await scope.ServiceProvider.GetRequiredService<Clinic.Web.Clinical.NationalCodeIndex>().BackfillAsync();
+    }
 }
 
 if (!app.Environment.IsDevelopment())

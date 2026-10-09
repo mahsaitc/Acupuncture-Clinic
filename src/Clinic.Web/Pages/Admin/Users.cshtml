@@ -35,9 +35,7 @@
                             <div class="small">@L["Medical Council number"]: <span dir="ltr">@r.Doctor.MedicalCouncilNumber</span></div>
                             @if (!r.Doctor.IsApproved)
                             {
-                                <form method="post" asp-page-handler="ApproveDoctor" asp-route-id="@r.User.Id" asp-route-Q="@Model.Q" class="mt-1">
-                                    <button type="submit" class="btn btn-sm btn-warning">@L["Approve doctor"]</button>
-                                </form>
+                                <a class="btn btn-sm btn-warning mt-1" asp-page="./DoctorRequests" asp-fragment="d@(r.Doctor.Id)">@L["Review documents"]</a>
                             }
                         }
                     </td>

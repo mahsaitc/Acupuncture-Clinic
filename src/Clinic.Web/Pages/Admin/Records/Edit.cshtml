@@ -7,6 +7,7 @@
     ViewData["Title"] = title;
     var header = new Clinic.Web.Pages.Admin.Records.RecordHeader(Model.Patient, title, "record");
     var i = Model.Input;
+    var english = CulturePath.IsEnglish;
     var female = Model.Profile?.Gender != Gender.Male;
 }
 
@@ -165,7 +166,14 @@
             </div>
             <div class="col-md-4">
                 <label asp-for="Input.Icd10" class="form-label"></label>
-                <input asp-for="Input.Icd10" class="form-control" dir="ltr" placeholder="E66.9" />
+                <input asp-for="Input.Icd10" class="form-control" dir="ltr" list="icd10-list" autocomplete="off" data-fill-empty="#Input_Diagnosis" />
+                <div class="form-text">@L["Type a word of the diagnosis (for example obesity or migraine) or the code, and pick from the list."]</div>
+                <datalist id="icd10-list">
+                    @foreach (var c in Clinic.Application.Clinical.Icd10Catalog.All)
+                    {
+                        <option value="@c.Code" data-name="@(english ? c.En : c.Fa)">@c.Code - @c.Fa - @c.En</option>
+                    }
+                </datalist>
             </div>
         </div>
     </section>

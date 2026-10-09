@@ -7,7 +7,7 @@
     var isAdmin = User.IsInRole(Roles.Admin);
     var isDoctor = User.IsInRole(Roles.Doctor);
     var unread = await (await Scope.MessagesAsync(Db.ContactMessages)).CountAsync(m => m.ReadUtc == null && !m.IsArchived);
-    var pendingDoctors = isAdmin ? await Db.Doctors.CountAsync(d => !d.IsApproved) : 0;
+    var pendingDoctors = isAdmin ? await Db.Doctors.CountAsync(d => !d.IsApproved && Db.Users.Any(u => u.Id == d.UserId && u.IsActive)) : 0;
 
     string Active(string page) => path == page || path.StartsWith(page + "/") ? "active" : "";
 }
@@ -67,7 +67,8 @@
                     <a class="@Active("/Admin/Site")" asp-page="/Admin/Site"><i class="bi bi-house-gear"></i>@L["Home page and contact"]</a>
 
                     <div class="admin-nav-group">@L["Settings"]</div>
-                    <a class="@Active("/Admin/Users")" asp-page="/Admin/Users"><i class="bi bi-person-gear"></i>@L["Users"]@if (pendingDoctors > 0) { <span class="badge rounded-pill bg-warning text-dark ms-auto">@Fmt.Number(pendingDoctors)</span> }</a>
+                    <a class="@Active("/Admin/Users")" asp-page="/Admin/Users"><i class="bi bi-person-gear"></i>@L["Users"]</a>
+                    <a class="@Active("/Admin/DoctorRequests")" asp-page="/Admin/DoctorRequests"><i class="bi bi-person-check"></i>@L["Doctor requests"]@if (pendingDoctors > 0) { <span class="badge rounded-pill bg-warning text-dark ms-auto">@Fmt.Number(pendingDoctors)</span> }</a>
                     <a class="@Active("/Admin/Services")" asp-page="/Admin/Services"><i class="bi bi-grid"></i>@L["Services"]</a>
                     <a class="@Active("/Admin/Audit")" asp-page="/Admin/Audit"><i class="bi bi-shield-check"></i>@L["Access log"]</a>
                 }

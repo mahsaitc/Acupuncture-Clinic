@@ -2025,4 +2025,151 @@
   <data name="The account was created." xml:space="preserve">
     <value>حساب کاربری ساخته شد.</value>
   </data>
+  <data name="Employee" xml:space="preserve">
+    <value>کارمند</value>
+  </data>
+  <data name="Self-employed" xml:space="preserve">
+    <value>شغل آزاد</value>
+  </data>
+  <data name="Housewife" xml:space="preserve">
+    <value>خانه‌دار</value>
+  </data>
+  <data name="Student" xml:space="preserve">
+    <value>دانشجو یا دانش‌آموز</value>
+  </data>
+  <data name="Teacher" xml:space="preserve">
+    <value>معلم</value>
+  </data>
+  <data name="Healthcare worker" xml:space="preserve">
+    <value>کادر درمان</value>
+  </data>
+  <data name="Worker" xml:space="preserve">
+    <value>کارگر</value>
+  </data>
+  <data name="Farmer" xml:space="preserve">
+    <value>کشاورز</value>
+  </data>
+  <data name="Driver" xml:space="preserve">
+    <value>راننده</value>
+  </data>
+  <data name="Retired" xml:space="preserve">
+    <value>بازنشسته</value>
+  </data>
+  <data name="Unemployed" xml:space="preserve">
+    <value>بیکار</value>
+  </data>
+  <data name="Illiterate" xml:space="preserve">
+    <value>بی‌سواد</value>
+  </data>
+  <data name="Primary school" xml:space="preserve">
+    <value>ابتدایی</value>
+  </data>
+  <data name="Middle school" xml:space="preserve">
+    <value>سیکل (راهنمایی)</value>
+  </data>
+  <data name="High school diploma" xml:space="preserve">
+    <value>دیپلم</value>
+  </data>
+  <data name="Associate degree" xml:space="preserve">
+    <value>فوق‌دیپلم</value>
+  </data>
+  <data name="Bachelor's degree" xml:space="preserve">
+    <value>لیسانس</value>
+  </data>
+  <data name="Master's degree" xml:space="preserve">
+    <value>فوق‌لیسانس</value>
+  </data>
+  <data name="Doctorate" xml:space="preserve">
+    <value>دکترا</value>
+  </data>
+  <data name="This national code is already registered for another person." xml:space="preserve">
+    <value>این کد ملی قبلاً برای شخص دیگری ثبت شده است.</value>
+  </data>
+  <data name="Type a word of the diagnosis (for example obesity or migraine) or the code, and pick from the list." xml:space="preserve">
+    <value>یک کلمه از نام بیماری (مثلاً چاقی یا میگرن) یا خود کد را بنویسید و از فهرست انتخاب کنید.</value>
+  </data>
+  <data name="Medical licence or Medical Council card" xml:space="preserve">
+    <value>پروانه مطب یا کارت نظام پزشکی</value>
+  </data>
+  <data name="National ID card" xml:space="preserve">
+    <value>کارت ملی</value>
+  </data>
+  <data name="Other document" xml:space="preserve">
+    <value>سایر مدارک</value>
+  </data>
+  <data name="Other documents (optional)" xml:space="preserve">
+    <value>سایر مدارک (اختیاری)</value>
+  </data>
+  <data name="Upload at most {0} other documents." xml:space="preserve">
+    <value>حداکثر {0} مدرک دیگر بارگذاری کنید.</value>
+  </data>
+  <data name="{0} is larger than 2 MB." xml:space="preserve">
+    <value>حجم {0} بیشتر از ۲ مگابایت است.</value>
+  </data>
+  <data name="{0} must be a JPG, PNG, WEBP or PDF file." xml:space="preserve">
+    <value>{0} باید فایل JPG، PNG، WEBP یا PDF باشد.</value>
+  </data>
+  <data name="Your request and documents were sent. You can sign in once the clinic admin approves your account." xml:space="preserve">
+    <value>درخواست و مدارک شما ارسال شد. پس از تأیید مدیر کلینیک می‌توانید وارد شوید.</value>
+  </data>
+  <data name="Doctor accounts are activated after the clinic admin checks your documents." xml:space="preserve">
+    <value>حساب پزشک پس از بررسی مدارک توسط مدیر کلینیک فعال می‌شود.</value>
+  </data>
+  <data name="Are you a patient?" xml:space="preserve">
+    <value>بیمار هستید؟</value>
+  </data>
+  <data name="Documents" xml:space="preserve">
+    <value>مدارک</value>
+  </data>
+  <data name="JPG, PNG, WEBP or PDF, up to 2 MB each. Only the clinic admin sees them." xml:space="preserve">
+    <value>فایل JPG، PNG، WEBP یا PDF، هر کدام حداکثر ۲ مگابایت. فقط مدیر کلینیک آن‌ها را می‌بیند.</value>
+  </data>
+  <data name="The file is larger than 2 MB." xml:space="preserve">
+    <value>حجم فایل بیشتر از ۲ مگابایت است.</value>
+  </data>
+  <data name="For example your specialty certificate or acupuncture certificate (up to {0} files)." xml:space="preserve">
+    <value>مثلاً مدرک تخصص یا گواهی طب سوزنی (حداکثر {0} فایل).</value>
+  </data>
+  <data name="Your doctor account is waiting for the clinic admin to check your documents." xml:space="preserve">
+    <value>حساب پزشک شما در انتظار بررسی مدارک توسط مدیر کلینیک است.</value>
+  </data>
+  <data name="Doctor requests" xml:space="preserve">
+    <value>درخواست‌های پزشکان</value>
+  </data>
+  <data name="The doctor account was approved. Set their working hours so patients can book with them." xml:space="preserve">
+    <value>حساب پزشک تأیید شد. ساعات کاری او را تعیین کنید تا بیماران بتوانند نوبت بگیرند.</value>
+  </data>
+  <data name="The request was rejected and the account was deactivated." xml:space="preserve">
+    <value>درخواست رد و حساب کاربری غیرفعال شد.</value>
+  </data>
+  <data name="{0} MB" xml:space="preserve">
+    <value>{0} مگابایت</value>
+  </data>
+  <data name="{0} KB" xml:space="preserve">
+    <value>{0} کیلوبایت</value>
+  </data>
+  <data name="Check each doctor's documents. After you approve, the doctor can sign in and their dashboard is active." xml:space="preserve">
+    <value>مدارک هر پزشک را بررسی کنید. پس از تأیید شما، پزشک می‌تواند وارد شود و داشبوردش فعال می‌شود.</value>
+  </data>
+  <data name="No doctor is waiting for approval." xml:space="preserve">
+    <value>پزشکی در انتظار تأیید نیست.</value>
+  </data>
+  <data name="Requested on {0}" xml:space="preserve">
+    <value>درخواست در {0}</value>
+  </data>
+  <data name="Reject this request and deactivate the account?" xml:space="preserve">
+    <value>این درخواست رد و حساب غیرفعال شود؟</value>
+  </data>
+  <data name="Reject" xml:space="preserve">
+    <value>رد درخواست</value>
+  </data>
+  <data name="No documents were uploaded." xml:space="preserve">
+    <value>هیچ مدرکی بارگذاری نشده است.</value>
+  </data>
+  <data name="Review documents" xml:space="preserve">
+    <value>بررسی مدارک</value>
+  </data>
+  <data name="Required for doctors. No two people can have the same national code." xml:space="preserve">
+    <value>برای پزشکان الزامی است. کد ملی هیچ دو نفری نمی‌تواند یکسان باشد.</value>
+  </data>
 </root>

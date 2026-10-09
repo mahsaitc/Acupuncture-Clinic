@@ -97,27 +97,6 @@ public class UsersModel(ClinicDbContext db, UserManager<ApplicationUser> userMan
         return RedirectToPage(new { Q });
     }
 
-    public async Task<IActionResult> OnPostApproveDoctorAsync(string id)
-    {
-        var user = await userManager.FindByIdAsync(id);
-        var profile = await db.Doctors.FirstOrDefaultAsync(d => d.UserId == id);
-        if (user is null || profile is null)
-        {
-            return RedirectToPage(new { Q });
-        }
-
-        profile.IsApproved = true;
-        await db.SaveChangesAsync();
-        if (!await userManager.IsInRoleAsync(user, Roles.Doctor))
-        {
-            await userManager.AddToRoleAsync(user, Roles.Doctor);
-        }
-        await userManager.UpdateSecurityStampAsync(user);
-
-        TempData["Message"] = l["The doctor account was approved."].Value;
-        return RedirectToPage(new { Q });
-    }
-
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     /// <summary>An admin cannot remove their own admin role and lock themselves out.</summary>

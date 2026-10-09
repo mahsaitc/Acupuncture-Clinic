@@ -26,8 +26,8 @@
             @if (p?.Children is int kids) { <div><dt>@L["Number of children"]</dt><dd>@Fmt.Number(kids)</dd></div> }
             @if (p?.FirstVisitDate is DateOnly fv) { <div><dt>@L["Date of first visit"]</dt><dd>@Fmt.Day(fv)</dd></div> }
             @if (p?.FatherName is { } father) { <div><dt>@L["Father's name"]</dt><dd>@father</dd></div> }
-            @if (p?.Occupation is { } job) { <div><dt>@L["Occupation"]</dt><dd>@job</dd></div> }
-            @if (p?.Education is { } edu) { <div><dt>@L["Education"]</dt><dd>@edu</dd></div> }
+            @if (p?.Occupation is { } job) { <div><dt>@L["Occupation"]</dt><dd>@L[job]</dd></div> }
+            @if (p?.Education is { } edu) { <div><dt>@L["Education"]</dt><dd>@L[edu]</dd></div> }
             @if (p?.City is not null || p?.Address is not null) { <div class="wide"><dt>@L["Address"]</dt><dd>@p!.City@(p.City is not null && p.Address is not null ? "، " : "")@p.Address @if (p.PostalCode is { } zip) { <span class="text-muted" dir="ltr">(@zip)</span> }</dd></div> }
             @if (doctorName is not null) { <div><dt>@L["Treating doctor"]</dt><dd>@doctorName</dd></div> }
             @if (p?.Referral is not null || p?.ReferralSource is not null) { <div><dt>@L["Referred by"]</dt><dd>@(p!.Referral is ReferralChannel rc ? L[rc.ToString()] : "")@(p.Referral is not null && p.ReferralSource is not null ? " - " : "")@p.ReferralSource</dd></div> }

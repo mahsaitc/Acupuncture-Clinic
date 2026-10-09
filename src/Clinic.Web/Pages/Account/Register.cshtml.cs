@@ -38,7 +38,8 @@ public class RegisterModel(UserManager<ApplicationUser> userManager, SignInManag
 
     internal static async Task<ApplicationUser?> CreateUserAsync(
         UserManager<ApplicationUser> userManager, RegisterInput input,
-        Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary modelState, string role, IStringLocalizer<SharedResource> l)
+        Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary modelState, string? role, IStringLocalizer<SharedResource> l,
+        string? nationalCodeHash = null)
     {
         if (await userManager.FindByEmailAsync(input.Email) is not null)
         {
@@ -61,6 +62,7 @@ public class RegisterModel(UserManager<ApplicationUser> userManager, SignInManag
             PhoneNumber = mobile,
             FullName = input.FullName.Trim(),
             PreferredLanguage = CulturePath.IsEnglish ? CulturePath.English : CulturePath.Persian,
+            NationalCodeHash = nationalCodeHash,
         };
 
         var result = await userManager.CreateAsync(user, input.Password);
@@ -73,7 +75,10 @@ public class RegisterModel(UserManager<ApplicationUser> userManager, SignInManag
             return null;
         }
 
-        await userManager.AddToRoleAsync(user, role);
+        if (role is not null)
+        {
+            await userManager.AddToRoleAsync(user, role);
+        }
         return user;
     }
 }
