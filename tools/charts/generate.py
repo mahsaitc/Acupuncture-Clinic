@@ -31,7 +31,7 @@ def cs(text):
 
 DRAWN = "--drawn" in sys.argv  # go back to the drawn charts on purpose
 PHOTO = photo.available() and not DRAWN
-PHOTO_VIEWS = set(photo.VIEWS) if PHOTO else set()
+PHOTO_VIEWS = set(photo.views()) if PHOTO else set()
 if not PHOTO and not DRAWN:
     left = [k for k in photo.VIEWS if os.path.exists(os.path.join(CHARTS, f"{k}.png"))]
     if left:

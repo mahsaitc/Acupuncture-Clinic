@@ -19,8 +19,13 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 FRAMES_FILE = os.path.join(ROOT, "tools", "blender", "charts.json")
 SILHOUETTES_FILE = os.path.join(os.path.dirname(__file__), "photo", "silhouettes.json")
 
-# Charts drawn from the render. The ear chart stays a drawing.
+# Charts drawn from the render. The ear chart joins them when its picture (ear.png) is in the charts folder.
 VIEWS = ["front", "back", "side", "head-front", "head-side", "arm-inner", "arm-outer", "leg-inner", "leg-outer"]
+CHARTS_DIR = os.path.join(ROOT, "src", "Clinic.Web", "wwwroot", "img", "charts")
+
+
+def views():
+    return VIEWS + (["ear"] if os.path.exists(os.path.join(CHARTS_DIR, "ear.png")) else [])
 
 # Per-point corrections after the automatic placement, in chart units: {(view, code): (dx_or_dx, dy)}.
 # On symmetric charts (front, back, head-front) the first number is the distance from the midline.
@@ -52,8 +57,23 @@ HEAD_FRONT_DX_RATIO = 0.86
 ARM_Y = [(12, "shoulder"), (230, "elbow"), (400, "wrist"), (447, "knuckles"), (476.6, "fingertip")]
 LEG_Y = [(10, "hip"), (238, "knee"), (422, "ankle"), (466, "sole")]
 
+# The left ear from the side, face on the left. Each pair: a landmark on the drawn ear chart (x, y) and the same landmark on the
+# model as (front-to-back y, height z) in metres, from the Z-Anatomy boxes of the helix, lobule, tragus, antitragus, intertragic
+# incisure, triangular fossa, cymba conchae and the cavity of the concha. The points move by the affine map that fits them.
+EAR_LANDMARKS = [
+    ((110, 19), (0.0075, 1.607)),     # top of the helix
+    ((102, 290), (0.0005, 1.551)),    # bottom of the lobe
+    ((80, 178), (-0.0045, 1.5775)),   # tragus
+    ((116, 214), (0.003, 1.5655)),    # antitragus
+    ((90, 220), (-0.0035, 1.5665)),   # intertragic notch
+    ((102, 72), (0.004, 1.5955)),     # triangular fossa
+    ((104, 108), (0.0085, 1.583)),    # cymba conchae
+    ((105, 172), (0.006, 1.573)),     # cavity of the concha
+]
+
 _frames = None
 _silhouettes = None
+_ear_map = None
 
 
 def available():
@@ -179,6 +199,44 @@ def _front_back(view, dx, y, figures):
     return _safe_dx(dx, _across((old[0][0] - 100, old[0][1] - 100), new, dx)), y_new
 
 
+def _solve3(m, v):
+    def det(a):
+        return (a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0])
+                + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0]))
+    d = det(m)
+    out = []
+    for i in range(3):
+        mi = [row[:] for row in m]
+        for r in range(3):
+            mi[r][i] = v[r]
+        out.append(det(mi) / d)
+    return out
+
+
+def _ear_affine():
+    """Least-squares affine map from the drawn ear chart to the rendered one: (a, b, c) for x and (d, e, f) for y."""
+    global _ear_map
+    if _ear_map is None:
+        frame = _load()[0]["ear"]
+        w, h = frame["size"]
+        s = frame["px_per_m"]
+        _, cy, cz = frame["center"]
+        pairs = [((ox, oy), (w / 2 + (my - cy) * s, h / 2 - (mz - cz) * s)) for (ox, oy), (my, mz) in EAR_LANDMARKS]
+        coefs = []
+        for k in (0, 1):
+            m = [[0.0] * 3 for _ in range(3)]
+            v = [0.0] * 3
+            for (ox, oy), new in pairs:
+                row = (ox, oy, 1.0)
+                for i in range(3):
+                    v[i] += row[i] * new[k]
+                    for j in range(3):
+                        m[i][j] += row[i] * row[j]
+            coefs.append(_solve3(m, v))
+        _ear_map = coefs
+    return _ear_map
+
+
 def remap(view, x, y, code=None):
     """New chart position of a point drawn at (x, y) on the schematic chart `view`. Symmetric charts take and return
     the distance from the midline in x."""
@@ -203,6 +261,9 @@ def remap(view, x, y, code=None):
         ny = _interp(_anchors(view, LEG_Y), y)
         poly = figures.LEG_OUTLINE if view == "leg-inner" else figures.mirror(figures.LEG_OUTLINE, 80)
         nx = _single_run(view, poly, x, y, ny)
+    elif view == "ear":
+        (a, b, c), (d, e, f) = _ear_affine()
+        nx, ny = a * x + b * y + c, d * x + e * y + f
     else:
         raise ValueError(f"{view} is not a photo chart")
     ax, ay = ADJUST.get((view, code), (0, 0))
