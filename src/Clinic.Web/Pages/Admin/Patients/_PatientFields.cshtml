@@ -1,5 +1,9 @@
 @using Clinic.Domain.Entities
 @model Clinic.Web.Pages.Admin.Patients.PatientInput
+@inject Clinic.Web.Clinical.StaffScope Scope
+@{
+    var doctors = await Scope.DoctorsAsync();
+}
 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 <div class="row g-4">
     <div class="col-xl-6">
@@ -65,6 +69,16 @@
                         <input asp-for="FirstVisitDate" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
                         <span asp-validation-for="FirstVisitDate" class="text-danger small"></span>
                     </div>
+                    @if (doctors.Count > 0)
+                    {
+                        <div class="col-sm-6">
+                            <label asp-for="DoctorId" class="form-label"></label>
+                            <select asp-for="DoctorId" class="form-select">
+                                <option value="">-</option>
+                                @foreach (var d in doctors) { <option value="@d.Id">@d.Name</option> }
+                            </select>
+                        </div>
+                    }
                     <div class="col-sm-6">
                         <label asp-for="Referral" class="form-label"></label>
                         <select asp-for="Referral" class="form-select">
@@ -80,7 +94,7 @@
                         <label asp-for="Insurance" class="form-label"></label>
                         <select asp-for="Insurance" class="form-select">
                             <option value="">-</option>
-                            @foreach (var i in Enum.GetValues<BasicInsurance>()) { <option value="@i">@L[Clinic.Web.Pages.Admin.Patients.PatientInput.InsuranceName(i)]</option> }
+                            @foreach (var i in Clinic.Web.Pages.Admin.Patients.PatientInput.InsuranceOrder) { <option value="@i">@L[Clinic.Web.Pages.Admin.Patients.PatientInput.InsuranceName(i)]</option> }
                         </select>
                     </div>
                     <div class="col-sm-6">

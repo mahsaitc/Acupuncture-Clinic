@@ -29,6 +29,7 @@ builder.Services.AddScoped<IdentityErrorDescriber, LocalizedIdentityErrorDescrib
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<Clinic.Web.Clinical.PrivateFileStore>();
 builder.Services.AddScoped<Clinic.Web.Clinical.AuditLog>();
+builder.Services.AddScoped<Clinic.Web.Clinical.StaffScope>();
 builder.Services.AddScoped<Clinic.Web.Pages.Admin.Patients.PatientRegistration>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
@@ -38,6 +39,9 @@ builder.Services.AddRazorPages(options =>
         options.Conventions.AuthorizeFolder("/Admin", Policies.Staff);
         // Medical records are for doctors only, never receptionists.
         options.Conventions.AuthorizeFolder("/Admin/Records", Policies.Doctor);
+        // A doctor who is not the admin opens only their own patients.
+        options.Conventions.AddFolderApplicationModelConvention("/Admin/Records", m => m.Filters.Add(new Clinic.Web.Clinical.PatientAccessFilter("patientId")));
+        options.Conventions.AddFolderApplicationModelConvention("/Admin/Patients", m => m.Filters.Add(new Clinic.Web.Clinical.PatientAccessFilter("id")));
         options.Conventions.AuthorizeFolder("/Files");
         options.Conventions.AuthorizeFolder("/Appointments");
         options.Conventions.AuthorizeFolder("/Booking");

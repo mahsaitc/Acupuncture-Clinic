@@ -51,14 +51,33 @@ public class UsersModel(ClinicDbContext db, UserManager<ApplicationUser> userMan
             return RedirectToPage(new { Q });
         }
 
+        var profile = role == Roles.Doctor ? await db.Doctors.FirstOrDefaultAsync(d => d.UserId == id) : null;
         if (await userManager.IsInRoleAsync(user, role))
         {
             await userManager.RemoveFromRoleAsync(user, role);
+            // A former doctor no longer appears in the booking list; their history stays.
+            if (profile is not null)
+            {
+                profile.IsApproved = false;
+            }
         }
         else
         {
             await userManager.AddToRoleAsync(user, role);
+            // Giving the doctor role makes the user a bookable doctor at once.
+            if (role == Roles.Doctor)
+            {
+                if (profile is null)
+                {
+                    db.Doctors.Add(new DoctorProfile { UserId = id, MedicalCouncilNumber = "", IsApproved = true });
+                }
+                else
+                {
+                    profile.IsApproved = true;
+                }
+            }
         }
+        await db.SaveChangesAsync();
         await userManager.UpdateSecurityStampAsync(user);
         return RedirectToPage(new { Q });
     }

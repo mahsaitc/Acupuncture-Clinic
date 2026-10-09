@@ -86,12 +86,24 @@ public class PatientInput
     [Display(Name = "Referral details")]
     public string? ReferralSource { get; set; }
 
+    [Display(Name = "Treating doctor")]
+    public int? DoctorId { get; set; }
+
+    /// <summary>The order of the insurance list.</summary>
+    public static readonly BasicInsurance[] InsuranceOrder =
+    [
+        BasicInsurance.SocialSecurity, BasicInsurance.Salamat, BasicInsurance.ArmedForces, BasicInsurance.ImamKhomeiniRelief,
+        BasicInsurance.Bank, BasicInsurance.OtherInsurance, BasicInsurance.NoInsurance,
+    ];
+
     /// <summary>Resource key (English text) for each basic insurance.</summary>
     public static string InsuranceName(BasicInsurance i) => i switch
     {
         BasicInsurance.SocialSecurity => "Social security",
         BasicInsurance.Salamat => "Salamat insurance",
         BasicInsurance.ArmedForces => "Armed forces",
+        BasicInsurance.ImamKhomeiniRelief => "Imam Khomeini Relief Committee",
+        BasicInsurance.Bank => "Bank insurance",
         BasicInsurance.OtherInsurance => "Other insurance",
         _ => "No insurance",
     };
@@ -134,6 +146,7 @@ public class PatientInput
         PostalCode = p?.PostalCode,
         Referral = p?.Referral,
         ReferralSource = p?.ReferralSource,
+        DoctorId = p?.DoctorProfileId,
         Insurance = p?.Insurance,
         HasSupplementaryInsurance = p?.HasSupplementaryInsurance,
         EmergencyContactName = p?.EmergencyContactName,
@@ -162,6 +175,10 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
         if (mobile.Length > 0 && await db.Users.AnyAsync(u => u.PhoneNumber == mobile && u.Id != existingUserId))
         {
             modelState.AddModelError("Input.Mobile", l["A patient with this mobile number is already registered."]);
+        }
+        if (input.DoctorId is int doctorId && !await db.Doctors.AnyAsync(d => d.Id == doctorId && d.IsApproved))
+        {
+            input.DoctorId = null;
         }
         if (!string.IsNullOrWhiteSpace(input.Email))
         {
@@ -282,6 +299,7 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
         p.PostalCode = Clean(JalaliDate.ToLatinDigits(input.PostalCode ?? ""));
         p.Referral = input.Referral;
         p.ReferralSource = Clean(input.ReferralSource);
+        p.DoctorProfileId = input.DoctorId;
         p.Insurance = input.Insurance;
         p.HasSupplementaryInsurance = input.HasSupplementaryInsurance;
         p.EmergencyContactName = Clean(input.EmergencyContactName);

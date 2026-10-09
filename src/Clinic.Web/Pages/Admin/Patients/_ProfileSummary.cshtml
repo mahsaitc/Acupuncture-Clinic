@@ -1,7 +1,10 @@
 @using Clinic.Domain.Entities
 @model Clinic.Web.Pages.Admin.Patients.ProfileSummary
 @inject TimeProvider Time
+@inject Clinic.Web.Clinical.StaffScope Scope
 @{
+    var doctorName = p0() is int did ? (await Scope.DoctorsAsync()).FirstOrDefault(d => d.Id == did).Name : null;
+    int? p0() => Model.Profile?.DoctorProfileId;
     var p = Model.Profile;
     var u = Model.Patient;
     var age = p?.AgeOn(DateOnly.FromDateTime(Time.GetUtcNow().UtcDateTime));
@@ -26,6 +29,7 @@
             @if (p?.Occupation is { } job) { <div><dt>@L["Occupation"]</dt><dd>@job</dd></div> }
             @if (p?.Education is { } edu) { <div><dt>@L["Education"]</dt><dd>@edu</dd></div> }
             @if (p?.City is not null || p?.Address is not null) { <div class="wide"><dt>@L["Address"]</dt><dd>@p!.City@(p.City is not null && p.Address is not null ? "، " : "")@p.Address @if (p.PostalCode is { } zip) { <span class="text-muted" dir="ltr">(@zip)</span> }</dd></div> }
+            @if (doctorName is not null) { <div><dt>@L["Treating doctor"]</dt><dd>@doctorName</dd></div> }
             @if (p?.Referral is not null || p?.ReferralSource is not null) { <div><dt>@L["Referred by"]</dt><dd>@(p!.Referral is ReferralChannel rc ? L[rc.ToString()] : "")@(p.Referral is not null && p.ReferralSource is not null ? " - " : "")@p.ReferralSource</dd></div> }
             @if (p?.Insurance is BasicInsurance bi) { <div><dt>@L["Basic insurance"]</dt><dd>@L[Clinic.Web.Pages.Admin.Patients.PatientInput.InsuranceName(bi)]</dd></div> }
             else if (p?.InsuranceProvider is { } ins) { <div><dt>@L["Insurance"]</dt><dd>@ins</dd></div> }

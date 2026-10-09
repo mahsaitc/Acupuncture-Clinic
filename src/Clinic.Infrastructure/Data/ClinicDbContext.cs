@@ -92,6 +92,8 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
             e.Property(m => m.Subject).HasMaxLength(200).IsRequired();
             e.Property(m => m.Body).HasMaxLength(4000).IsRequired();
             e.HasIndex(m => new { m.IsArchived, m.CreatedUtc });
+            // A plain indexed column, not a foreign key: adding one to an existing SQLite table rebuilds the table.
+            e.HasIndex(m => m.DoctorProfileId);
         });
 
         builder.Entity<Post>(e =>
@@ -130,6 +132,7 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
             e.Property(p => p.PostalCode).HasMaxLength(20);
             e.Property(p => p.ReferralSource).HasMaxLength(200);
             e.Property(p => p.InsuranceProvider).HasMaxLength(100);
+            e.HasIndex(p => p.DoctorProfileId);
             e.Property(p => p.EmergencyContactName).HasMaxLength(200);
             e.Property(p => p.EmergencyContactPhone).HasMaxLength(30);
             e.Property(p => p.Notes).HasMaxLength(2000);

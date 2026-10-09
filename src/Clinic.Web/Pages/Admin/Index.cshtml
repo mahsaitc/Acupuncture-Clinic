@@ -8,7 +8,7 @@
 
 <div class="page-head">
     <div>
-        <h1 class="h3">@L["Dashboard"]</h1>
+        <h1 class="h3">@(Model.OwnOnly && Model.DoctorName is not null ? L["Dashboard of {0}", Model.DoctorName] : L["Dashboard"])</h1>
         <div class="text-muted">@Fmt.Date(DateTime.UtcNow)</div>
     </div>
     <a class="btn btn-success" asp-page="/Booking/Index"><i class="bi bi-plus-lg me-1"></i>@L["New appointment"]</a>
@@ -30,7 +30,7 @@
     <div class="col-sm-6 col-xl-4">
         <a class="kpi" asp-page="./Patients/Index">
             <div class="stat-icon"><i class="bi bi-people"></i></div>
-            <div><div class="kpi-value">@Fmt.Number(Model.PatientCount)</div><div class="kpi-label">@L["Registered patients"]</div></div>
+            <div><div class="kpi-value">@Fmt.Number(Model.PatientCount)</div><div class="kpi-label">@(Model.OwnOnly ? L["My patients"] : L["Registered patients"])</div></div>
         </a>
     </div>
     <div class="col-sm-6 col-xl-4">
@@ -48,12 +48,15 @@
             </a>
         </div>
     }
+    @if (!Model.OwnOnly)
+    {
     <div class="col-sm-6 col-xl-4">
         <div class="kpi">
             <div class="stat-icon"><i class="bi bi-journal-text"></i></div>
             <div><div class="kpi-value">@Fmt.Number(Model.PublishedPosts)</div><div class="kpi-label">@L["Published posts and articles"]</div></div>
         </div>
     </div>
+    }
 </div>
 
 <div class="row g-4">
@@ -109,3 +112,34 @@
         </div>
     </div>
 </div>
+
+@if (Model.DoctorName is not null)
+{
+    <section class="card card-soft mt-4">
+        <div class="card-body">
+            <h2 class="h5 mb-1">@L["My working hours"]</h2>
+            <p class="text-muted small">@L["Only the clinic admin can change working hours."]</p>
+            @if (Model.Hours.Count == 0)
+            {
+                <p class="text-muted mb-0">@L["No working hours are set yet, so patients cannot book with you."]</p>
+            }
+            else
+            {
+                <div class="d-flex flex-wrap gap-3">
+                    @foreach (var day in Clinic.Web.Pages.Admin.ScheduleModel.WeekOrder)
+                    {
+                        var blocks = Model.Hours.Where(w => w.DayOfWeek == day).OrderBy(w => w.Start).ToList();
+                        if (blocks.Count == 0) { continue; }
+                        <div>
+                            <div class="fw-semibold">@L[day.ToString()]</div>
+                            @foreach (var b in blocks)
+                            {
+                                <span class="badge bg-success-subtle text-success-emphasis me-1">@L["{0} to {1}", Fmt.Number(b.Start.ToString("HH:mm")), Fmt.Number(b.End.ToString("HH:mm"))]</span>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+}

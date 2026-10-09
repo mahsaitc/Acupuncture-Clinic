@@ -1935,4 +1935,94 @@
   <data name="No insurance" xml:space="preserve">
     <value>بدون بیمه (آزاد)</value>
   </data>
+  <data name="Imam Khomeini Relief Committee" xml:space="preserve">
+    <value>کمیته امداد امام خمینی</value>
+  </data>
+  <data name="Bank insurance" xml:space="preserve">
+    <value>بیمه بانک‌ها</value>
+  </data>
+  <data name="Treating doctor" xml:space="preserve">
+    <value>پزشک معالج</value>
+  </data>
+  <data name="Recipient" xml:space="preserve">
+    <value>گیرنده</value>
+  </data>
+  <data name="The clinic (general)" xml:space="preserve">
+    <value>کلینیک (عمومی)</value>
+  </data>
+  <data name="With an appointment" xml:space="preserve">
+    <value>همراه نوبت</value>
+  </data>
+  <data name="Sent to" xml:space="preserve">
+    <value>ارسال به</value>
+  </data>
+  <data name="Doctors' working hours" xml:space="preserve">
+    <value>ساعات کاری پزشکان</value>
+  </data>
+  <data name="There is no approved doctor yet. Add one under Users." xml:space="preserve">
+    <value>هنوز پزشک تأییدشده‌ای وجود ندارد. از بخش کاربران یک پزشک اضافه کنید.</value>
+  </data>
+  <data name="All doctors" xml:space="preserve">
+    <value>همه پزشکان</value>
+  </data>
+  <data name="Dashboard of {0}" xml:space="preserve">
+    <value>داشبورد {0}</value>
+  </data>
+  <data name="My patients" xml:space="preserve">
+    <value>بیماران من</value>
+  </data>
+  <data name="My working hours" xml:space="preserve">
+    <value>ساعات کاری من</value>
+  </data>
+  <data name="Only the clinic admin can change working hours." xml:space="preserve">
+    <value>ساعات کاری را فقط مدیر کلینیک می‌تواند تغییر دهد.</value>
+  </data>
+  <data name="No working hours are set yet, so patients cannot book with you." xml:space="preserve">
+    <value>هنوز ساعت کاری برای شما تعیین نشده و بیماران نمی‌توانند با شما نوبت بگیرند.</value>
+  </data>
+  <data name="Note with the appointment on {0}" xml:space="preserve">
+    <value>پیام همراه نوبت {0}</value>
+  </data>
+  <data name="Message for the doctor (optional)" xml:space="preserve">
+    <value>پیام برای پزشک (اختیاری)</value>
+  </data>
+  <data name="Your doctor will see this message in their inbox." xml:space="preserve">
+    <value>پزشک این پیام را در بخش پیام‌های خود می‌بیند.</value>
+  </data>
+  <data name="Send to" xml:space="preserve">
+    <value>ارسال به</value>
+  </data>
+  <data name="New user" xml:space="preserve">
+    <value>کاربر جدید</value>
+  </data>
+  <data name="Back to users" xml:space="preserve">
+    <value>بازگشت به کاربران</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>حساب کاربری</value>
+  </data>
+  <data name="Doctor details" xml:space="preserve">
+    <value>مشخصات پزشک</value>
+  </data>
+  <data name="Specialty (Persian)" xml:space="preserve">
+    <value>تخصص (فارسی)</value>
+  </data>
+  <data name="Specialty (English)" xml:space="preserve">
+    <value>تخصص (انگلیسی)</value>
+  </data>
+  <data name="A doctor created here is approved at once. Next you set their working hours." xml:space="preserve">
+    <value>پزشکی که اینجا ساخته شود بلافاصله تأیید می‌شود. در مرحله بعد ساعات کاری او را تعیین می‌کنید.</value>
+  </data>
+  <data name="Create account" xml:space="preserve">
+    <value>ساخت حساب</value>
+  </data>
+  <data name="Choose at least one role." xml:space="preserve">
+    <value>دست‌کم یک نقش انتخاب کنید.</value>
+  </data>
+  <data name="The doctor's account was created. Set their working hours so patients can book with them." xml:space="preserve">
+    <value>حساب پزشک ساخته شد. ساعات کاری او را تعیین کنید تا بیماران بتوانند نوبت بگیرند.</value>
+  </data>
+  <data name="The account was created." xml:space="preserve">
+    <value>حساب کاربری ساخته شد.</value>
+  </data>
 </root>

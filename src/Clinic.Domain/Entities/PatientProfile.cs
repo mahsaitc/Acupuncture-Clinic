@@ -26,6 +26,8 @@ public enum BasicInsurance
     ArmedForces = 2,
     OtherInsurance = 3,
     NoInsurance = 4,
+    ImamKhomeiniRelief = 5,
+    Bank = 6,
 }
 
 /// <summary>
@@ -59,6 +61,9 @@ public class PatientProfile
 
     /// <summary>Optional detail, e.g. the friend's or the referring doctor's name.</summary>
     public string? ReferralSource { get; set; }
+    /// <summary>The doctor who treats the patient; doctors see their own patients.</summary>
+    public int? DoctorProfileId { get; set; }
+
     public BasicInsurance? Insurance { get; set; }
 
     /// <summary>Whether the patient has supplementary insurance; null when not asked.</summary>

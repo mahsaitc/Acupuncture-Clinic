@@ -1,0 +1,74 @@
+@page
+@model Clinic.Web.Pages.Admin.UserCreateModel
+@{
+    ViewData["Title"] = L["New user"];
+}
+
+<div class="page-head">
+    <h1 class="h3">@L["New user"]</h1>
+    <a class="btn btn-outline-secondary" asp-page="./Users">@L["Back to users"]</a>
+</div>
+
+<form method="post" class="row g-4">
+    <div class="col-lg-6">
+        <section class="card card-soft">
+            <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-person-plus me-2 text-success"></i>@L["Account"]</h2>
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <partial name="/Pages/Account/_RegisterFields.cshtml" for="Input" />
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-6">
+        <section class="card card-soft mb-4">
+            <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-person-gear me-2 text-success"></i>@L["Roles"]</h2>
+                <div class="d-flex flex-wrap gap-3" id="roles">
+                    @foreach (var role in Roles.All)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="SelectedRoles" value="@role" id="role-@role" checked="@Model.SelectedRoles.Contains(role)" />
+                            <label class="form-check-label" for="role-@role">@L[role]</label>
+                        </div>
+                    }
+                </div>
+                <span asp-validation-for="SelectedRoles" class="text-danger small"></span>
+            </div>
+        </section>
+        <section class="card card-soft" id="doctor-fields">
+            <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-heart-pulse me-2 text-success"></i>@L["Doctor details"]</h2>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="MedicalCouncilNumber" class="form-label required"></label>
+                        <input asp-for="MedicalCouncilNumber" class="form-control" dir="ltr" inputmode="numeric" />
+                        <span asp-validation-for="MedicalCouncilNumber" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="SpecialtyFa" class="form-label"></label>
+                        <input asp-for="SpecialtyFa" class="form-control" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="SpecialtyEn" class="form-label"></label>
+                        <input asp-for="SpecialtyEn" class="form-control" dir="ltr" />
+                    </div>
+                </div>
+                <div class="form-text mt-2">@L["A doctor created here is approved at once. Next you set their working hours."]</div>
+            </div>
+        </section>
+    </div>
+    <div class="col-12 sticky-actions">
+        <button type="submit" class="btn btn-success px-4">@L["Create account"]</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        (() => {
+            const box = document.getElementById('role-Doctor'), fields = document.getElementById('doctor-fields');
+            const sync = () => fields.hidden = !box.checked;
+            box.addEventListener('change', sync);
+            sync();
+        })();
+    </script>
+}

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Clinic.Web.Pages.Admin.Patients;
 
-public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userManager) : PageModel
+public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userManager, Clinic.Web.Clinical.StaffScope scope) : PageModel
 {
     public ApplicationUser Patient { get; private set; } = default!;
     public List<Appointment> Appointments { get; private set; } = [];
@@ -31,14 +31,14 @@ public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userM
         Patient = user;
         Profile = await db.PatientProfiles.AsNoTracking().FirstOrDefaultAsync(p => p.UserId == id);
 
-        Appointments = await db.Appointments.AsNoTracking()
+        Appointments = await (await scope.AppointmentsAsync(db.Appointments)).AsNoTracking()
             .Include(a => a.Service)
             .Where(a => a.PatientUserId == id)
             .OrderByDescending(a => a.StartUtc)
             .Take(100)
             .ToListAsync();
 
-        Messages = await db.ContactMessages.AsNoTracking()
+        Messages = await (await scope.MessagesAsync(db.ContactMessages)).AsNoTracking()
             .Where(m => m.UserId == id)
             .OrderByDescending(m => m.CreatedUtc)
             .Take(20)

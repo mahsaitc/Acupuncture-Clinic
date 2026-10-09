@@ -1,11 +1,12 @@
 @using Microsoft.EntityFrameworkCore
 @inject Clinic.Infrastructure.Data.ClinicDbContext Db
+@inject Clinic.Web.Clinical.StaffScope Scope
 @{
     var english = CulturePath.IsEnglish;
     var path = (ViewContext.RouteData.Values["page"] as string) ?? "";
     var isAdmin = User.IsInRole(Roles.Admin);
     var isDoctor = User.IsInRole(Roles.Doctor);
-    var unread = await Db.ContactMessages.CountAsync(m => m.ReadUtc == null && !m.IsArchived);
+    var unread = await (await Scope.MessagesAsync(Db.ContactMessages)).CountAsync(m => m.ReadUtc == null && !m.IsArchived);
     var pendingDoctors = isAdmin ? await Db.Doctors.CountAsync(d => !d.IsApproved) : 0;
 
     string Active(string page) => path == page || path.StartsWith(page + "/") ? "active" : "";
@@ -50,9 +51,9 @@
                 <a class="@Active("/Admin/Appointments")" asp-page="/Admin/Appointments"><i class="bi bi-calendar3"></i>@L["Appointments"]</a>
                 <a class="@Active("/Admin/Patients")" asp-page="/Admin/Patients/Index"><i class="bi bi-people"></i>@L["Patients"]</a>
                 <a class="@Active("/Admin/Messages")" asp-page="/Admin/Messages"><i class="bi bi-envelope"></i>@L["Messages"]@if (unread > 0) { <span class="badge rounded-pill bg-warning text-dark ms-auto">@Fmt.Number(unread)</span> }</a>
-                @if (isDoctor)
+                @if (isAdmin)
                 {
-                    <a class="@Active("/Admin/Schedule")" asp-page="/Admin/Schedule"><i class="bi bi-clock"></i>@L["Working hours"]</a>
+                    <a class="@Active("/Admin/Schedule")" asp-page="/Admin/Schedule"><i class="bi bi-clock"></i>@L["Doctors' working hours"]</a>
                 }
 
                 @if (isAdmin || isDoctor)

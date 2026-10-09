@@ -10,12 +10,12 @@ namespace Clinic.Web.Pages.Admin.Records;
 
 /// <summary>Streams a patient's file to a doctor. Opening a file is audited; thumbnails on a page already audited are not.</summary>
 [Authorize(Policy = Policies.Doctor)]
-public class FileModel(ClinicDbContext db, PrivateFileStore store, AuditLog audit) : PageModel
+public class FileModel(ClinicDbContext db, PrivateFileStore store, AuditLog audit, StaffScope scope) : PageModel
 {
     public async Task<IActionResult> OnGetAsync(int id, bool thumb = false, bool download = false)
     {
         var file = await db.MedicalFiles.AsNoTracking().FirstOrDefaultAsync(f => f.Id == id);
-        if (file is null || (thumb && !file.IsImage))
+        if (file is null || (thumb && !file.IsImage) || (scope.IsOwnOnly && await scope.FindPatientAsync(file.PatientUserId) is null))
         {
             return NotFound();
         }

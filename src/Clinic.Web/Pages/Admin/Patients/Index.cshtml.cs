@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Clinic.Web.Pages.Admin.Patients;
 
-public class IndexModel(ClinicDbContext db, TimeProvider time) : PageModel
+public class IndexModel(ClinicDbContext db, Clinic.Web.Clinical.StaffScope scope, TimeProvider time) : PageModel
 {
     private const int PageSize = 30;
 
@@ -34,6 +34,7 @@ public class IndexModel(ClinicDbContext db, TimeProvider time) : PageModel
                     join ur in db.UserRoles on u.Id equals ur.UserId
                     where ur.RoleId == patientRoleId
                     select u;
+        query = await scope.PatientsAsync(query);
         if (!string.IsNullOrWhiteSpace(Q))
         {
             var q = Q.Trim();

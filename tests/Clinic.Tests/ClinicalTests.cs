@@ -175,7 +175,7 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
     public async Task Doctor_saves_record_with_persian_digits_and_diagnosis_is_encrypted()
     {
         var patient = await CreateUserAsync(Roles.Patient);
-        var client = await LoginAsync(await CreateUserAsync(Roles.Doctor));
+        var client = await LoginAsync(await AssignAsync(await CreateUserAsync(Roles.Doctor), patient));
         var url = $"/Admin/Records/Edit?patientId={patient.Id}";
 
         // Tick boxes send one value per box, so this form has repeated keys.
@@ -234,7 +234,7 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
     public async Task Doctor_records_a_session_with_points()
     {
         var patient = await CreateUserAsync(Roles.Patient);
-        var client = await LoginAsync(await CreateUserAsync(Roles.Doctor));
+        var client = await LoginAsync(await AssignAsync(await CreateUserAsync(Roles.Doctor), patient));
         var json = """
             [{"code":"ST36","label":"ST36 Zusanli","side":"Right"},
              {"code":"EAR-1","label":"Shenmen ear","view":"ear","side":"Left","x":500,"y":40,"note":"seed"}]
@@ -333,7 +333,7 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
     public async Task Doctor_opening_a_file_is_audited()
     {
         var patient = await CreateUserAsync(Roles.Patient);
-        var client = await LoginAsync(await CreateUserAsync(Roles.Doctor));
+        var client = await LoginAsync(await AssignAsync(await CreateUserAsync(Roles.Doctor), patient));
         var upload = await UploadAsync(client, $"/Admin/Records/Files?handler=Upload&patientId={patient.Id}", "x.png", "image/png", Png, "Upload.Title", "X-ray");
         Assert.Equal(HttpStatusCode.Redirect, upload.StatusCode);
 
@@ -350,15 +350,40 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
             a => a.PatientUserId == patient.Id && a.Action == AuditAction.ViewFile && a.EntityId == id.ToString());
     }
 
-    private async Task<ApplicationUser> CreateUserAsync(string role)
+    private async Task<ApplicationUser> CreateUserAsync(string role, string? name = null)
     {
         using var scope = factory.Services.CreateScope();
         var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var email = $"{role.ToLowerInvariant()}-{Guid.NewGuid():N}@test";
-        var user = new ApplicationUser { UserName = email, Email = email, FullName = $"{role} test" };
+        var user = new ApplicationUser { UserName = email, Email = email, FullName = name ?? $"{role} test" };
         Assert.True((await users.CreateAsync(user, Password)).Succeeded);
         await users.AddToRoleAsync(user, role);
         return user;
+    }
+
+    /// <summary>Makes the user a bookable doctor and the patient one of theirs; a doctor opens only their own patients.</summary>
+    private async Task<ApplicationUser> AssignAsync(ApplicationUser doctor, ApplicationUser patient)
+    {
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+        var profile = await db.Doctors.FirstOrDefaultAsync(d => d.UserId == doctor.Id);
+        if (profile is null)
+        {
+            profile = new DoctorProfile { UserId = doctor.Id, MedicalCouncilNumber = "1234", IsApproved = true };
+            db.Doctors.Add(profile);
+            await db.SaveChangesAsync();
+        }
+        var patientProfile = await db.PatientProfiles.FirstOrDefaultAsync(p => p.UserId == patient.Id);
+        if (patientProfile is null)
+        {
+            db.PatientProfiles.Add(new PatientProfile { UserId = patient.Id, DoctorProfileId = profile.Id });
+        }
+        else
+        {
+            patientProfile.DoctorProfileId = profile.Id;
+        }
+        await db.SaveChangesAsync();
+        return doctor;
     }
 
     private async Task<HttpClient> LoginAsync(ApplicationUser user)

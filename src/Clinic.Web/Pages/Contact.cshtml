@@ -77,6 +77,16 @@
                             <input asp-for="Input.Email" class="form-control" autocomplete="email" dir="ltr" />
                             <span asp-validation-for="Input.Email" class="text-danger small"></span>
                         </div>
+                        @if (Model.Doctors.Count > 1)
+                        {
+                        <div class="col-md-6">
+                            <label asp-for="Input.DoctorId" class="form-label"></label>
+                            <select asp-for="Input.DoctorId" class="form-select">
+                                <option value="">@L["The clinic (general)"]</option>
+                                @foreach (var d in Model.Doctors) { <option value="@d.Id">@d.Name</option> }
+                            </select>
+                        </div>
+                        }
                         <div class="col-md-6">
                             <label asp-for="Input.Subject" class="form-label"></label>
                             <input asp-for="Input.Subject" class="form-control" />

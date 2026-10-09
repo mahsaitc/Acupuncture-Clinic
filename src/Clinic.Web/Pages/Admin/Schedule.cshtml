@@ -4,11 +4,21 @@
     ViewData["Title"] = L["Working hours"];
 }
 
-<h1 class="h3 mb-3">@L["Working hours"]</h1>
+<div class="page-head">
+    <h1 class="h3">@L["Doctors' working hours"]</h1>
+    @if (Model.Doctors.Count > 0)
+    {
+        <form method="get">
+            <select class="form-select" name="DoctorId" onchange="this.form.submit()" aria-label="@L["Doctor"]">
+                @foreach (var d in Model.Doctors) { <option value="@d.Id" selected="@(Model.DoctorId == d.Id)">@d.Name</option> }
+            </select>
+        </form>
+    }
+</div>
 
 @if (Model.Profile is null)
 {
-    <p class="text-muted">@L["No doctor profile is linked to this account."]</p>
+    <p class="text-muted">@L["There is no approved doctor yet. Add one under Users."]</p>
     return;
 }
 
@@ -29,7 +39,7 @@
                         }
                         @foreach (var b in blocks)
                         {
-                            <form method="post" asp-page-handler="Remove" asp-route-id="@b.Id" class="d-inline-block me-2 mb-1">
+                            <form method="post" asp-page-handler="Remove" asp-route-id="@b.Id" asp-route-DoctorId="@Model.DoctorId" class="d-inline-block me-2 mb-1">
                                 <span class="badge bg-success-subtle text-success-emphasis fs-6">@L["{0} to {1}", Fmt.Number(b.Start.ToString("HH:mm")), Fmt.Number(b.End.ToString("HH:mm"))]</span>
                                 <button type="submit" class="btn btn-sm btn-link text-danger p-0" aria-label="@L["Remove"]">✕</button>
                             </form>
@@ -42,7 +52,7 @@
 </div>
 
 <h2 class="h5">@L["Add a block"]</h2>
-<form method="post" asp-page-handler="Add" class="row g-2 align-items-end">
+<form method="post" asp-page-handler="Add" asp-route-DoctorId="@Model.DoctorId" class="row g-2 align-items-end">
     <div class="col-sm-4">
         <label class="form-label" for="day">@L["Day"]</label>
         <select class="form-select" id="day" name="day">

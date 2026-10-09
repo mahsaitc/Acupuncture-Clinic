@@ -13,11 +13,15 @@ namespace Clinic.Web.Pages;
 public class ContactModel(
     ClinicDbContext db,
     SiteContentProvider siteContent,
+    Clinic.Web.Clinical.StaffScope scope,
     ContactThrottle throttle,
     TimeProvider time,
     IStringLocalizer<SharedResource> l) : PageModel
 {
     public SiteContent Site { get; private set; } = new();
+
+    /// <summary>Approved doctors a message can be addressed to.</summary>
+    public List<(int Id, string Name)> Doctors { get; private set; } = [];
 
     [BindProperty]
     public MessageInput Input { get; set; } = new();
@@ -43,6 +47,10 @@ public class ContactModel(
         [Display(Name = "Email (optional)")]
         public string? Email { get; set; }
 
+        /// <summary>The doctor the message is for, or null for the clinic.</summary>
+        [Display(Name = "Send to")]
+        public int? DoctorId { get; set; }
+
         [Required(ErrorMessage = "{0} is required.")]
         [StringLength(200)]
         [Display(Name = "Subject")]
@@ -54,11 +62,17 @@ public class ContactModel(
         public string Body { get; set; } = "";
     }
 
-    public async Task OnGetAsync() => Site = await siteContent.GetAsync();
+    public async Task OnGetAsync(int? doctorId)
+    {
+        Site = await siteContent.GetAsync();
+        Doctors = await scope.DoctorsAsync();
+        Input.DoctorId = Doctors.Any(d => d.Id == doctorId) ? doctorId : null;
+    }
 
     public async Task<IActionResult> OnPostAsync()
     {
         Site = await siteContent.GetAsync();
+        Doctors = await scope.DoctorsAsync();
 
         if (!string.IsNullOrEmpty(Website))
         {
@@ -84,6 +98,7 @@ public class ContactModel(
             Subject = Input.Subject.Trim(),
             Body = Input.Body.Trim(),
             UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+            DoctorProfileId = Doctors.Any(d => d.Id == Input.DoctorId) ? Input.DoctorId : null,
             CreatedUtc = time.GetUtcNow().UtcDateTime,
         });
         await db.SaveChangesAsync();
