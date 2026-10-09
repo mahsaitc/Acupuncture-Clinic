@@ -11,7 +11,7 @@
     </div>
     <form method="get" class="d-flex gap-2 flex-wrap">
         <a class="btn btn-success text-nowrap" asp-page="./Create"><i class="bi bi-person-plus me-1"></i>@L["New patient"]</a>
-        <input class="form-control" name="Q" value="@Model.Q" placeholder="@L["Search name, email or mobile"]" />
+        <input class="form-control" name="Q" value="@Model.Q" placeholder="@L["Search name, mobile or national code"]" />
         <button class="btn btn-success"><i class="bi bi-search"></i></button>
     </form>
 </div>
@@ -21,6 +21,7 @@
         <thead>
             <tr>
                 <th>@L["Name"]</th>
+                <th>@L["National code"]</th>
                 <th>@L["Mobile number"]</th>
                 @if (Model.ShowDoctor)
                 {
@@ -36,6 +37,7 @@
             {
                 <tr class="@(r.IsActive ? "" : "table-secondary")">
                     <td><a class="fw-semibold" asp-page="./Details" asp-route-id="@r.Id">@r.FullName</a><div class="small text-muted" dir="ltr">@r.Email</div></td>
+                    <td dir="ltr" class="text-nowrap">@(Model.NationalCodes.GetValueOrDefault(r.Id) is { Length: > 0 } code ? Fmt.Number(code) : "-")</td>
                     <td dir="ltr" class="text-nowrap">@r.Phone</td>
                     @if (Model.ShowDoctor)
                     {

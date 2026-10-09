@@ -112,4 +112,42 @@ public partial class ClinicalTests
         Assert.Contains("میانگین رضایت بیماران بر اساس نوع بیماری", page);
         Assert.Contains("میانگین رضایت بیماران بر اساس نوع درمان", page);
     }
+
+    [Fact]
+    public async Task Reception_finds_a_patient_by_national_code_and_sees_their_visits()
+    {
+        var code = NewNationalCode();
+        var patient = await CreateUserAsync(Roles.Patient, $"بیمار کد ملی {Guid.NewGuid():N}");
+        var doctor = await AssignAsync(await CreateUserAsync(Roles.Doctor, "دکتر کد ملی"), patient);
+        using (var scope = factory.Services.CreateScope())
+        {
+            var sp = scope.ServiceProvider;
+            var db = sp.GetRequiredService<ClinicDbContext>();
+            var user = await db.Users.SingleAsync(u => u.Id == patient.Id);
+            user.NationalCodeHash = sp.GetRequiredService<NationalCodeIndex>().Hash(code);
+            db.PatientProfiles.Single(p => p.UserId == patient.Id).NationalCode = code;
+            db.TreatmentSessions.Add(new TreatmentSession
+            {
+                PatientUserId = patient.Id, DoctorUserId = doctor.Id, DateUtc = DateTime.UtcNow.AddDays(-3), Type = SessionType.CatgutEmbedding,
+            });
+            await db.SaveChangesAsync();
+        }
+
+        var reception = await LoginAsync(await CreateUserAsync(Roles.Receptionist));
+        var list = await reception.GetStringAsync($"/Admin/Patients?Q={Uri.EscapeDataString(patient.FullName)}");
+        Assert.Contains(JalaliDate.ToPersianDigits(code), list);
+
+        // Searching the code (typed with Persian digits) opens the patient's page with their visits.
+        var response = await reception.GetAsync($"/Admin/Patients?Q={Uri.EscapeDataString(JalaliDate.ToPersianDigits(code))}");
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.Contains("/Admin/Patients/Details", response.Headers.Location!.OriginalString);
+        var page = await reception.GetStringAsync(response.Headers.Location);
+        Assert.Contains(patient.FullName, page);
+        Assert.Contains("کاشت نخ", page);
+        Assert.Contains($"Patient={patient.Id}", page);
+
+        var printed = await reception.GetStringAsync($"/Admin/Reports?Period=Range&Patient={patient.Id}&From=1400/01/01");
+        Assert.Contains($"مراجعات {patient.FullName}", printed);
+        Assert.Contains("کاشت نخ", printed);
+    }
 }

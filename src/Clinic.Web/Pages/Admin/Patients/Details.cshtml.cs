@@ -9,8 +9,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Clinic.Web.Pages.Admin.Patients;
 
-public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userManager, Clinic.Web.Clinical.StaffScope scope) : PageModel
+public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userManager, Clinic.Web.Clinical.StaffScope scope,
+    Clinic.Web.Clinical.VisitLog visitLog) : PageModel
 {
+    /// <summary>Range of the visit list (Jalali or Gregorian input); empty means every visit.</summary>
+    [BindProperty(SupportsGet = true)]
+    public string? From { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string? To { get; set; }
+
+    /// <summary>Dates the patient came in (held appointments and treatment sessions), newest first.</summary>
+    public List<Clinic.Web.Clinical.Visit> Visits { get; private set; } = [];
+    public DateOnly VisitsFrom { get; private set; }
+    public DateOnly VisitsTo { get; private set; }
+
     public ApplicationUser Patient { get; private set; } = default!;
     public List<Appointment> Appointments { get; private set; } = [];
     public List<ContactMessage> Messages { get; private set; } = [];
@@ -53,6 +66,23 @@ public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userM
             {
                 DoctorNames[d.Id] = d.FullName;
             }
+        }
+
+        VisitsTo = Clinic.Web.Localization.DisplayFormat.TryParseDateInput(To, out var to) ? to : visitLog.Today;
+        VisitsFrom = Clinic.Web.Localization.DisplayFormat.TryParseDateInput(From, out var from) ? from : new DateOnly(2000, 1, 1);
+        if (VisitsTo < VisitsFrom)
+        {
+            (VisitsFrom, VisitsTo) = (VisitsTo, VisitsFrom);
+        }
+        Visits = (await visitLog.BetweenAsync(VisitsFrom, VisitsTo, id)).OrderByDescending(v => v.Utc).ToList();
+        if (string.IsNullOrWhiteSpace(From))
+        {
+            // The printed report starts at the first visit rather than at year 2000.
+            VisitsFrom = Visits.Count > 0 ? Visits[^1].Day : visitLog.Day(user.CreatedUtc);
+        }
+        foreach (var d in Visits.Select(v => v.DoctorProfileId).OfType<int>().Where(d => !DoctorNames.ContainsKey(d)).Distinct().ToList())
+        {
+            DoctorNames[d] = await db.Doctors.Where(x => x.Id == d).Join(db.Users, x => x.UserId, u => u.Id, (x, u) => u.FullName).FirstOrDefaultAsync() ?? "-";
         }
 
         Messages = await (await scope.MessagesAsync(db.ContactMessages)).AsNoTracking()

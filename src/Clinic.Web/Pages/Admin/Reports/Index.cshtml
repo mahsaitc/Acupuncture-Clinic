@@ -29,6 +29,10 @@
 </div>
 
 <form method="get" class="card card-soft mb-4 d-print-none">
+    @if (!string.IsNullOrEmpty(Model.PatientFilter) && string.IsNullOrWhiteSpace(Model.NationalCode))
+    {
+        <input type="hidden" name="Patient" value="@Model.PatientFilter" />
+    }
     <div class="card-body">
         <div class="btn-group flex-wrap mb-3" role="group" aria-label="@L["Period"]">
             @foreach (var p in Clinic.Web.Pages.Admin.Reports.IndexModel.PeriodNames)

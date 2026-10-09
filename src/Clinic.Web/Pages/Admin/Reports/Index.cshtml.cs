@@ -34,6 +34,10 @@ public class IndexModel(ClinicDbContext db, VisitLog log, StaffScope scope, Nati
     [BindProperty(SupportsGet = true)]
     public int? DoctorId { get; set; }
 
+    /// <summary>One patient's visits, for patients without a national code (linked from the patient page).</summary>
+    [BindProperty(SupportsGet = true, Name = "Patient")]
+    public string? PatientFilter { get; set; }
+
     public DateOnly RangeFrom { get; private set; }
     public DateOnly RangeTo { get; private set; }
     public string? Error { get; private set; }
@@ -84,6 +88,16 @@ public class IndexModel(ClinicDbContext db, VisitLog log, StaffScope scope, Nati
                 return;
             }
             PatientId = patient.Id;
+            PatientName = patient.FullName;
+        }
+        else if (!string.IsNullOrWhiteSpace(PatientFilter))
+        {
+            if (await scope.FindPatientAsync(PatientFilter) is not { } patient)
+            {
+                Error = l["Patient not found."];
+                return;
+            }
+            patientId = PatientId = patient.Id;
             PatientName = patient.FullName;
         }
 

@@ -2643,4 +2643,10 @@
   <data name="{0} could not be used: choose a JPG, PNG or WEBP image of at most 5 MB." xml:space="preserve">
     <value>فایل {0} قابل استفاده نبود: یک تصویر JPG، PNG یا WEBP حداکثر ۵ مگابایت انتخاب کنید.</value>
   </data>
+  <data name="Search name, mobile or national code" xml:space="preserve">
+    <value>جستجوی نام، موبایل یا کد ملی</value>
+  </data>
+  <data name="Patient not found." xml:space="preserve">
+    <value>بیمار پیدا نشد.</value>
+  </data>
 </root>
