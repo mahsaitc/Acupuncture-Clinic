@@ -24,3 +24,24 @@ How the library is built:
 - The credit line under the chart (Z-Anatomy / BodyParts3D, CC BY-SA 4.0) in `Pages/Shared/_BodyMap.cshtml` must stay.
 
 `tests/Clinic.Tests/BodyMapTests.cs` fails if a chart other than the ear is not a photo again.
+
+## Working on this project from more than one place
+
+One branch is the source of truth: `phase-2-medical-records` on GitHub. Chat sessions do not share memory; the repository does.
+
+- Start every session with `git pull` on that branch, and finish with `dotnet test` and `git push`. Do not work in two sessions at the same time.
+- Never rewrite history or force-push this branch. Commits the owner pushed from the PC (other author e-mail) stay as they are.
+- Use one session for all work (site features, charts, tests). Rendering the charts needs Blender and the Z-Anatomy `.blend` on the owner's
+  Windows PC: tell the owner the exact commands (`docs/body-images-render-guide.fa.md`); the owner runs them and pushes the PNGs.
+- The owner prefers short, one-command-per-block instructions in Persian, and checks results by sending screenshots.
+
+### State of the photo charts (for whoever continues)
+
+- Done: 9 rendered charts, 390 points moved onto them by landmarks, credit line, guards (`generate.py`, `BodyMapTests`).
+- The model is a nude adult male (Z-Anatomy has no female model); groin objects are left out of the renders. The leg charts are cut
+  below the groin, so `SP12` and `LR12` are on the front chart only.
+- Point positions are a first placement for the owner (a doctor) to review. Corrections go into `ADJUST` in `tools/charts/photo.py`,
+  keyed by `(chart, code)`, then run `python3 tools/charts/generate.py`.
+- Known blemishes in the renders: a small dark patch at the shoulder cut of `arm-outer`, a grey cap at the top of `leg-inner`.
+- `dotnet` is not available in the cloud session that built this: run `dotnet test` on the PC after pulling.
+- Test admin login (local only, from `dotnet user-secrets`): see README; never commit secrets.
