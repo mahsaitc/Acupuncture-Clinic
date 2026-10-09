@@ -335,6 +335,41 @@ def write_silhouettes_only(args):
         json.dump(sil, fh, separators=(",", ":"))
 
 
+def soften_alpha(path, sigma):
+    """Round off jagged cut edges: blur the opacity and threshold it softly, and spread the colour into the new edge pixels."""
+    import numpy as np
+    img = bpy.data.images.load(path)
+    w, h = img.size
+    arr = np.empty(len(img.pixels), dtype=np.float32)
+    img.pixels.foreach_get(arr)
+    arr = arr.reshape(h, w, 4)
+    r = max(1, int(3 * sigma))
+    kernel = np.exp(-0.5 * (np.arange(-r, r + 1) / sigma) ** 2)
+    kernel /= kernel.sum()
+
+    def blur(x):
+        x = np.apply_along_axis(lambda v: np.convolve(v, kernel, mode="same"), 0, x)
+        return np.apply_along_axis(lambda v: np.convolve(v, kernel, mode="same"), 1, x)
+
+    a = arr[..., 3]
+    ab = blur(a)
+    t = np.clip((ab - 0.38) / 0.24, 0.0, 1.0)
+    alpha = t * t * (3 - 2 * t)  # smoothstep: soft, rounded edge
+    out = np.empty_like(arr)
+    denom = np.maximum(ab, 1e-4)
+    for c in range(3):
+        out[..., c] = np.clip(blur(arr[..., c] * a) / denom, 0.0, 1.0)
+    out[..., 3] = alpha
+    res = bpy.data.images.new("softened", w, h, alpha=True)
+    res.alpha_mode = "STRAIGHT"
+    res.pixels.foreach_set(out.ravel())
+    res.filepath_raw = path
+    res.file_format = "PNG"
+    res.save()
+    bpy.data.images.remove(res)
+    bpy.data.images.remove(img)
+
+
 def render_charts(args, views_cfg, objs, sc, cam, sun):
     """Render every chart in charts.json: orthographic frame of W x H chart units at px_per_m, same aspect as the SVG chart."""
     with open(args.charts_file, encoding="utf-8") as fh:
@@ -371,7 +406,24 @@ def render_charts(args, views_cfg, objs, sc, cam, sun):
             sun.matrix_world = cam.matrix_world @ Matrix.Rotation(math.radians(25), 4, "X") @ Matrix.Rotation(math.radians(20), 4, "Y")
         fname = key + ".png"
         sc.render.filepath = os.path.abspath(os.path.join(args.out, fname))
+        smooth, added = spec.get("smooth"), []
+        if smooth:  # smooth shading and subdivision round off a low-polygon mesh
+            for o in objs:
+                if o.hide_render:
+                    continue
+                try:
+                    o.data.polygons.foreach_set("use_smooth", [True] * len(o.data.polygons))
+                    o.data.update()
+                except Exception:
+                    pass
+                mod = o.modifiers.new("ChartSmooth", "SUBSURF")
+                mod.levels = mod.render_levels = smooth.get("subsurf", 2)
+                added.append((o, mod))
         bpy.ops.render.render(write_still=True)
+        for o, mod in added:
+            o.modifiers.remove(mod)
+        if spec.get("soften"):
+            soften_alpha(sc.render.filepath, spec["soften"] * args.scale)
         pct, rgb = image_stats(sc.render.filepath)
         print("chart %s: %d objects, %.1f%% opaque, mean RGB (%.2f, %.2f, %.2f)" % ((key, shown, pct) + rgb))
         manifest[fname] = {"view": spec["view"], "center": spec["center"], "px_per_m": s_m, "size": [W, H], "scale": args.scale,
