@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
+using Clinic.Application.Common;
 using Clinic.Domain;
 using Clinic.Domain.Entities;
 using Clinic.Infrastructure.Data;
@@ -67,12 +68,13 @@ public partial class ClinicalTests
     {
         var client = await LoginAsync(await CreateUserAsync(Roles.Admin));
         var email = $"doc-{Guid.NewGuid():N}@test";
+        var council = NewCouncilNumber();
         var response = await PostPairsAsync(client, "/Admin/UserCreate",
         [
             new("Input.FullName", "دکتر نمونه"), new("Input.Email", email), new("Input.PhoneNumber", "09" + Random.Shared.Next(100000000, 999999999).ToString(CultureInfo.InvariantCulture)),
             new("Input.Password", Password), new("Input.ConfirmPassword", Password),
             new("SelectedRoles", Roles.Doctor), new("SelectedRoles", Roles.Receptionist),
-            new("MedicalCouncilNumber", "۱۲۳۴۵"), new("SpecialtyFa", "طب سوزنی"), new("NationalCode", NewNationalCode()),
+            new("MedicalCouncilNumber", JalaliDate.ToPersianDigits(council)), new("SpecialtyFa", "طب سوزنی"), new("NationalCode", NewNationalCode()),
         ]);
 
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
@@ -84,7 +86,7 @@ public partial class ClinicalTests
         Assert.Equal([Roles.Doctor, Roles.Receptionist], (await users.GetRolesAsync(user)).Order());
         var profile = await db.Doctors.SingleAsync(d => d.UserId == user.Id);
         Assert.True(profile.IsApproved);
-        Assert.Equal("12345", profile.MedicalCouncilNumber);
+        Assert.Equal(council, profile.MedicalCouncilNumber);
 
         var add = await PostFormAsync(client, $"/Admin/Schedule?handler=Add&DoctorId={profile.Id}",
             new() { ["day"] = nameof(DayOfWeek.Saturday), ["start"] = "09:00", ["end"] = "12:00" });
@@ -211,7 +213,9 @@ public partial class ClinicalTests
 
     private static string NewNationalCode() => Random.Shared.NextInt64(1_000_000_000, 9_999_999_999).ToString(CultureInfo.InvariantCulture);
 
-    private static async Task<HttpResponseMessage> DoctorSignUpAsync(HttpClient client, string email, string nationalCode)
+    private static string NewCouncilNumber() => Random.Shared.Next(100_000, 9_999_999).ToString(CultureInfo.InvariantCulture);
+
+    private static async Task<HttpResponseMessage> DoctorSignUpAsync(HttpClient client, string email, string nationalCode, string? councilNumber = null)
     {
         var token = await TokenAsync(client, "/Account/RegisterDoctor");
         using var form = new MultipartFormDataContent
@@ -223,7 +227,7 @@ public partial class ClinicalTests
             { new StringContent(Password), "Input.Password" },
             { new StringContent(Password), "Input.ConfirmPassword" },
             { new StringContent(nationalCode), "NationalCode" },
-            { new StringContent("98765"), "MedicalCouncilNumber" },
+            { new StringContent(councilNumber ?? NewCouncilNumber()), "MedicalCouncilNumber" },
         };
         foreach (var field in new[] { "MedicalLicense", "NationalIdCard" })
         {

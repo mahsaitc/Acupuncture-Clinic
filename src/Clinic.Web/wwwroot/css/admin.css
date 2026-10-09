@@ -328,6 +328,14 @@ a.kpi:hover {
   stroke-width: 2;
 }
 
+.pain-chart .line {
+  stroke: #c0563b;
+}
+
+.pain-chart .dot {
+  stroke: #a3432c;
+}
+
 /* Point charts */
 .chart-pages {
   gap: .35rem;
@@ -800,6 +808,21 @@ a.kpi:hover {
 @media print {
   @page {
     margin: 14mm 12mm;
+  }
+
+  .print-letterhead {
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid #4f5d2f;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  .print-signature {
+    justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 8px;
+    border-top: 1px solid #ccc;
   }
 
   .admin-sidebar,

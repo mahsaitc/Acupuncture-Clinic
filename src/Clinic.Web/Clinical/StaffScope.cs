@@ -51,12 +51,15 @@ public class StaffScope(ClinicDbContext db, UserManager<ApplicationUser> users, 
         {
             return patients;
         }
-        var userId = UserId;
-        return patients.Where(u =>
+        return PatientsOf(patients, doctorId, UserId);
+    }
+
+    /// <summary>A doctor's patients: assigned to them, booked with them or treated by them.</summary>
+    public IQueryable<ApplicationUser> PatientsOf(IQueryable<ApplicationUser> patients, int doctorId, string? doctorUserId) =>
+        patients.Where(u =>
             db.PatientProfiles.Any(p => p.UserId == u.Id && p.DoctorProfileId == doctorId)
             || db.Appointments.Any(a => a.PatientUserId == u.Id && a.DoctorProfileId == doctorId)
-            || db.TreatmentSessions.Any(s => s.PatientUserId == u.Id && s.DoctorUserId == userId));
-    }
+            || db.TreatmentSessions.Any(s => s.PatientUserId == u.Id && s.DoctorUserId == doctorUserId));
 
     /// <summary>Limits appointments to the doctor's own.</summary>
     public async Task<IQueryable<Appointment>> AppointmentsAsync(IQueryable<Appointment> appointments) =>

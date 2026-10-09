@@ -21,6 +21,7 @@ public class IndexModel(ClinicDbContext db, UserManager<ApplicationUser> users, 
     public List<MedicalFile> Files { get; private set; } = [];
     public Dictionary<string, string> DoctorNames { get; private set; } = [];
     public List<(DateTime Utc, double Kg)> Weights { get; private set; } = [];
+    public List<(DateTime Utc, int Score)> Pains { get; private set; } = [];
     public double? LatestWeight => Sessions.FirstOrDefault(s => s.WeightKg is not null)?.WeightKg;
 
     /// <summary>1 for the first session, in date order (the list is newest first).</summary>
@@ -60,6 +61,7 @@ public class IndexModel(ClinicDbContext db, UserManager<ApplicationUser> users, 
             Weights.Add((first < Record.CreatedUtc ? first.AddDays(-1) : Record.CreatedUtc, baseline));
         }
         Weights.AddRange(measured);
+        Pains = Sessions.Where(s => s.PainScore is not null).OrderBy(s => s.DateUtc).Select(s => (s.DateUtc, s.PainScore!.Value)).ToList();
         Weights = Weights.OrderBy(w => w.Utc).ToList();
 
         await audit.WriteAsync(AuditAction.ViewRecord, patientId);

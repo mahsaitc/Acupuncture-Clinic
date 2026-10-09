@@ -50,6 +50,10 @@
                 <div class="admin-nav-group">@L["Clinic"]</div>
                 <a class="@Active("/Admin/Appointments")" asp-page="/Admin/Appointments"><i class="bi bi-calendar3"></i>@L["Appointments"]</a>
                 <a class="@Active("/Admin/Patients")" asp-page="/Admin/Patients/Index"><i class="bi bi-people"></i>@L["Patients"]</a>
+                @if (!Scope.IsOwnOnly)
+                {
+                    <a class="@Active("/Admin/Doctors")" asp-page="/Admin/Doctors/Index"><i class="bi bi-person-badge"></i>@L["Doctors"]</a>
+                }
                 <a class="@Active("/Admin/Messages")" asp-page="/Admin/Messages"><i class="bi bi-envelope"></i>@L["Messages"]@if (unread > 0) { <span class="badge rounded-pill bg-warning text-dark ms-auto">@Fmt.Number(unread)</span> }</a>
                 @if (isAdmin)
                 {

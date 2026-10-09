@@ -20,6 +20,7 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<SiteContent> SiteContent => Set<SiteContent>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
+    public DbSet<MessageReply> MessageReplies => Set<MessageReply>();
     public DbSet<Post> Posts => Set<Post>();
     public DbSet<PatientProfile> PatientProfiles => Set<PatientProfile>();
     public DbSet<MedicalRecord> MedicalRecords => Set<MedicalRecord>();
@@ -104,6 +105,14 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
             e.HasIndex(m => new { m.IsArchived, m.CreatedUtc });
             // A plain indexed column, not a foreign key: adding one to an existing SQLite table rebuilds the table.
             e.HasIndex(m => m.DoctorProfileId);
+            e.HasMany(m => m.Replies).WithOne().HasForeignKey(r => r.ContactMessageId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<MessageReply>(e =>
+        {
+            e.Property(r => r.AuthorUserId).HasMaxLength(450).IsRequired();
+            e.Property(r => r.Body).HasMaxLength(4000).IsRequired();
+            e.HasIndex(r => new { r.ContactMessageId, r.CreatedUtc });
         });
 
         builder.Entity<Post>(e =>

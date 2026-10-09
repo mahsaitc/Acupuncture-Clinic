@@ -117,6 +117,15 @@
                 </div>
             </div>
         }
+        @if (Model.Pains.Count > 0)
+        {
+            <div class="card card-soft mb-4">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">@L["Pain score over time"] <span class="small text-muted fw-normal">(@L["0 = no pain, 10 = worst pain"])</span></h2>
+                    <partial name="_PainChart" model="Model.Pains" />
+                </div>
+            </div>
+        }
 
         <div class="card card-soft">
             <div class="card-body">

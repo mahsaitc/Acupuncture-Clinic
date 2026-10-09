@@ -22,6 +22,9 @@ public class SummaryModel(ClinicDbContext db, UserManager<ApplicationUser> users
     /// <summary>True when the page shows only the signed-in doctor's own sessions.</summary>
     public bool IsOwnOnly => scope.IsOwnOnly;
 
+    /// <summary>Who prints the page; a doctor's name goes on the copy they give the patient.</summary>
+    public string PrintedBy { get; private set; } = "";
+
     public ApplicationUser Patient { get; private set; } = default!;
     public PatientProfile? Profile { get; private set; }
     public List<DoctorPart> Doctors { get; private set; } = [];
@@ -42,6 +45,7 @@ public class SummaryModel(ClinicDbContext db, UserManager<ApplicationUser> users
             return NotFound();
         }
         Patient = patient;
+        PrintedBy = await db.Users.Where(u => u.Id == scope.UserId).Select(u => u.FullName).FirstOrDefaultAsync() ?? "";
         Profile = await db.PatientProfiles.AsNoTracking().FirstOrDefaultAsync(p => p.UserId == id);
 
         var sessions = await scope.Sessions(db.TreatmentSessions).AsNoTracking().Include(s => s.Points)

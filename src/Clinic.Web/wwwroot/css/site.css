@@ -751,3 +751,33 @@ label.required::after {
   justify-content: space-between;
   margin-top: .5rem;
 }
+
+/* Message conversations (admin inbox and the patient's messages page) */
+.message-thread {
+  display: grid;
+  gap: .5rem;
+}
+
+.message-reply {
+  border-radius: .75rem;
+  padding: .6rem .8rem;
+  border: 1px solid rgba(0, 0, 0, .06);
+}
+
+.message-reply.from-clinic {
+  background: #f1f4e8;
+  margin-inline-start: 1.5rem;
+}
+
+.message-reply.from-patient {
+  background: #fff;
+  margin-inline-end: 1.5rem;
+}
+
+.reply-box > summary {
+  list-style: none;
+}
+
+.reply-box > summary::-webkit-details-marker {
+  display: none;
+}

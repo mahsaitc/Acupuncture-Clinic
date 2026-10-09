@@ -79,6 +79,10 @@ public class RegisterDoctorModel(
         {
             ModelState.AddModelError(nameof(NationalCode), l["This national code is already registered for another person."]);
         }
+        if (await CouncilNumbers.InUseAsync(db, MedicalCouncilNumber))
+        {
+            ModelState.AddModelError(nameof(MedicalCouncilNumber), l["This Medical Council number is already registered for another doctor."]);
+        }
         if (!ModelState.IsValid)
         {
             return Page();
@@ -114,7 +118,7 @@ public class RegisterDoctorModel(
         {
             UserId = user.Id,
             NationalCode = NationalCodeIndex.Normalize(NationalCode),
-            MedicalCouncilNumber = Clinic.Application.Common.JalaliDate.ToLatinDigits(MedicalCouncilNumber).Trim(),
+            MedicalCouncilNumber = CouncilNumbers.Normalize(MedicalCouncilNumber),
             SpecialtyFa = string.IsNullOrWhiteSpace(Specialty) ? null : Specialty.Trim(),
             SpecialtyEn = string.IsNullOrWhiteSpace(Specialty) ? null : Specialty.Trim(),
             IsApproved = false,

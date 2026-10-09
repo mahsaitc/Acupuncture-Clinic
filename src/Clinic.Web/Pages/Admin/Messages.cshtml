@@ -50,6 +50,50 @@
                     <div class="small text-muted text-nowrap">@Fmt.DateTime(m.CreatedUtc)</div>
                 </div>
                 <p class="mb-3" style="white-space: pre-line">@m.Body</p>
+
+                @if (m.Replies.Count > 0)
+                {
+                    <div class="message-thread mb-3">
+                        @foreach (var r in m.Replies)
+                        {
+                            <div class="message-reply @(r.FromClinic ? "from-clinic" : "from-patient")" id="r@(r.Id)">
+                                <div class="small text-muted mb-1">
+                                    <i class="bi @(r.FromClinic ? "bi-reply" : "bi-person") me-1"></i>
+                                    <strong>@Model.AuthorNames.GetValueOrDefault(r.AuthorUserId, "-")</strong>
+                                    @(r.FromClinic ? "" : $"({L["Patient"]})") · @Fmt.DateTime(r.CreatedUtc)
+                                    @if (r.EditedUtc is not null) { <span>· @L["edited"]</span> }
+                                </div>
+                                <div style="white-space: pre-line">@r.Body</div>
+                                @if (Model.CanChange(r))
+                                {
+                                    <details class="mt-1">
+                                        <summary class="small text-success">@L["Edit"]</summary>
+                                        <form method="post" asp-page-handler="EditReply" asp-route-replyId="@r.Id" asp-route-Archived="@Model.Archived" asp-route-DoctorId="@Model.DoctorId" class="mt-2">
+                                            <textarea name="body" class="form-control mb-2" rows="3" maxlength="@Clinic.Web.Pages.Admin.MessagesModel.MaxReplyLength" required>@r.Body</textarea>
+                                            <button type="submit" class="btn btn-sm btn-success">@L["Save"]</button>
+                                        </form>
+                                    </details>
+                                    <form method="post" asp-page-handler="DeleteReply" asp-route-replyId="@r.Id" asp-route-Archived="@Model.Archived" asp-route-DoctorId="@Model.DoctorId" class="d-inline" onsubmit="return confirm('@L["Delete this reply?"]')">
+                                        <button type="submit" class="btn btn-link btn-sm text-danger p-0">@L["Delete"]</button>
+                                    </form>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+
+                <details class="mb-3 reply-box">
+                    <summary class="btn btn-sm btn-success"><i class="bi bi-reply me-1"></i>@L["Reply"]</summary>
+                    <form method="post" asp-page-handler="Reply" asp-route-id="@m.Id" asp-route-Archived="@Model.Archived" asp-route-DoctorId="@Model.DoctorId" class="mt-2">
+                        <textarea name="body" class="form-control mb-2" rows="3" maxlength="@Clinic.Web.Pages.Admin.MessagesModel.MaxReplyLength" required placeholder="@L["Write your reply"]"></textarea>
+                        <button type="submit" class="btn btn-sm btn-success">@L["Send reply"]</button>
+                        @if (m.UserId is null)
+                        {
+                            <div class="form-text">@L["The sender was not signed in, so they cannot read replies on the site. Call or e-mail them as well."]</div>
+                        }
+                    </form>
+                </details>
+
                 <div class="d-flex flex-wrap gap-2">
                     <form method="post" asp-page-handler="Read" asp-route-id="@m.Id" asp-route-read="@(m.ReadUtc is null)" asp-route-Archived="@Model.Archived" asp-route-DoctorId="@Model.DoctorId">
                         <button type="submit" class="btn btn-sm btn-outline-success">@(m.ReadUtc is null ? L["Mark as read"] : L["Mark as unread"])</button>
@@ -57,6 +101,12 @@
                     <form method="post" asp-page-handler="Archive" asp-route-id="@m.Id" asp-route-archive="@(!m.IsArchived)" asp-route-Archived="@Model.Archived" asp-route-DoctorId="@Model.DoctorId">
                         <button type="submit" class="btn btn-sm btn-outline-secondary">@(m.IsArchived ? L["Move to inbox"] : L["Archive"])</button>
                     </form>
+                    @if (Model.CanDelete)
+                    {
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@m.Id" asp-route-Archived="@Model.Archived" asp-route-DoctorId="@Model.DoctorId" onsubmit="return confirm('@L["Delete this message and its replies?"]')">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>@L["Delete"]</button>
+                        </form>
+                    }
                 </div>
             </div>
         </div>

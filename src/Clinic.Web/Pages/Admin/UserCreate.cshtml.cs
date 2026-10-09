@@ -3,6 +3,7 @@ using Clinic.Domain;
 using Clinic.Domain.Entities;
 using Clinic.Infrastructure.Data;
 using Clinic.Infrastructure.Identity;
+using Clinic.Web.Clinical;
 using Clinic.Web.Pages.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -66,6 +67,10 @@ public class UserCreateModel(ClinicDbContext db, UserManager<ApplicationUser> us
         {
             ModelState.AddModelError(nameof(NationalCode), l["This national code is already registered for another person."]);
         }
+        if (isDoctor && await CouncilNumbers.InUseAsync(db, MedicalCouncilNumber))
+        {
+            ModelState.AddModelError(nameof(MedicalCouncilNumber), l["This Medical Council number is already registered for another doctor."]);
+        }
         if (!ModelState.IsValid)
         {
             return Page();
@@ -97,7 +102,7 @@ public class UserCreateModel(ClinicDbContext db, UserManager<ApplicationUser> us
                 UserId = user.Id,
                 NationalCode = Clinic.Web.Clinical.NationalCodeIndex.Normalize(NationalCode),
                 RequestedUtc = time.GetUtcNow().UtcDateTime,
-                MedicalCouncilNumber = Clinic.Application.Common.JalaliDate.ToLatinDigits(MedicalCouncilNumber).Trim(),
+                MedicalCouncilNumber = CouncilNumbers.Normalize(MedicalCouncilNumber),
                 SpecialtyFa = Clean(SpecialtyFa),
                 SpecialtyEn = Clean(SpecialtyEn) ?? Clean(SpecialtyFa),
                 IsApproved = true,

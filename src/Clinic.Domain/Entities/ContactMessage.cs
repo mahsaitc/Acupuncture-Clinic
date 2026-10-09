@@ -22,4 +22,7 @@ public class ContactMessage
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
     public DateTime? ReadUtc { get; set; }
     public bool IsArchived { get; set; }
+
+    /// <summary>The conversation that follows: the clinic's replies and the patient's answers.</summary>
+    public List<MessageReply> Replies { get; set; } = [];
 }

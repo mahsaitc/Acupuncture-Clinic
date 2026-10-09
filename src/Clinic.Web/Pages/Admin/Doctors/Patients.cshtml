@@ -1,0 +1,58 @@
+@page
+@model Clinic.Web.Pages.Admin.Doctors.PatientsModel
+@{
+    ViewData["Title"] = L["Patients of {0}", Model.DoctorName];
+    var english = CulturePath.IsEnglish;
+}
+
+<div class="page-head">
+    <div>
+        <a class="small" asp-page="./Index"><i class="bi @(english ? "bi-arrow-left" : "bi-arrow-right") me-1"></i>@L["Doctors"]</a>
+        <h1 class="h3 mt-1">@L["Patients of {0}", Model.DoctorName]</h1>
+        <div class="text-muted">@L["{0} patients", Fmt.Number(Model.Rows.Count)] · @L["Medical Council number"]: <span dir="ltr">@Fmt.Number(Model.Doctor.MedicalCouncilNumber)</span></div>
+    </div>
+</div>
+
+@if (Model.Rows.Count == 0)
+{
+    <p class="text-muted">@L["This doctor has no patients yet."]</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover bg-white align-middle">
+            <thead>
+                <tr>
+                    <th>@L["Name"]</th>
+                    <th>@L["Mobile number"]</th>
+                    <th>@L["Treatment sessions"]</th>
+                    <th>@L["Last visit"]</th>
+                    <th>@L["Next appointment"]</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.Rows)
+                {
+                    <tr>
+                        <td><a class="fw-semibold" asp-page="/Admin/Patients/Details" asp-route-id="@r.Id">@r.FullName</a></td>
+                        <td dir="ltr" class="text-nowrap">@(r.Phone is { } ph ? Fmt.Number(ph) : "-")</td>
+                        <td>@Fmt.Number(r.Sessions)</td>
+                        <td class="text-nowrap">@(r.LastUtc is DateTime last ? Fmt.Date(last) : "-")</td>
+                        <td class="text-nowrap">@(r.NextUtc is DateTime next ? Fmt.DateTime(next) : "-")</td>
+                        <td class="text-nowrap text-end">
+                            @if (Model.CanOpenRecords)
+                            {
+                                <a class="btn btn-sm btn-outline-success" asp-page="/Admin/Records/Index" asp-route-patientId="@r.Id"><i class="bi bi-folder2-open me-1"></i>@L["Medical record"]</a>
+                            }
+                            @if (Model.CanSeeSummary)
+                            {
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="/Admin/Patients/Summary" asp-route-id="@r.Id"><i class="bi bi-journal-medical me-1"></i>@L["Case summary"]</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

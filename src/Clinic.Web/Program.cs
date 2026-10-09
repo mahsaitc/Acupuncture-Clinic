@@ -44,6 +44,7 @@ builder.Services.AddRazorPages(options =>
         options.Conventions.AddFolderApplicationModelConvention("/Admin/Records", m => m.Filters.Add(new Clinic.Web.Clinical.PatientAccessFilter("patientId")));
         options.Conventions.AddFolderApplicationModelConvention("/Admin/Patients", m => m.Filters.Add(new Clinic.Web.Clinical.PatientAccessFilter("id")));
         options.Conventions.AuthorizeFolder("/Files");
+        options.Conventions.AuthorizeFolder("/Messages");
         options.Conventions.AuthorizeFolder("/Appointments");
         options.Conventions.AuthorizeFolder("/Booking");
     })

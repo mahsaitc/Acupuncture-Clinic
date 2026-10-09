@@ -2232,4 +2232,91 @@
   <data name="From the latest appointment" xml:space="preserve">
     <value>از آخرین نوبت</value>
   </data>
+  <data name="This Medical Council number is already registered for another doctor." xml:space="preserve">
+    <value>این شماره نظام پزشکی قبلاً برای پزشک دیگری ثبت شده است.</value>
+  </data>
+  <data name="Doctors" xml:space="preserve">
+    <value>پزشکان</value>
+  </data>
+  <data name="Click a doctor&#x27;s name to see their patients." xml:space="preserve">
+    <value>برای دیدن بیماران هر پزشک روی نام او بزنید.</value>
+  </data>
+  <data name="No doctors yet." xml:space="preserve">
+    <value>هنوز پزشکی ثبت نشده است.</value>
+  </data>
+  <data name="Last visit" xml:space="preserve">
+    <value>آخرین ویزیت</value>
+  </data>
+  <data name="Last patient" xml:space="preserve">
+    <value>آخرین بیمار</value>
+  </data>
+  <data name="Patients of {0}" xml:space="preserve">
+    <value>بیماران {0}</value>
+  </data>
+  <data name="This doctor has no patients yet." xml:space="preserve">
+    <value>این پزشک هنوز بیماری ندارد.</value>
+  </data>
+  <data name="Printed by" xml:space="preserve">
+    <value>چاپ‌کننده</value>
+  </data>
+  <data name="Print date" xml:space="preserve">
+    <value>تاریخ چاپ</value>
+  </data>
+  <data name="Signature and stamp" xml:space="preserve">
+    <value>امضا و مهر</value>
+  </data>
+  <data name="Pain score over time" xml:space="preserve">
+    <value>روند شدت درد</value>
+  </data>
+  <data name="0 = no pain, 10 = worst pain" xml:space="preserve">
+    <value>۰ = بدون درد، ۱۰ = شدیدترین درد</value>
+  </data>
+  <data name="Change since the first session: {0} points" xml:space="preserve">
+    <value>تغییر نسبت به اولین جلسه: {0} نمره</value>
+  </data>
+  <data name="edited" xml:space="preserve">
+    <value>ویرایش شده</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>پاسخ</value>
+  </data>
+  <data name="Delete this reply?" xml:space="preserve">
+    <value>این پاسخ حذف شود؟</value>
+  </data>
+  <data name="Write your reply" xml:space="preserve">
+    <value>پاسخ خود را بنویسید</value>
+  </data>
+  <data name="Send reply" xml:space="preserve">
+    <value>ارسال پاسخ</value>
+  </data>
+  <data name="The sender was not signed in, so they cannot read replies on the site. Call or e-mail them as well." xml:space="preserve">
+    <value>فرستنده با حساب کاربری وارد نشده بود و پاسخ را در سایت نمی‌بیند؛ با او تماس بگیرید یا ایمیل بزنید.</value>
+  </data>
+  <data name="Delete this message and its replies?" xml:space="preserve">
+    <value>این پیام و پاسخ‌هایش حذف شوند؟</value>
+  </data>
+  <data name="My messages" xml:space="preserve">
+    <value>پیام‌های من</value>
+  </data>
+  <data name="Your messages to the clinic and to your doctor, with their replies." xml:space="preserve">
+    <value>پیام‌های شما به کلینیک و پزشکتان، همراه با پاسخ‌ها.</value>
+  </data>
+  <data name="New message" xml:space="preserve">
+    <value>پیام جدید</value>
+  </data>
+  <data name="You have not sent any messages yet." xml:space="preserve">
+    <value>هنوز پیامی نفرستاده‌اید.</value>
+  </data>
+  <data name="The clinic" xml:space="preserve">
+    <value>کلینیک</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>شما</value>
+  </data>
+  <data name="Waiting for the clinic&#x27;s reply." xml:space="preserve">
+    <value>در انتظار پاسخ کلینیک.</value>
+  </data>
+  <data name="Your reply was sent." xml:space="preserve">
+    <value>پاسخ شما ارسال شد.</value>
+  </data>
 </root>
