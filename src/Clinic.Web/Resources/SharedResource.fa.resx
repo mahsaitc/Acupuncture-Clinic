@@ -2481,4 +2481,166 @@
   <data name="The sample figures were restored." xml:space="preserve">
     <value>ارقام نمونه بازگردانده شد.</value>
   </data>
+  <data name="Visit reports" xml:space="preserve">
+    <value>گزارش مراجعات</value>
+  </data>
+  <data name="Clinic charts" xml:space="preserve">
+    <value>نمودارهای آماری</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>گزارش‌ها</value>
+  </data>
+  <data name="Yearly" xml:space="preserve">
+    <value>سالانه</value>
+  </data>
+  <data name="Date range" xml:space="preserve">
+    <value>بازه دلخواه</value>
+  </data>
+  <data name="Daily, weekly, monthly or yearly visits, or one patient&#x27;s visits by national code." xml:space="preserve">
+    <value>مراجعات روزانه، هفتگی، ماهانه یا سالانه، یا مراجعات یک بیمار با کد ملی.</value>
+  </data>
+  <data name="Period" xml:space="preserve">
+    <value>دوره</value>
+  </data>
+  <data name="Patient&#x27;s national code (optional)" xml:space="preserve">
+    <value>کد ملی بیمار (اختیاری)</value>
+  </data>
+  <data name="Show report" xml:space="preserve">
+    <value>نمایش گزارش</value>
+  </data>
+  <data name="No patient with this national code was found." xml:space="preserve">
+    <value>بیماری با این کد ملی پیدا نشد.</value>
+  </data>
+  <data name="Visits of {0}" xml:space="preserve">
+    <value>مراجعات {0}</value>
+  </data>
+  <data name="Visits" xml:space="preserve">
+    <value>مراجعات</value>
+  </data>
+  <data name="No visits in this period." xml:space="preserve">
+    <value>در این دوره مراجعه‌ای ثبت نشده است.</value>
+  </data>
+  <data name="{0} visits" xml:space="preserve">
+    <value>{0} مراجعه</value>
+  </data>
+  <data name="How many periods" xml:space="preserve">
+    <value>تعداد دوره‌ها</value>
+  </data>
+  <data name="Last {0}" xml:space="preserve">
+    <value>{0} دوره اخیر</value>
+  </data>
+  <data name="Share of the whole period" xml:space="preserve">
+    <value>سهم در کل دوره</value>
+  </data>
+  <data name="Over time" xml:space="preserve">
+    <value>در طول زمان</value>
+  </data>
+  <data name="Not recorded" xml:space="preserve">
+    <value>ثبت نشده</value>
+  </data>
+  <data name="Under 18" xml:space="preserve">
+    <value>زیر ۱۸ سال</value>
+  </data>
+  <data name="18 to 29" xml:space="preserve">
+    <value>۱۸ تا ۲۹ سال</value>
+  </data>
+  <data name="30 to 39" xml:space="preserve">
+    <value>۳۰ تا ۳۹ سال</value>
+  </data>
+  <data name="40 to 49" xml:space="preserve">
+    <value>۴۰ تا ۴۹ سال</value>
+  </data>
+  <data name="50 to 59" xml:space="preserve">
+    <value>۵۰ تا ۵۹ سال</value>
+  </data>
+  <data name="60 and over" xml:space="preserve">
+    <value>۶۰ سال و بالاتر</value>
+  </data>
+  <data name="All visits" xml:space="preserve">
+    <value>کل مراجعات</value>
+  </data>
+  <data name="Visits by sex" xml:space="preserve">
+    <value>مراجعات به تفکیک جنس</value>
+  </data>
+  <data name="Visits by age group" xml:space="preserve">
+    <value>مراجعات به تفکیک گروه سنی</value>
+  </data>
+  <data name="Visits by education" xml:space="preserve">
+    <value>مراجعات به تفکیک تحصیلات</value>
+  </data>
+  <data name="Visits by occupation" xml:space="preserve">
+    <value>مراجعات به تفکیک شغل</value>
+  </data>
+  <data name="Visits by treatment" xml:space="preserve">
+    <value>مراجعات به تفکیک نوع درمان</value>
+  </data>
+  <data name="Visits by doctor" xml:space="preserve">
+    <value>مراجعات هر پزشک</value>
+  </data>
+  <data name="No session recorded" xml:space="preserve">
+    <value>بدون جلسه ثبت‌شده</value>
+  </data>
+  <data name="Pain score and pain reduction" xml:space="preserve">
+    <value>شدت درد و کاهش درد</value>
+  </data>
+  <data name="Average pain score (0 to 10)" xml:space="preserve">
+    <value>میانگین شدت درد (۰ تا ۱۰)</value>
+  </data>
+  <data name="Average reduction since the first session" xml:space="preserve">
+    <value>میانگین کاهش درد نسبت به اولین جلسه</value>
+  </data>
+  <data name="Why our clinic" xml:space="preserve">
+    <value>چرا کلینیک ما</value>
+  </data>
+  <data name="Care you can trust" xml:space="preserve">
+    <value>درمانی که می‌توانید به آن اعتماد کنید</value>
+  </data>
+  <data name="Patient satisfaction" xml:space="preserve">
+    <value>رضایت بیماران</value>
+  </data>
+  <data name="What our patients say" xml:space="preserve">
+    <value>نظر بیماران ما</value>
+  </data>
+  <data name="{0} out of 5 stars" xml:space="preserve">
+    <value>{0} از ۵ ستاره</value>
+  </data>
+  <data name="What patients say" xml:space="preserve">
+    <value>نظر بیماران</value>
+  </data>
+  <data name="Publish a patient&#x27;s words only with their consent, and without their full name. Leave the text empty to remove an item." xml:space="preserve">
+    <value>نظر بیمار را فقط با رضایت خودش و بدون نام کامل منتشر کنید. برای حذف یک مورد، متن آن را خالی بگذارید.</value>
+  </data>
+  <data name="Name or initials (Persian)" xml:space="preserve">
+    <value>نام یا حروف اول (فارسی)</value>
+  </data>
+  <data name="Name or initials (English)" xml:space="preserve">
+    <value>نام یا حروف اول (انگلیسی)</value>
+  </data>
+  <data name="Condition (Persian)" xml:space="preserve">
+    <value>بیماری (فارسی)</value>
+  </data>
+  <data name="Condition (English)" xml:space="preserve">
+    <value>بیماری (انگلیسی)</value>
+  </data>
+  <data name="Treatment (Persian)" xml:space="preserve">
+    <value>درمان (فارسی)</value>
+  </data>
+  <data name="Treatment (English)" xml:space="preserve">
+    <value>درمان (انگلیسی)</value>
+  </data>
+  <data name="Stars" xml:space="preserve">
+    <value>ستاره</value>
+  </data>
+  <data name="Picture (optional)" xml:space="preserve">
+    <value>تصویر (اختیاری)</value>
+  </data>
+  <data name="Remove picture" xml:space="preserve">
+    <value>حذف تصویر</value>
+  </data>
+  <data name="Short promotional items with a picture or an icon. Leave the title empty to remove an item." xml:space="preserve">
+    <value>موارد کوتاه تبلیغاتی با تصویر یا آیکون. برای حذف یک مورد، عنوان آن را خالی بگذارید.</value>
+  </data>
+  <data name="{0} could not be used: choose a JPG, PNG or WEBP image of at most 5 MB." xml:space="preserve">
+    <value>فایل {0} قابل استفاده نبود: یک تصویر JPG، PNG یا WEBP حداکثر ۵ مگابایت انتخاب کنید.</value>
+  </data>
 </root>

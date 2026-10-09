@@ -30,6 +30,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<Clinic.Web.Clinical.PrivateFileStore>();
 builder.Services.AddScoped<Clinic.Web.Clinical.AuditLog>();
 builder.Services.AddScoped<Clinic.Web.Clinical.StaffScope>();
+builder.Services.AddScoped<Clinic.Web.Clinical.VisitLog>();
 builder.Services.AddScoped<Clinic.Web.Clinical.NationalCodeIndex>();
 builder.Services.AddScoped<Clinic.Web.Pages.Admin.Patients.PatientRegistration>();
 

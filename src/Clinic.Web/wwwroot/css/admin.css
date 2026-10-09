@@ -862,3 +862,31 @@ a.kpi:hover {
 .doc-tile img { width: 100%; height: 7rem; object-fit: cover; border-radius: .5rem; background: #f3f3ef; }
 .doc-icon { display: grid; place-items: center; height: 7rem; font-size: 2.5rem; color: #b33; background: #f8f3f3; border-radius: .5rem; }
 .doc-name { font-weight: 600; font-size: .9rem; }
+
+/* Clinic charts and reports */
+.chart-box {
+  position: relative;
+  height: 280px;
+}
+
+.chart-box.pie {
+  height: 260px;
+}
+
+@media print {
+  .chart-card {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+
+  #clinic-charts > div {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  .report-table {
+    font-size: 10pt;
+  }
+}

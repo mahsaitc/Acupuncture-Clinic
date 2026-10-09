@@ -885,3 +885,120 @@ label.required::after {
 .result-table td {
   font-size: .85rem;
 }
+
+/* Results band: the headline figures on a deep olive panel */
+.results-band {
+  background: linear-gradient(135deg, var(--olive-900), var(--olive-600));
+  border-radius: var(--radius);
+  padding: 1.5rem 1rem;
+  margin-inline: 0;
+  box-shadow: var(--shadow-lift);
+}
+
+.results-band .result-tile {
+  background: rgba(255, 255, 255, .08);
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, .14);
+  color: #fff;
+}
+
+.results-band .result-icon,
+.results-band .result-value {
+  color: var(--sand-300);
+}
+
+.results-band .result-label {
+  color: rgba(255, 255, 255, .82);
+}
+
+/* "Why our clinic" */
+.highlights {
+  background: var(--cream);
+}
+
+.highlight-card {
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.highlight-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+}
+
+.highlight-media {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.highlight-art {
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 3rem;
+  background-size: cover;
+}
+
+.highlight-art.art-0 { background-image: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, .25) 0 18%, transparent 19%), linear-gradient(135deg, var(--olive-700), var(--olive-500)); }
+.highlight-art.art-1 { background-image: radial-gradient(circle at 80% 30%, rgba(255, 255, 255, .22) 0 22%, transparent 23%), linear-gradient(135deg, #8a6d3b, var(--sand-500)); }
+.highlight-art.art-2 { background-image: radial-gradient(circle at 30% 80%, rgba(255, 255, 255, .2) 0 20%, transparent 21%), linear-gradient(135deg, #3f6b6b, #6f9a8a); }
+.highlight-art.art-3 { background-image: radial-gradient(circle at 70% 75%, rgba(255, 255, 255, .22) 0 16%, transparent 17%), linear-gradient(135deg, var(--olive-900), #7a8a4a); }
+
+/* Testimonials */
+.testimonials {
+  background: linear-gradient(180deg, var(--olive-50), var(--cream));
+}
+
+.testimonial-card {
+  position: relative;
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 1.75rem 1.5rem 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.testimonial-quote {
+  position: absolute;
+  inset-inline-end: 1.25rem;
+  top: .5rem;
+  font-size: 3.5rem;
+  color: var(--olive-100);
+  line-height: 1;
+}
+
+.testimonial-stars {
+  color: var(--sand-500);
+  margin-bottom: .75rem;
+}
+
+.testimonial-card blockquote {
+  font-size: .98rem;
+  line-height: 1.9;
+  color: var(--ink);
+}
+
+.testimonial-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+
+.testimonial-avatar.initial {
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--olive-600), var(--sand-500));
+}
+
+.results {
+  background: #fff;
+}

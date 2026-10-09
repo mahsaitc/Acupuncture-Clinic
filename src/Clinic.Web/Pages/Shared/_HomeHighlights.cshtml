@@ -1,0 +1,35 @@
+@using Clinic.Domain.Entities
+@model ClinicResults
+@{
+    var english = CulturePath.IsEnglish;
+}
+<section class="section highlights" id="why-us">
+    <div class="container">
+        <div class="section-title">
+            <div class="kicker">@L["Why our clinic"]</div>
+            <h2>@L["Care you can trust"]</h2>
+        </div>
+        <div class="row g-4">
+            @for (var i = 0; i < Model.Highlights.Count; i++)
+            {
+                var h = Model.Highlights[i];
+                <div class="col-sm-6 col-lg-3">
+                    <article class="highlight-card h-100">
+                        @if (h.ImagePath is { } image)
+                        {
+                            <img class="highlight-media" src="@image" alt="" loading="lazy" />
+                        }
+                        else
+                        {
+                            <div class="highlight-media highlight-art art-@(i % 4)" aria-hidden="true"><i class="bi bi-@h.Icon"></i></div>
+                        }
+                        <div class="p-3">
+                            <h3 class="h6 mb-2">@h.Title(english)</h3>
+                            @if (h.Text(english) is { Length: > 0 } text) { <p class="small text-muted mb-0">@text</p> }
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    </div>
+</section>

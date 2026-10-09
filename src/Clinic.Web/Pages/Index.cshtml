@@ -87,6 +87,11 @@
     </div>
 </section>
 
+@if (Model.Results is { Show: true, Highlights.Count: > 0 } why)
+{
+    <partial name="_HomeHighlights" model="why" />
+}
+
 <section class="section steps">
     <div class="container">
         <div class="section-title">
@@ -113,6 +118,16 @@
     </div>
 </section>
 
+@if (Model.Results is { Show: true } results && (results.Tiles.Count > 0 || results.Charts.Count > 0))
+{
+    <partial name="_HomeResults" model="results" />
+}
+
+@if (Model.Results is { Show: true, Testimonials.Count: > 0 } said)
+{
+    <partial name="_HomeTestimonials" model="said" />
+}
+
 @if (Model.LatestPosts.Count > 0)
 {
     <section class="section">
@@ -130,11 +145,6 @@
             <div class="text-center mt-4"><a class="btn btn-outline-success" asp-page="/Blog/Index">@L["All posts"]</a></div>
         </div>
     </section>
-}
-
-@if (Model.Results is { Show: true } results && (results.Tiles.Count > 0 || results.Charts.Count > 0))
-{
-    <partial name="_HomeResults" model="results" />
 }
 
 <section class="section pb-0">

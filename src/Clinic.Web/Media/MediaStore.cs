@@ -36,6 +36,10 @@ public class MediaStore(IConfiguration config, IWebHostEnvironment env)
     public Task<SaveResult> SavePostImageAsync(IFormFile file, CancellationToken ct = default) =>
         SaveAsync(file, "posts", ImageTypes, MaxImageBytes, ct);
 
+    /// <summary>Pictures for the home page's testimonials and highlights.</summary>
+    public Task<SaveResult> SaveHomeImageAsync(IFormFile file, CancellationToken ct = default) =>
+        SaveAsync(file, "home", ImageTypes, MaxImageBytes, ct);
+
     /// <summary>Deletes a file previously returned by this store. Paths outside the store are ignored.</summary>
     public void Delete(string? webPath)
     {

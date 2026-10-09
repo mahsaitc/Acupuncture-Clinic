@@ -27,7 +27,7 @@
     </div>
 }
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <section class="card card-soft mb-4">
         <div class="card-body">
             <div class="d-flex flex-wrap gap-4 mb-3">
@@ -159,6 +159,78 @@
             </div>
         </section>
     }
+
+    <section class="card card-soft mb-4">
+        <div class="card-body">
+            <h2 class="h5">@L["What patients say"]</h2>
+            <p class="small text-muted">@L["Publish a patient's words only with their consent, and without their full name. Leave the text empty to remove an item."]</p>
+            @for (var i = 0; i < r.Testimonials.Count; i++)
+            {
+                var t = r.Testimonials[i];
+                <div class="border rounded-3 p-3 mb-3">
+                    <div class="row g-2">
+                        <div class="col-md-3"><label class="form-label small">@L["Name or initials (Persian)"]</label><input class="form-control form-control-sm" name="Results.Testimonials[@i].NameFa" value="@t.NameFa" /></div>
+                        <div class="col-md-3"><label class="form-label small">@L["Name or initials (English)"]</label><input class="form-control form-control-sm" name="Results.Testimonials[@i].NameEn" value="@t.NameEn" dir="ltr" /></div>
+                        <div class="col-md-3"><label class="form-label small">@L["Condition (Persian)"]</label><input class="form-control form-control-sm" name="Results.Testimonials[@i].ConditionFa" value="@t.ConditionFa" /></div>
+                        <div class="col-md-3"><label class="form-label small">@L["Condition (English)"]</label><input class="form-control form-control-sm" name="Results.Testimonials[@i].ConditionEn" value="@t.ConditionEn" dir="ltr" /></div>
+                        <div class="col-md-3"><label class="form-label small">@L["Treatment (Persian)"]</label><input class="form-control form-control-sm" name="Results.Testimonials[@i].TreatmentFa" value="@t.TreatmentFa" /></div>
+                        <div class="col-md-3"><label class="form-label small">@L["Treatment (English)"]</label><input class="form-control form-control-sm" name="Results.Testimonials[@i].TreatmentEn" value="@t.TreatmentEn" dir="ltr" /></div>
+                        <div class="col-md-2">
+                            <label class="form-label small">@L["Stars"]</label>
+                            <select class="form-select form-select-sm" name="Results.Testimonials[@i].Rating">
+                                @for (var star = 5; star >= 1; star--) { <option value="@star" selected="@(t.Rating == star)">@Fmt.Number(star)</option> }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small">@L["Picture (optional)"]</label>
+                            <input type="hidden" name="Results.Testimonials[@i].PhotoPath" value="@t.PhotoPath" />
+                            <input type="file" class="form-control form-control-sm" name="tphoto@(i)" accept="image/jpeg,image/png,image/webp" />
+                            @if (t.PhotoPath is { } photo)
+                            {
+                                <div class="d-flex align-items-center gap-2 mt-1"><img src="@photo" alt="" width="36" height="36" class="rounded-circle object-fit-cover" /><label class="small"><input type="checkbox" name="tremove@(i)" value="true" /> @L["Remove picture"]</label></div>
+                            }
+                        </div>
+                        <div class="col-md-6"><label class="form-label small">@L["Text (Persian)"]</label><textarea class="form-control form-control-sm" rows="3" name="Results.Testimonials[@i].TextFa">@t.TextFa</textarea></div>
+                        <div class="col-md-6"><label class="form-label small">@L["Text (English)"]</label><textarea class="form-control form-control-sm" rows="3" name="Results.Testimonials[@i].TextEn" dir="ltr">@t.TextEn</textarea></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section class="card card-soft mb-4">
+        <div class="card-body">
+            <h2 class="h5">@L["Why our clinic"]</h2>
+            <p class="small text-muted">@L["Short promotional items with a picture or an icon. Leave the title empty to remove an item."]</p>
+            @for (var i = 0; i < r.Highlights.Count; i++)
+            {
+                var h = r.Highlights[i];
+                <div class="border rounded-3 p-3 mb-3">
+                    <div class="row g-2">
+                        <div class="col-md-2">
+                            <label class="form-label small">@L["Icon"]</label>
+                            <select class="form-select form-select-sm" name="Results.Highlights[@i].Icon">
+                                @foreach (var icon in Clinic.Web.Pages.Admin.ResultsModel.Icons) { <option value="@icon" selected="@(h.Icon == icon)">@icon</option> }
+                            </select>
+                        </div>
+                        <div class="col-md-5"><label class="form-label small">@L["Title (Persian)"]</label><input class="form-control form-control-sm" name="Results.Highlights[@i].TitleFa" value="@h.TitleFa" /></div>
+                        <div class="col-md-5"><label class="form-label small">@L["Title (English)"]</label><input class="form-control form-control-sm" name="Results.Highlights[@i].TitleEn" value="@h.TitleEn" dir="ltr" /></div>
+                        <div class="col-md-4"><label class="form-label small">@L["Text (Persian)"]</label><textarea class="form-control form-control-sm" rows="2" name="Results.Highlights[@i].TextFa">@h.TextFa</textarea></div>
+                        <div class="col-md-4"><label class="form-label small">@L["Text (English)"]</label><textarea class="form-control form-control-sm" rows="2" name="Results.Highlights[@i].TextEn" dir="ltr">@h.TextEn</textarea></div>
+                        <div class="col-md-4">
+                            <label class="form-label small">@L["Picture (optional)"]</label>
+                            <input type="hidden" name="Results.Highlights[@i].ImagePath" value="@h.ImagePath" />
+                            <input type="file" class="form-control form-control-sm" name="hphoto@(i)" accept="image/jpeg,image/png,image/webp" />
+                            @if (h.ImagePath is { } image)
+                            {
+                                <div class="d-flex align-items-center gap-2 mt-1"><img src="@image" alt="" width="48" height="32" class="rounded object-fit-cover" /><label class="small"><input type="checkbox" name="hremove@(i)" value="true" /> @L["Remove picture"]</label></div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
 
     <div class="sticky-actions">
         <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-check-lg me-1"></i>@L["Save"]</button>

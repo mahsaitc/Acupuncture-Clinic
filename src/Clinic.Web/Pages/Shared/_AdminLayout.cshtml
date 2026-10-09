@@ -60,6 +60,13 @@
                     <a class="@Active("/Admin/Schedule")" asp-page="/Admin/Schedule"><i class="bi bi-clock"></i>@L["Doctors' working hours"]</a>
                 }
 
+                <div class="admin-nav-group">@L["Reports"]</div>
+                <a class="@(path == "/Admin/Reports/Index" ? "active" : "")" asp-page="/Admin/Reports/Index"><i class="bi bi-file-earmark-bar-graph"></i>@L["Visit reports"]</a>
+                @if (isAdmin)
+                {
+                    <a class="@Active("/Admin/Reports/Charts")" asp-page="/Admin/Reports/Charts"><i class="bi bi-pie-chart"></i>@L["Clinic charts"]</a>
+                }
+
                 @if (isAdmin || isDoctor)
                 {
                     <div class="admin-nav-group">@L["Content"]</div>
