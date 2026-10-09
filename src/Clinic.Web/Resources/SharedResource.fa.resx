@@ -1896,4 +1896,16 @@
   <data name="Rendered from a free 3D model and edited for this clinic" xml:space="preserve">
     <value>رندرشده از یک مدل سه‌بعدی آزاد و ویرایش‌شده برای این کلینیک</value>
   </data>
+  <data name="Zoom in" xml:space="preserve">
+    <value>بزرگ‌نمایی</value>
+  </data>
+  <data name="Zoom out" xml:space="preserve">
+    <value>کوچک‌نمایی</value>
+  </data>
+  <data name="Whole chart" xml:space="preserve">
+    <value>نمایش کامل تصویر</value>
+  </data>
+  <data name="Zoom with the buttons, a double click or Ctrl + mouse wheel; drag to move a zoomed chart." xml:space="preserve">
+    <value>با دکمه‌ها، دوبار کلیک یا Ctrl و چرخ موس زوم کنید؛ تصویر بزرگ‌شده را با کشیدن جابه‌جا کنید.</value>
+  </data>
 </root>

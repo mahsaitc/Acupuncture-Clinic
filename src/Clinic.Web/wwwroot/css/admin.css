@@ -380,8 +380,44 @@ a.kpi:hover {
 }
 
 .body-view {
+  position: relative;
   margin: 0;
   text-align: center;
+}
+
+.zoom-tools {
+  position: absolute;
+  top: .4rem;
+  inset-inline-end: .4rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.zoom-tools .btn {
+  padding: .1rem .35rem;
+  line-height: 1.2;
+  opacity: .85;
+}
+
+.zoom-level {
+  font-size: .72rem;
+  color: var(--muted);
+  min-width: 2rem;
+}
+
+.body-map .marker > g {
+  transform: scale(var(--marker-scale, 1));
+}
+
+.body-view svg.zoomed {
+  cursor: grab;
+  touch-action: none;
+}
+
+.body-view svg.zoomed:active {
+  cursor: grabbing;
 }
 
 .body-view svg {

@@ -467,6 +467,99 @@ for code, name, x, y in [
 ]:
     P(code, name, "EAR", ear=(x, y))
 
+# ------------------------------------------------------------------ Whole-body overview
+# Every body point is also drawn on a whole-body chart (front, back or side), so the body page shows all the
+# points of a session. Points measured only on a close-up chart (head, arm, leg) get their whole-body place
+# from the points measured on both charts: an affine fit to the nearest such neighbours.
+OVERVIEW = {"arm-inner": "front", "arm-outer": "back", "head-front": "front", "leg-inner": "front", "leg-outer": "side"}
+BODY_VIEWS = ("front", "back", "side")
+HEAD_SIDE_NOSE_X = 184
+EAR_X_ON_HEAD_SIDE = 118  # on head-side, points behind this go to the back chart, in front of it to the front chart
+
+
+def _solve3(m, v):
+    """Solves a 3x3 linear system by Cramer's rule; None if singular."""
+    def det(a):
+        return (a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0])
+                + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0]))
+    d = det(m)
+    if abs(d) < 1e-6:
+        return None
+    out = []
+    for i in range(3):
+        mi = [row[:] for row in m]
+        for r in range(3):
+            mi[r][i] = v[r]
+        out.append(det(mi) / d)
+    return out
+
+
+def _fit(pairs):
+    """Least-squares affine map (x, y) -> value for each output coordinate."""
+    coefs = []
+    for k in (0, 1):
+        m = [[0.0] * 3 for _ in range(3)]
+        v = [0.0] * 3
+        for (x, y), out in pairs:
+            row = (x, y, 1.0)
+            for i in range(3):
+                v[i] += row[i] * out[k]
+                for j in range(3):
+                    m[i][j] += row[i] * row[j]
+        c = _solve3(m, v)
+        if c is None:
+            return None
+        coefs.append(c)
+    return coefs
+
+
+def _head_neck_half_width(y):
+    """Half the width of the drawn head (an ellipse, centre y 40) and neck at a height; the body below is wider."""
+    if y < 66:
+        t = (y - 40) / 26
+        return 21 * max(0.0, 1 - t * t) ** 0.5 if abs(t) < 1 else 11.5
+    return 11.5 if y < 90 else 100
+
+
+def _overview_view(views):
+    if "head-side" in views and not any(v in views for v in OVERVIEW):
+        return "head-side", "back" if views["head-side"][0] < EAR_X_ON_HEAD_SIDE else "front"
+    for detail, body in OVERVIEW.items():
+        if detail in views:
+            return detail, body
+    return None, None
+
+
+def add_overview_places(k=6):
+    known = [p for p in POINTS if any(b in p[3] for b in BODY_VIEWS)]
+    for code, _, meridian, views in POINTS:
+        if meridian == "EAR" or any(b in views for b in BODY_VIEWS):
+            continue
+        detail, body = _overview_view(views)
+        if not detail:
+            continue
+        x, y = views[detail]
+        pairs = sorted(((q[3][detail], q[3][body]) for q in known if detail in q[3] and body in q[3]),
+                       key=lambda pr: (pr[0][0] - x) ** 2 + (pr[0][1] - y) ** 2)
+        coefs = None
+        for n in range(k, len(pairs) + 1):
+            coefs = _fit(pairs[:n])
+            if coefs:
+                break
+        if not coefs:
+            continue
+        bx = coefs[0][0] * x + coefs[0][1] * y + coefs[0][2]
+        by = coefs[1][0] * x + coefs[1][1] * y + coefs[1][2]
+        if detail == "head-side" and body == "front":
+            # Sideways the fit is poor (few pairs): place the point between the nose (midline) and the ear (edge).
+            bx = _head_neck_half_width(by) * min(max((HEAD_SIDE_NOSE_X - x) / (HEAD_SIDE_NOSE_X - EAR_X_ON_HEAD_SIDE), 0), 1)
+        if body in ("front", "back"):
+            bx = 0 if meridian in ("GV", "CV") else min(max(bx, 0), 0.85 * _head_neck_half_width(by))
+        views[body] = (round(bx, 1), round(by, 1))
+
+
+add_overview_places()
+
 PROTOCOLS = [
     ("weight", "Weight loss", ["CV12", "ST25", "SP15", "CV6", "ST28", "ST36", "ST40", "SP6"]),
     ("weight-ear", "Weight loss, ear", ["TF4", "CO4", "CO13", "CO18", "TG", "HX1"]),

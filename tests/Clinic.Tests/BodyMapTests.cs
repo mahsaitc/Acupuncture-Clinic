@@ -172,4 +172,14 @@ public class BodyMapTests
         Assert.Null(AcupointLibrary.NumberOf("EX-HN3"));
         Assert.Equal(Enumerable.Range(1, 361), AcupointLibrary.Ordered.Take(361).Select(p => AcupointLibrary.NumberOf(p.Code)!.Value));
     }
+
+    [Fact]
+    public void Every_body_point_is_also_on_a_whole_body_chart()
+    {
+        var body = new[] { "front", "back", "side" };
+        var missing = AcupointLibrary.Points
+            .Where(p => p.Meridian != "EAR" && !p.Placements.Any(pl => body.Contains(pl.View)))
+            .Select(p => p.Code).ToList();
+        Assert.Empty(missing);
+    }
 }

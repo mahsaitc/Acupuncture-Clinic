@@ -79,29 +79,36 @@
                 g.classList.add('marker');
                 g.dataset.index = i;
                 if (i === selected) g.classList.add('selected');
+                // Drawn around the origin and moved into place, so zooming can keep the marker the same size.
+                g.setAttribute('transform', `translate(${m.x} ${m.y})`);
+                const inner = document.createElementNS(svgNS, 'g');
                 const c = document.createElementNS(svgNS, 'circle');
-                c.setAttribute('cx', m.x); c.setAttribute('cy', m.y); c.setAttribute('r', 4);
+                c.setAttribute('cx', 0); c.setAttribute('cy', 0); c.setAttribute('r', 4);
                 // Labels go outwards so the left and right points, and neighbours, do not cover each other.
                 const before = view.symmetric ? m.x < view.width / 2 : m.x > view.width * 0.65;
                 const t = document.createElementNS(svgNS, 'text');
-                t.setAttribute('x', before ? m.x - 6 : m.x + 6); t.setAttribute('y', m.y + 2.4);
+                t.setAttribute('x', before ? -6 : 6); t.setAttribute('y', 2.4);
                 t.setAttribute('text-anchor', before ? 'end' : 'start');
                 t.textContent = p.code || p.label;
                 const title = document.createElementNS(svgNS, 'title');
                 title.textContent = p.label + (p.note ? ' - ' + p.note : '');
-                g.append(c, t, title);
+                inner.append(c, t);
+                g.append(inner, title);
                 g.addEventListener('click', e => { e.stopPropagation(); select(i, true); });
                 layer.append(g);
             }));
             if (pending && pending.view === view.key) {
                 const g = document.createElementNS(svgNS, 'g');
                 g.classList.add('marker', 'pending');
+                g.setAttribute('transform', `translate(${pending.x} ${pending.y})`);
+                const inner = document.createElementNS(svgNS, 'g');
                 const c = document.createElementNS(svgNS, 'circle');
-                c.setAttribute('cx', pending.x); c.setAttribute('cy', pending.y); c.setAttribute('r', 5);
+                c.setAttribute('cx', 0); c.setAttribute('cy', 0); c.setAttribute('r', 5);
                 const t = document.createElementNS(svgNS, 'text');
-                t.setAttribute('x', pending.x + 7); t.setAttribute('y', pending.y + 2.4);
+                t.setAttribute('x', 7); t.setAttribute('y', 2.4);
                 t.textContent = search.value.trim() || '?';
-                g.append(c, t);
+                inner.append(c, t);
+                g.append(inner);
                 layer.append(g);
             }
         });
@@ -279,6 +286,104 @@
         render();
         search.focus();
     }));
+
+
+    // ------------------------------------------------------------------ zoom
+    // Each chart zooms with its own + / - buttons, a double click, or Ctrl + mouse wheel, and pans by dragging
+    // when zoomed in. A drag never counts as a click, so it does not place a point.
+    const MAX_ZOOM = 6;
+    let dragged = false;
+
+    function setBox(svg, box) {
+        const view = views.get(svg.dataset.view);
+        box.w = Math.min(view.width, Math.max(view.width / MAX_ZOOM, box.w));
+        box.h = box.w * view.height / view.width;
+        box.x = Math.min(view.width - box.w, Math.max(0, box.x));
+        box.y = Math.min(view.height - box.h, Math.max(0, box.y));
+        svg.setAttribute('viewBox', `${box.x} ${box.y} ${box.w} ${box.h}`);
+        svg.classList.toggle('zoomed', box.w < view.width - 0.01);
+        // Markers keep their size on screen; only the picture is magnified.
+        svg.style.setProperty('--marker-scale', box.w / view.width);
+        svg.closest('.body-view').querySelector('.zoom-level').textContent = Math.round(view.width / box.w * 10) / 10 + '×';
+    }
+
+    function boxOf(svg) {
+        const b = svg.viewBox.baseVal;
+        return { x: b.x, y: b.y, w: b.width, h: b.height };
+    }
+
+    function toLocal(svg, clientX, clientY) {
+        const pt = svg.createSVGPoint();
+        pt.x = clientX; pt.y = clientY;
+        return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+
+    /** Zooms by factor around a chart point (the centre when none is given). */
+    function zoom(svg, factor, at) {
+        const box = boxOf(svg);
+        const cx = at ? at.x : box.x + box.w / 2, cy = at ? at.y : box.y + box.h / 2;
+        const w = box.w / factor;
+        setBox(svg, { x: cx - (cx - box.x) * w / box.w, y: cy - (cy - box.y) * w / box.w, w: w });
+    }
+
+    document.querySelectorAll('.body-map svg[data-view]').forEach(svg => {
+        const view = views.get(svg.dataset.view);
+        const figure = svg.closest('.body-view');
+        const tools = document.createElement('div');
+        tools.className = 'zoom-tools';
+        const button = (label, title, onClick) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'btn btn-sm btn-light';
+            b.innerHTML = label;
+            b.title = title; b.setAttribute('aria-label', title);
+            b.addEventListener('click', onClick);
+            return b;
+        };
+        const level = document.createElement('span');
+        level.className = 'zoom-level';
+        tools.append(
+            button('<i class="bi bi-zoom-in"></i>', text.zoomIn, () => zoom(svg, 1.5)),
+            button('<i class="bi bi-zoom-out"></i>', text.zoomOut, () => zoom(svg, 1 / 1.5)),
+            button('<i class="bi bi-arrows-fullscreen"></i>', text.zoomReset, () => setBox(svg, { x: 0, y: 0, w: view.width })),
+            level);
+        figure.prepend(tools);
+        setBox(svg, { x: 0, y: 0, w: view.width });
+
+        svg.addEventListener('wheel', e => {
+            if (!e.ctrlKey) return;
+            e.preventDefault();
+            zoom(svg, e.deltaY < 0 ? 1.25 : 0.8, toLocal(svg, e.clientX, e.clientY));
+        }, { passive: false });
+        svg.addEventListener('dblclick', e => {
+            e.preventDefault();
+            // The first click of the double click marked a place for a point of one's own: undo that.
+            if (pending) { pending = null; render(); }
+            zoom(svg, 2, toLocal(svg, e.clientX, e.clientY));
+        });
+
+        let start = null;
+        svg.addEventListener('pointerdown', e => {
+            dragged = false;
+            if (!svg.classList.contains('zoomed')) return;
+            start = { x: e.clientX, y: e.clientY, box: boxOf(svg), scale: svg.getScreenCTM().a };
+        });
+        svg.addEventListener('pointermove', e => {
+            if (!start) return;
+            const dx = e.clientX - start.x, dy = e.clientY - start.y;
+            if (!dragged && Math.hypot(dx, dy) < 5) return;
+            dragged = true;
+            svg.setPointerCapture(e.pointerId);
+            setBox(svg, { x: start.box.x - dx / start.scale, y: start.box.y - dy / start.scale, w: start.box.w });
+        });
+        const end = () => { start = null; };
+        svg.addEventListener('pointerup', end);
+        svg.addEventListener('pointercancel', end);
+        // A drag (or the second click of a double click) must not place or pick a point.
+        svg.addEventListener('click', e => {
+            if (dragged || e.detail > 1) { e.stopPropagation(); e.preventDefault(); dragged = false; }
+        }, true);
+    });
 
     form.addEventListener('submit', save);
     render();

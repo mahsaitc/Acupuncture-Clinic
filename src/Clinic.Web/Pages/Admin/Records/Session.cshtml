@@ -63,6 +63,7 @@
                         </div>
                     </div>
 
+                    <div class="small text-muted mb-2"><i class="bi bi-zoom-in me-1"></i>@L["Zoom with the buttons, a double click or Ctrl + mouse wheel; drag to move a zoomed chart."]</div>
                     <partial name="_BodyMap" model="new Clinic.Web.Clinical.BodyMap(points, true)" />
                     <p class="small text-muted mt-2 mb-0"><i class="bi bi-info-circle me-1"></i>@L["Point positions on the charts are approximate and meant for recording only."]</p>
                 </div>
@@ -178,7 +179,7 @@
     <script id="body-map-text" type="application/json">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(new
     {
         Right = L["Right"].Value, Left = L["Left"].Value, Midline = L["Midline"].Value, Both = L["Both sides"].Value,
-        custom = L["Point {0}"].Value, replace = L["Replace the current points?"].Value, clear = L["Remove all points?"].Value,
+        custom = L["Point {0}"].Value, zoomIn = L["Zoom in"].Value, zoomOut = L["Zoom out"].Value, zoomReset = L["Whole chart"].Value, replace = L["Replace the current points?"].Value, clear = L["Remove all points?"].Value,
     }))</script>
     <script src="~/js/bodymap.js" asp-append-version="true"></script>
 }
