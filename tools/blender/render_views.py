@@ -335,7 +335,27 @@ def write_silhouettes_only(args):
         json.dump(sil, fh, separators=(",", ":"))
 
 
-def soften_alpha(path, sigma):
+def polygon_mask(polys, w, h):
+    """Boolean mask (row 0 at the top) of the pixels inside any of the polygons, given in pixel coordinates (even-odd rule)."""
+    import numpy as np
+    mask = np.zeros((h, w), dtype=bool)
+    cols = np.arange(w) + 0.5
+    for poly in polys:
+        n = len(poly)
+        for r in range(max(0, int(min(p[1] for p in poly))), min(h, int(max(p[1] for p in poly)) + 1)):
+            yy = r + 0.5
+            xs = []
+            for i in range(n):
+                (x1, y1), (x2, y2) = poly[i], poly[(i + 1) % n]
+                if y1 != y2 and min(y1, y2) <= yy < max(y1, y2):
+                    xs.append(x1 + (yy - y1) * (x2 - x1) / (y2 - y1))
+            xs.sort()
+            for i in range(0, len(xs) - 1, 2):
+                mask[r] |= (cols >= xs[i]) & (cols < xs[i + 1])
+    return mask
+
+
+def soften_alpha(path, sigma, cuts=None, scale=1):
     """Round off jagged cut edges: blur the opacity and threshold it softly, and spread the colour into the new edge pixels."""
     import numpy as np
     img = bpy.data.images.load(path)
@@ -351,6 +371,9 @@ def soften_alpha(path, sigma):
         x = np.apply_along_axis(lambda v: np.convolve(v, kernel, mode="same"), 0, x)
         return np.apply_along_axis(lambda v: np.convolve(v, kernel, mode="same"), 1, x)
 
+    if cuts:  # polygons in chart units: erase what lies inside (a flap of skin that is not part of the chart)
+        polys = [[(x * scale, y * scale) for x, y in poly] for poly in cuts]
+        arr[..., 3][polygon_mask(polys, w, h)[::-1]] = 0.0  # the image's row 0 is its bottom
     a = arr[..., 3]
     ab = blur(a)
     t = np.clip((ab - 0.38) / 0.24, 0.0, 1.0)
@@ -422,8 +445,8 @@ def render_charts(args, views_cfg, objs, sc, cam, sun):
         bpy.ops.render.render(write_still=True)
         for o, mod in added:
             o.modifiers.remove(mod)
-        if spec.get("soften"):
-            soften_alpha(sc.render.filepath, spec["soften"] * args.scale)
+        if spec.get("soften") or spec.get("cut"):
+            soften_alpha(sc.render.filepath, max(spec.get("soften", 1.0), 0.3) * args.scale, spec.get("cut"), args.scale)
         pct, rgb = image_stats(sc.render.filepath)
         print("chart %s: %d objects, %.1f%% opaque, mean RGB (%.2f, %.2f, %.2f)" % ((key, shown, pct) + rgb))
         manifest[fname] = {"view": spec["view"], "center": spec["center"], "px_per_m": s_m, "size": [W, H], "scale": args.scale,
