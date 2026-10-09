@@ -41,36 +41,65 @@
                 var c = charts[ci];
                 var unit = c.Unit(english);
                 var max = c.Rows.Max(r => Math.Max(r.Value, r.After ?? 0));
+                var top = c.Rows.Max(r => r.Value);
                 // Two charts a row; an odd last chart takes the whole row.
-                <div class="col-lg-@(ci == charts.Count - 1 && charts.Count % 2 == 1 ? "12" : "6")">
+                var wide = ci == charts.Count - 1 && charts.Count % 2 == 1;
+                // A short list in a half-width card reads best as columns; longer or full-width lists as horizontal bars.
+                var columns = c.Kind == ResultChartKind.Bars && !wide && c.Rows.Count <= 6;
+                <div class="col-lg-@(wide ? "12" : "6")">
                     <figure class="result-chart h-100 mb-0">
-                        <figcaption class="h6 mb-3">@c.Title(english)</figcaption>
+                        <figcaption class="result-chart-head">
+                            <span class="result-chart-icon"><i class="bi bi-@(c.Kind == ResultChartKind.BeforeAfter ? "activity" : columns ? "bar-chart-fill" : "bar-chart-steps")" aria-hidden="true"></i></span>
+                            <span class="result-chart-title">@c.Title(english)</span>
+                        </figcaption>
                         @if (c.Kind == ResultChartKind.BeforeAfter)
                         {
-                            <div class="result-legend small mb-2">
+                            <div class="result-legend small mb-3">
                                 <span><i class="swatch before"></i>@L["Before treatment"]</span>
                                 <span><i class="swatch after"></i>@L["After treatment"]</span>
                             </div>
                         }
-                        <div class="result-bars">
-                            @foreach (var r in c.Rows)
-                            {
-                                <div class="result-bar-row">
-                                    <div class="result-bar-label">@r.Label(english)</div>
-                                    <div class="result-bar-tracks">
-                                        @if (c.Kind == ResultChartKind.BeforeAfter)
+                        @if (columns)
+                        {
+                            <div class="result-columns" style="--count: @c.Rows.Count">
+                                @foreach (var r in c.Rows)
+                                {
+                                    <div class="result-column @(r.Value == top ? "is-top" : "")">
+                                        <div class="result-column-track">
+                                            <span class="result-column-fill" style="--h: @Width(r.Value, max)"><b dir="ltr">@V(r.Value)<small>@unit</small></b></span>
+                                        </div>
+                                        <div class="result-column-label">@r.Label(english)</div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="result-bars">
+                                @foreach (var r in c.Rows)
+                                {
+                                    <div class="result-bar-row">
+                                        <div class="result-bar-label">@r.Label(english)</div>
+                                        <div class="result-bar-tracks">
+                                            @if (c.Kind == ResultChartKind.BeforeAfter)
+                                            {
+                                                <div class="result-track"><span class="result-rail"><span class="result-fill before" style="--w: @Width(r.Value, max)"></span></span><b>@V(r.Value) @unit</b></div>
+                                                <div class="result-track"><span class="result-rail"><span class="result-fill" style="--w: @Width(r.After ?? 0, max)"></span></span><b>@(r.After is double a ? V(a) : "-") @unit</b></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="result-track"><span class="result-rail"><span class="result-fill @(r.Value == top ? "is-top" : "")" style="--w: @Width(r.Value, max)"></span></span><b>@V(r.Value) @unit</b></div>
+                                            }
+                                        </div>
+                                        @if (c.Kind == ResultChartKind.BeforeAfter && r.After is double after && r.Value > 0)
                                         {
-                                            <div class="result-track"><span class="result-fill before" style="width: @Width(r.Value, max)"></span><b>@V(r.Value) @unit</b></div>
-                                            <div class="result-track"><span class="result-fill" style="width: @Width(r.After ?? 0, max)"></span><b>@(r.After is double a ? V(a) : "-") @unit</b></div>
-                                        }
-                                        else
-                                        {
-                                            <div class="result-track"><span class="result-fill" style="width: @Width(r.Value, max)"></span><b>@V(r.Value) @unit</b></div>
+                                            var change = (after - r.Value) / r.Value * 100;
+                                            <span class="result-change @(change <= 0 ? "down" : "up")" dir="ltr"><i class="bi bi-arrow-@(change <= 0 ? "down" : "up")-short"></i>@N(Math.Abs(change).ToString("0", System.Globalization.CultureInfo.InvariantCulture) + "%")</span>
                                         }
                                     </div>
-                                </div>
-                            }
-                        </div>
+                                }
+                            </div>
+                        }
                         @if (c.ShowTable)
                         {
                             <div class="table-responsive mt-3">
@@ -116,3 +145,4 @@
         }
     </div>
 </section>
+<script src="~/js/home-results.js" asp-append-version="true" defer></script>
