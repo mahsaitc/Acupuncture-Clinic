@@ -77,8 +77,19 @@
                         <input asp-for="ReferralSource" class="form-control" placeholder="@L["e.g. the friend's or doctor's name"]" />
                     </div>
                     <div class="col-sm-6">
-                        <label asp-for="InsuranceProvider" class="form-label"></label>
-                        <input asp-for="InsuranceProvider" class="form-control" />
+                        <label asp-for="Insurance" class="form-label"></label>
+                        <select asp-for="Insurance" class="form-select">
+                            <option value="">-</option>
+                            @foreach (var i in Enum.GetValues<BasicInsurance>()) { <option value="@i">@L[Clinic.Web.Pages.Admin.Patients.PatientInput.InsuranceName(i)]</option> }
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="HasSupplementaryInsurance" class="form-label"></label>
+                        <select asp-for="HasSupplementaryInsurance" class="form-select">
+                            <option value="">-</option>
+                            <option value="true">@L["Has it"]</option>
+                            <option value="false">@L["Does not have it"]</option>
+                        </select>
                     </div>
                     <div class="col-12">
                         <label asp-for="Notes" class="form-label"></label>

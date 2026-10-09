@@ -18,6 +18,16 @@ public enum ReferralChannel
     Other = 5,
 }
 
+/// <summary>The patient's basic (public) health insurance.</summary>
+public enum BasicInsurance
+{
+    SocialSecurity = 0,
+    Salamat = 1,
+    ArmedForces = 2,
+    OtherInsurance = 3,
+    NoInsurance = 4,
+}
+
 /// <summary>
 /// A patient's non-clinical details, which the receptionist may enter and edit.
 /// Clinical data lives in <see cref="MedicalRecord"/>, which only doctors can open.
@@ -49,6 +59,12 @@ public class PatientProfile
 
     /// <summary>Optional detail, e.g. the friend's or the referring doctor's name.</summary>
     public string? ReferralSource { get; set; }
+    public BasicInsurance? Insurance { get; set; }
+
+    /// <summary>Whether the patient has supplementary insurance; null when not asked.</summary>
+    public bool? HasSupplementaryInsurance { get; set; }
+
+    /// <summary>Free-text insurance entered before the list existed; shown only when <see cref="Insurance"/> is empty.</summary>
     public string? InsuranceProvider { get; set; }
     public string? EmergencyContactName { get; set; }
     public string? EmergencyContactPhone { get; set; }

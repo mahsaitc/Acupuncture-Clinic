@@ -51,6 +51,8 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
             ["Input.Address"] = "خیابان ولیعصر",
             ["Input.Referral"] = nameof(ReferralChannel.Instagram),
             ["Input.ReferralSource"] = "صفحه کلینیک",
+            ["Input.Insurance"] = nameof(BasicInsurance.SocialSecurity),
+            ["Input.HasSupplementaryInsurance"] = "true",
         });
 
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
@@ -68,6 +70,10 @@ public partial class ClinicalTests(ClinicWebFactory factory) : IClassFixture<Cli
         var details = await client.GetStringAsync($"/Admin/Patients/Details?id={user.Id}");
         Assert.Contains("اینستاگرام - صفحه کلینیک", details);
         Assert.Equal(ReferralChannel.Instagram, profile.Referral);
+        Assert.Equal(BasicInsurance.SocialSecurity, profile.Insurance);
+        Assert.True(profile.HasSupplementaryInsurance);
+        Assert.Contains("تأمین اجتماعی", details);
+        Assert.Contains("بیمه تکمیلی", details);
         Assert.DoesNotContain("/Admin/Records", details);
 
         var again = await PostFormAsync(client, "/Admin/Patients/Create", new() { ["Input.FullName"] = "تکراری", ["Input.Mobile"] = mobile });

@@ -86,9 +86,21 @@ public class PatientInput
     [Display(Name = "Referral details")]
     public string? ReferralSource { get; set; }
 
-    [StringLength(100)]
-    [Display(Name = "Insurance")]
-    public string? InsuranceProvider { get; set; }
+    /// <summary>Resource key (English text) for each basic insurance.</summary>
+    public static string InsuranceName(BasicInsurance i) => i switch
+    {
+        BasicInsurance.SocialSecurity => "Social security",
+        BasicInsurance.Salamat => "Salamat insurance",
+        BasicInsurance.ArmedForces => "Armed forces",
+        BasicInsurance.OtherInsurance => "Other insurance",
+        _ => "No insurance",
+    };
+
+    [Display(Name = "Basic insurance")]
+    public BasicInsurance? Insurance { get; set; }
+
+    [Display(Name = "Supplementary insurance")]
+    public bool? HasSupplementaryInsurance { get; set; }
 
     [StringLength(200)]
     [Display(Name = "Emergency contact")]
@@ -122,7 +134,8 @@ public class PatientInput
         PostalCode = p?.PostalCode,
         Referral = p?.Referral,
         ReferralSource = p?.ReferralSource,
-        InsuranceProvider = p?.InsuranceProvider,
+        Insurance = p?.Insurance,
+        HasSupplementaryInsurance = p?.HasSupplementaryInsurance,
         EmergencyContactName = p?.EmergencyContactName,
         EmergencyContactPhone = p?.EmergencyContactPhone,
         Notes = p?.Notes,
@@ -269,7 +282,8 @@ public class PatientRegistration(ClinicDbContext db, UserManager<ApplicationUser
         p.PostalCode = Clean(JalaliDate.ToLatinDigits(input.PostalCode ?? ""));
         p.Referral = input.Referral;
         p.ReferralSource = Clean(input.ReferralSource);
-        p.InsuranceProvider = Clean(input.InsuranceProvider);
+        p.Insurance = input.Insurance;
+        p.HasSupplementaryInsurance = input.HasSupplementaryInsurance;
         p.EmergencyContactName = Clean(input.EmergencyContactName);
         p.EmergencyContactPhone = Clean(JalaliDate.ToLatinDigits(input.EmergencyContactPhone ?? ""));
         p.Notes = Clean(input.Notes);

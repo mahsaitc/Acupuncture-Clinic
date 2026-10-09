@@ -1908,4 +1908,31 @@
   <data name="Zoom with the buttons, a double click or Ctrl + mouse wheel; drag to move a zoomed chart." xml:space="preserve">
     <value>با دکمه‌ها، دوبار کلیک یا Ctrl و چرخ موس زوم کنید؛ تصویر بزرگ‌شده را با کشیدن جابه‌جا کنید.</value>
   </data>
+  <data name="Basic insurance" xml:space="preserve">
+    <value>بیمه پایه</value>
+  </data>
+  <data name="Supplementary insurance" xml:space="preserve">
+    <value>بیمه تکمیلی</value>
+  </data>
+  <data name="Has it" xml:space="preserve">
+    <value>دارد</value>
+  </data>
+  <data name="Does not have it" xml:space="preserve">
+    <value>ندارد</value>
+  </data>
+  <data name="Social security" xml:space="preserve">
+    <value>تأمین اجتماعی</value>
+  </data>
+  <data name="Salamat insurance" xml:space="preserve">
+    <value>بیمه سلامت</value>
+  </data>
+  <data name="Armed forces" xml:space="preserve">
+    <value>نیروهای مسلح</value>
+  </data>
+  <data name="Other insurance" xml:space="preserve">
+    <value>سایر</value>
+  </data>
+  <data name="No insurance" xml:space="preserve">
+    <value>بدون بیمه (آزاد)</value>
+  </data>
 </root>
