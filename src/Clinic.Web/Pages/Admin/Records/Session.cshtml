@@ -22,17 +22,18 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
                         <h2 class="h5 mb-0"><i class="bi bi-person-arms-up me-2 text-success"></i>@L["Acupuncture points"]</h2>
-                        <span class="small text-muted">@L["Click a chart to add a point of your own."]</span>
+                        <span class="small text-muted">@L["For a point that is not in the list, click its place on a chart, type its name and press Add."]</span>
                     </div>
 
                     <div class="point-tools mb-3">
-                        <label class="form-label small text-muted mb-1" for="point-search">@L["Type a point's code or name; it is marked on every chart it appears on."]</label>
+                        <label class="form-label small text-muted mb-1" for="point-search">@L["Type a point's number (1 to 361), code or name and press Add; it is marked on every chart it appears on."]</label>
                         <div class="input-group">
-                            <input class="form-control" id="point-search" list="point-names" dir="ltr" autocomplete="off" placeholder="ST36 · Zusanli · TF4 Shenmen" />
+                            <input class="form-control" id="point-search" list="point-names" dir="ltr" autocomplete="off" />
                             <datalist id="point-names">
-                                @foreach (var p in AcupointLibrary.Points)
+                                @foreach (var p in AcupointLibrary.Ordered)
                                 {
-                                    <option value="@p.Label"></option>
+                                    var n = AcupointLibrary.NumberOf(p.Code);
+                                    <option value="@(n is int num ? $"{num}. {p.Label}" : p.Label)"></option>
                                 }
                             </datalist>
                             <select class="form-select flex-grow-0 w-auto" id="point-side" aria-label="@L["Side"]">
@@ -42,7 +43,8 @@
                             </select>
                             <button type="button" class="btn btn-success" id="point-add"><i class="bi bi-plus-lg me-1"></i>@L["Add"]</button>
                         </div>
-                        <div class="small text-danger mt-1" id="point-unknown" hidden>@L["No standard point has that name. Pick one from the list, or click a chart to place your own point."]</div>
+                        <div class="small text-danger mt-1" id="point-unknown" hidden>@L["This point is not in the list. To add it as your own point, click its place on a chart, then press Add."]</div>
+                        <div class="small text-success mt-1" id="point-pending" hidden><i class="bi bi-geo-alt-fill me-1"></i>@L["Place marked on the chart. Type a name for the point and press Add."] <button type="button" class="btn btn-link btn-sm p-0 align-baseline" id="point-pending-cancel">@L["Cancel"]</button></div>
                         <div class="d-flex flex-wrap gap-2 mt-2">
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="bi bi-collection me-1"></i>@L["Load a protocol"]</button>
@@ -81,7 +83,7 @@
                     <div class="row g-3">
                         <div class="col-sm-6">
                             <label asp-for="Input.Date" class="form-label"></label>
-                            <input asp-for="Input.Date" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" autocomplete="off" />
+                            <input asp-for="Input.Date" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
                             <span asp-validation-for="Input.Date" class="text-danger small"></span>
                         </div>
                         <div class="col-sm-6">

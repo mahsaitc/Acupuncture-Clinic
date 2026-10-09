@@ -47,6 +47,16 @@ public static partial class AcupointLibrary
     /// <summary>Starting point sets the doctor can load and then adjust.</summary>
     public static IReadOnlyList<Protocol> Protocols => ProtocolData;
 
+    /// <summary>
+    /// The 361 standard channel points in the conventional order (LU, LI, ST, SP, HT, SI, BL, KI, PC, SJ,
+    /// GB, LR, GV, CV, each by number), then the extra and ear points, which have no number.
+    /// </summary>
+    public static readonly IReadOnlyList<Acupoint> Ordered;
+
+    private static readonly Dictionary<string, int> Numbers;
+
+    private static readonly string[] ChannelOrder = ["LU", "LI", "ST", "SP", "HT", "SI", "BL", "KI", "PC", "SJ", "GB", "LR", "GV", "CV"];
+
     private static readonly Dictionary<string, Acupoint> ByCode;
     private static readonly Dictionary<string, ChartView> ByKey;
 
@@ -57,7 +67,18 @@ public static partial class AcupointLibrary
         Pages = ViewData.Select(v => v.Page).Distinct().ToArray();
         ByCode = PointData.ToDictionary(p => p.Code, StringComparer.OrdinalIgnoreCase);
         ByKey = ViewData.ToDictionary(v => v.Key, StringComparer.OrdinalIgnoreCase);
+
+        var channel = PointData
+            .Where(p => Array.IndexOf(ChannelOrder, p.Meridian) >= 0)
+            .OrderBy(p => Array.IndexOf(ChannelOrder, p.Meridian))
+            .ThenBy(p => int.Parse(p.Code[p.Meridian.Length..], System.Globalization.CultureInfo.InvariantCulture))
+            .ToArray();
+        Numbers = channel.Select((p, i) => (p.Code, i + 1)).ToDictionary(x => x.Code, x => x.Item2, StringComparer.OrdinalIgnoreCase);
+        Ordered = [.. channel, .. PointData.Where(p => !Numbers.ContainsKey(p.Code))];
     }
+
+    /// <summary>The point's place, 1 to 361, among the standard channel points; null for extra and ear points.</summary>
+    public static int? NumberOf(string? code) => code is not null && Numbers.TryGetValue(code.Trim(), out var n) ? n : null;
 
     public static Acupoint? Find(string? code) => code is not null && ByCode.TryGetValue(code.Trim(), out var p) ? p : null;
 

@@ -33,7 +33,7 @@ public partial class LocalizationTests
         used.UnionWith(Enum.GetNames<Domain.Entities.MaritalStatus>());
         foreach (var flags in new[]
         {
-            typeof(Domain.Entities.TreatmentGoal), typeof(Domain.Entities.MedicalCondition), typeof(Domain.Entities.SleepQuality),
+            typeof(Domain.Entities.TreatmentGoal), typeof(Domain.Entities.ReferralChannel), typeof(Domain.Entities.MedicalCondition), typeof(Domain.Entities.SleepQuality),
             typeof(Domain.Entities.AppetiteLevel), typeof(Domain.Entities.EnergyLevel), typeof(Domain.Entities.TasteCraving),
             typeof(Domain.Entities.DigestionState), typeof(Domain.Entities.MenstrualState), typeof(Domain.Entities.Mood),
             typeof(Domain.Entities.PulseQuality), typeof(Domain.Entities.TreatmentArea), typeof(Domain.Entities.TreatmentMethod),

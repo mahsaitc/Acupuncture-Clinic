@@ -7,6 +7,17 @@ public enum MaritalStatus
     Other = 2,
 }
 
+/// <summary>How the patient heard of the clinic, kept as a fixed list so it can be counted.</summary>
+public enum ReferralChannel
+{
+    Friend = 0,
+    Instagram = 1,
+    Internet = 2,
+    Website = 3,
+    Doctor = 4,
+    Other = 5,
+}
+
 /// <summary>
 /// A patient's non-clinical details, which the receptionist may enter and edit.
 /// Clinical data lives in <see cref="MedicalRecord"/>, which only doctors can open.
@@ -34,6 +45,9 @@ public class PatientProfile
     /// <summary>The first visit to the clinic ("date of visit" on the intake form).</summary>
     public DateOnly? FirstVisitDate { get; set; }
 
+    public ReferralChannel? Referral { get; set; }
+
+    /// <summary>Optional detail, e.g. the friend's or the referring doctor's name.</summary>
     public string? ReferralSource { get; set; }
     public string? InsuranceProvider { get; set; }
     public string? EmergencyContactName { get; set; }

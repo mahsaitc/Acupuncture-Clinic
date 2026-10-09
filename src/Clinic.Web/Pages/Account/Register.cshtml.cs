@@ -45,9 +45,10 @@ public class RegisterModel(UserManager<ApplicationUser> userManager, SignInManag
             modelState.AddModelError(string.Empty, userManager.ErrorDescriber.DuplicateEmail(input.Email).Description);
             return null;
         }
+        var mobile = Clinic.Application.Common.JalaliDate.ToLatinDigits(input.PhoneNumber).Trim();
         // A patient the clinic registered at the front desk has no login yet. Taking it over needs the
         // clinic's help until sign-in by SMS exists, otherwise anyone who knows the number could claim it.
-        if (userManager.Users.Any(u => u.PhoneNumber == input.PhoneNumber && u.PasswordHash == null))
+        if (userManager.Users.Any(u => u.PhoneNumber == mobile && u.PasswordHash == null))
         {
             modelState.AddModelError(string.Empty, l["This mobile number is already registered at the clinic. Please call the clinic to activate your online account."]);
             return null;
@@ -57,7 +58,7 @@ public class RegisterModel(UserManager<ApplicationUser> userManager, SignInManag
         {
             UserName = input.Email,
             Email = input.Email,
-            PhoneNumber = input.PhoneNumber,
+            PhoneNumber = mobile,
             FullName = input.FullName.Trim(),
             PreferredLanguage = CulturePath.IsEnglish ? CulturePath.English : CulturePath.Persian,
         };
@@ -90,7 +91,7 @@ public class RegisterInput
     public string Email { get; set; } = "";
 
     [Required(ErrorMessage = "{0} is required.")]
-    [RegularExpression(@"^09\d{9}$|^\+\d{8,15}$", ErrorMessage = "Enter a mobile number like 09121234567.")]
+    [RegularExpression(@"^\s*(09|۰۹)[0-9۰-۹]{9}\s*$", ErrorMessage = "Enter an 11-digit mobile number like 09121234567.")]
     [Display(Name = "Mobile number")]
     public string PhoneNumber { get; set; } = "";
 

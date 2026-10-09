@@ -32,12 +32,30 @@ PHOTO_VIEWS = set(photo.VIEWS) if PHOTO else set()
 
 
 def placed(points):
-    """The points with their positions on the charts as shown: moved onto the photo charts when those are in use."""
+    """The points with their positions on the charts as shown: moved onto the photo charts when those are in use.
+    A placement that lands outside its photo chart (the chart frame is cut lower than the drawing was) is left off that
+    chart; the point stays on its other charts."""
     if not PHOTO:
         return points
-    out = []
+    sizes = {v: FIGURES[v][:2] for v in PHOTO_VIEWS}
+    symmetric = {v[0]: v[2] for v in VIEWS}
+    out, dropped = [], []
     for code, name, meridian, views in points:
-        out.append((code, name, meridian, {v: photo.remap(v, x, y, code) if v in PHOTO_VIEWS else (x, y) for v, (x, y) in views.items()}))
+        moved = {}
+        for v, (x, y) in views.items():
+            if v not in PHOTO_VIEWS:
+                moved[v] = (x, y)
+                continue
+            nx, ny = photo.remap(v, x, y, code)
+            w, h = sizes[v]
+            if 0 <= ny <= h and 0 <= nx <= (w / 2 if symmetric[v] else w):
+                moved[v] = (nx, ny)
+            else:
+                dropped.append(f"{code} on {v}")
+        assert moved, f"{code} would be on no chart"
+        out.append((code, name, meridian, moved))
+    if dropped:
+        print("Left off the photo charts (outside the frame):", ", ".join(dropped))
     return out
 
 

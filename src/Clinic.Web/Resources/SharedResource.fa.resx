@@ -1005,8 +1005,8 @@
   <data name="Insomnia and anxiety" xml:space="preserve">
     <value>بی‌خوابی و اضطراب</value>
   </data>
-  <data name="JPG, PNG, WebP, PDF or DICOM, at most 50 MB." xml:space="preserve">
-    <value>JPG، PNG، WebP، PDF یا DICOM، حداکثر ۵۰ مگابایت.</value>
+  <data name="JPG, PNG, WebP, PDF or DICOM, at most 200 KB." xml:space="preserve">
+    <value>JPG، PNG، WebP، PDF یا DICOM، حداکثر ۲۰۰ کیلوبایت.</value>
   </data>
   <data name="Lab" xml:space="preserve">
     <value>آزمایش</value>
@@ -1176,8 +1176,8 @@
   <data name="TCM pattern" xml:space="preserve">
     <value>الگوی طب سنتی چینی</value>
   </data>
-  <data name="The file must be a JPG, PNG, WebP, PDF or DICOM file of at most 50 MB." xml:space="preserve">
-    <value>فایل باید JPG، PNG، WebP، PDF یا DICOM و حداکثر ۵۰ مگابایت باشد.</value>
+  <data name="The file must be a JPG, PNG, WebP, PDF or DICOM file of at most 200 KB." xml:space="preserve">
+    <value>فایل باید JPG، PNG، WebP، PDF یا DICOM و حداکثر ۲۰۰ کیلوبایت باشد.</value>
   </data>
   <data name="The file was deleted." xml:space="preserve">
     <value>فایل حذف شد.</value>
@@ -1802,6 +1802,93 @@
   </data>
   <data name="WeightLoss" xml:space="preserve">
     <value>کاهش وزن</value>
+  </data>
+  <data name="and {0} more" xml:space="preserve">
+    <value>و {0} مورد دیگر</value>
+  </data>
+  <data name="Choose from the calendar" xml:space="preserve">
+    <value>انتخاب از تقویم</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>پاک کردن</value>
+  </data>
+  <data name="e.g. the friend&#x27;s or doctor&#x27;s name" xml:space="preserve">
+    <value>مثلاً نام دوست یا پزشک معرف</value>
+  </data>
+  <data name="Enter an 11-digit mobile number like 09121234567." xml:space="preserve">
+    <value>شماره موبایل را ۱۱ رقمی وارد کنید، مثل 09121234567.</value>
+  </data>
+  <data name="Enter an 11-digit phone number like 09121234567." xml:space="preserve">
+    <value>شماره تلفن را ۱۱ رقمی وارد کنید، مثل 09121234567.</value>
+  </data>
+  <data name="Enter an 11-digit phone number with the area code, like 07132346425." xml:space="preserve">
+    <value>شماره تلفن را ۱۱ رقمی و با کد شهر وارد کنید، مثل 07132346425.</value>
+  </data>
+  <data name="For a point that is not in the list, click its place on a chart, type its name and press Add." xml:space="preserve">
+    <value>برای نقطه‌ای که در فهرست نیست، جای آن را روی تصویر بزنید، نامش را بنویسید و «افزودن» را بزنید.</value>
+  </data>
+  <data name="Friend" xml:space="preserve">
+    <value>دوستان و آشنایان</value>
+  </data>
+  <data name="Instagram" xml:space="preserve">
+    <value>اینستاگرام</value>
+  </data>
+  <data name="Internet" xml:space="preserve">
+    <value>اینترنت</value>
+  </data>
+  <data name="Website" xml:space="preserve">
+    <value>وب‌سایت</value>
+  </data>
+  <data name="Next month" xml:space="preserve">
+    <value>ماه بعد</value>
+  </data>
+  <data name="Previous month" xml:space="preserve">
+    <value>ماه قبل</value>
+  </data>
+  <data name="Place marked on the chart. Type a name for the point and press Add." xml:space="preserve">
+    <value>جای نقطه روی تصویر مشخص شد. نام نقطه را بنویسید و «افزودن» را بزنید.</value>
+  </data>
+  <data name="Please fix these before saving:" xml:space="preserve">
+    <value>لطفاً پیش از ذخیره این موارد را اصلاح کنید:</value>
+  </data>
+  <data name="Referral details" xml:space="preserve">
+    <value>توضیح معرف</value>
+  </data>
+  <data name="The file is larger than 200 KB. Please choose a smaller file or reduce its size first." xml:space="preserve">
+    <value>حجم فایل بیشتر از ۲۰۰ کیلوبایت است. فایل کوچک‌تری انتخاب کنید یا ابتدا حجم آن را کم کنید.</value>
+  </data>
+  <data name="The national code must have exactly 10 digits." xml:space="preserve">
+    <value>کد ملی باید دقیقاً ۱۰ رقم باشد.</value>
+  </data>
+  <data name="The postal code must have exactly 10 digits." xml:space="preserve">
+    <value>کد پستی باید دقیقاً ۱۰ رقم باشد.</value>
+  </data>
+  <data name="This point is not in the list. To add it as your own point, click its place on a chart, then press Add." xml:space="preserve">
+    <value>این نقطه در فهرست نیست. برای افزودن آن به‌عنوان نقطه دلخواه، جای آن را روی تصویر بزنید و سپس «افزودن» را بزنید.</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>امروز</value>
+  </data>
+  <data name="Type a point&#x27;s code or name and press Add; it is marked on every chart it appears on." xml:space="preserve">
+    <value>کد یا نام نقطه را بنویسید و «افزودن» را بزنید؛ روی همه تصویرهایی که آن نقطه را دارند علامت می‌خورد.</value>
+  </data>
+  <data name="Daily" xml:space="preserve">
+    <value>روزانه</value>
+  </data>
+  <data name="Weekly" xml:space="preserve">
+    <value>هفتگی</value>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>ماهانه</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>قبلی</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>بعدی</value>
+  </data>
+  <data name="Type a point&#x27;s number (1 to 361), code or name and press Add; it is marked on every chart it appears on." xml:space="preserve">
+    <value>شماره (۱ تا ۳۶۱)، کد یا نام نقطه را بنویسید و «افزودن» را بزنید؛ روی همه تصویرهایی که آن نقطه را دارند علامت می‌خورد.</value>
   </data>
   <data name="Body images" xml:space="preserve">
     <value>تصاویر بدن</value>

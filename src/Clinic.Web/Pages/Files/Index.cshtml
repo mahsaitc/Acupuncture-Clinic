@@ -17,8 +17,8 @@
                 <h2 class="h5 mb-3"><i class="bi bi-cloud-arrow-up me-2 text-success"></i>@L["Send a result to the doctor"]</h2>
                 <div asp-validation-summary="All" class="text-danger small mb-2"></div>
                 <div class="mb-3">
-                    <input class="form-control" type="file" name="file" accept="@Clinic.Web.Clinical.PrivateFileStore.Accept" required />
-                    <div class="form-text">@L["JPG, PNG, WebP, PDF or DICOM, at most 50 MB."]</div>
+                    <input class="form-control" type="file" name="file" accept="@Clinic.Web.Clinical.PrivateFileStore.Accept" data-max-bytes="@Clinic.Web.Clinical.PrivateFileStore.MaxBytes" data-max-bytes-msg="@L["The file is larger than 200 KB. Please choose a smaller file or reduce its size first."]" required />
+                    <div class="form-text">@L["JPG, PNG, WebP, PDF or DICOM, at most 200 KB."]</div>
                 </div>
                 <div class="mb-3">
                     <label asp-for="Upload.Category" class="form-label"></label>
@@ -35,7 +35,7 @@
                 </div>
                 <div class="mb-3">
                     <label asp-for="Upload.TakenOn" class="form-label"></label>
-                    <input asp-for="Upload.TakenOn" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" autocomplete="off" />
+                    <input asp-for="Upload.TakenOn" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
                 </div>
                 <div class="mb-3">
                     <label asp-for="Upload.Note" class="form-label"></label>

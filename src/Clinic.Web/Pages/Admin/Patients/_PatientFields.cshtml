@@ -21,12 +21,12 @@
                     </div>
                     <div class="col-sm-6">
                         <label asp-for="NationalCode" class="form-label"></label>
-                        <input asp-for="NationalCode" class="form-control" dir="ltr" inputmode="numeric" autocomplete="off" />
+                        <input asp-for="NationalCode" class="form-control" dir="ltr" inputmode="numeric" maxlength="10" autocomplete="off" />
                         <span asp-validation-for="NationalCode" class="text-danger small"></span>
                     </div>
                     <div class="col-sm-6">
                         <label asp-for="BirthDate" class="form-label"></label>
-                        <input asp-for="BirthDate" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" autocomplete="off" />
+                        <input asp-for="BirthDate" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
                         <span asp-validation-for="BirthDate" class="text-danger small"></span>
                     </div>
                     <div class="col-sm-6">
@@ -62,12 +62,19 @@
                 <div class="row g-3">
                     <div class="col-sm-6">
                         <label asp-for="FirstVisitDate" class="form-label"></label>
-                        <input asp-for="FirstVisitDate" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" autocomplete="off" />
+                        <input asp-for="FirstVisitDate" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
                         <span asp-validation-for="FirstVisitDate" class="text-danger small"></span>
                     </div>
                     <div class="col-sm-6">
+                        <label asp-for="Referral" class="form-label"></label>
+                        <select asp-for="Referral" class="form-select">
+                            <option value="">-</option>
+                            @foreach (var r in Enum.GetValues<ReferralChannel>()) { <option value="@r">@L[r.ToString()]</option> }
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
                         <label asp-for="ReferralSource" class="form-label"></label>
-                        <input asp-for="ReferralSource" class="form-control" placeholder="@L["e.g. Instagram, a friend, Dr. ..."]" />
+                        <input asp-for="ReferralSource" class="form-control" placeholder="@L["e.g. the friend's or doctor's name"]" />
                     </div>
                     <div class="col-sm-6">
                         <label asp-for="InsuranceProvider" class="form-label"></label>
@@ -89,12 +96,13 @@
                 <div class="row g-3">
                     <div class="col-sm-6">
                         <label asp-for="Mobile" class="form-label"></label>
-                        <input asp-for="Mobile" class="form-control" dir="ltr" inputmode="tel" autocomplete="off" placeholder="09121234567" />
+                        <input asp-for="Mobile" class="form-control" dir="ltr" inputmode="tel" maxlength="11" autocomplete="off" placeholder="09121234567" />
                         <span asp-validation-for="Mobile" class="text-danger small"></span>
                     </div>
                     <div class="col-sm-6">
                         <label asp-for="LandlinePhone" class="form-label"></label>
-                        <input asp-for="LandlinePhone" class="form-control" dir="ltr" inputmode="tel" />
+                        <input asp-for="LandlinePhone" class="form-control" dir="ltr" inputmode="tel" maxlength="11" />
+                        <span asp-validation-for="LandlinePhone" class="text-danger small"></span>
                     </div>
                     <div class="col-12">
                         <label asp-for="Email" class="form-label"></label>
@@ -107,7 +115,8 @@
                     </div>
                     <div class="col-sm-8">
                         <label asp-for="PostalCode" class="form-label"></label>
-                        <input asp-for="PostalCode" class="form-control" dir="ltr" inputmode="numeric" />
+                        <input asp-for="PostalCode" class="form-control" dir="ltr" inputmode="numeric" maxlength="10" />
+                        <span asp-validation-for="PostalCode" class="text-danger small"></span>
                     </div>
                     <div class="col-12">
                         <label asp-for="Address" class="form-label"></label>
@@ -126,7 +135,8 @@
                     </div>
                     <div class="col-sm-5">
                         <label asp-for="EmergencyContactPhone" class="form-label"></label>
-                        <input asp-for="EmergencyContactPhone" class="form-control" dir="ltr" inputmode="tel" />
+                        <input asp-for="EmergencyContactPhone" class="form-control" dir="ltr" inputmode="tel" maxlength="11" />
+                        <span asp-validation-for="EmergencyContactPhone" class="text-danger small"></span>
                     </div>
                 </div>
             </div>

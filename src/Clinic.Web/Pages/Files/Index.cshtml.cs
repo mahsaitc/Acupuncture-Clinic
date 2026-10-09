@@ -76,7 +76,7 @@ public class IndexModel(ClinicDbContext db, PrivateFileStore store, AuditLog aud
         var saved = await store.SaveAsync(file!);
         if (saved.Error != PrivateFileStore.SaveError.None)
         {
-            ModelState.AddModelError(string.Empty, l["The file must be a JPG, PNG, WebP, PDF or DICOM file of at most 50 MB."]);
+            ModelState.AddModelError(string.Empty, l["The file must be a JPG, PNG, WebP, PDF or DICOM file of at most 200 KB."]);
             await LoadAsync();
             return Page();
         }

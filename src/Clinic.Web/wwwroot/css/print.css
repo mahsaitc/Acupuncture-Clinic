@@ -1,7 +1,7 @@
 /* The printable intake form (Admin/Records/Print). A4, black on white, fits the paper form. */
 @page {
   size: A4;
-  margin: 12mm;
+  margin: 14mm 12mm;
 }
 
 :root {
@@ -151,9 +151,10 @@ td.center {
     background: #fff;
   }
 
+  /* The side padding keeps a white margin even when the print dialog's margins are set to "None". */
   .sheet {
     margin: 0;
-    padding: 0;
+    padding: 0 8mm;
     box-shadow: none;
     max-width: none;
   }

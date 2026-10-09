@@ -153,4 +153,14 @@ public class BodyMapTests
         Assert.True(PrivateFileStore.LooksLike("application/dicom", dicom));
         Assert.False(PrivateFileStore.LooksLike("application/dicom", new byte[132]));
     }
+
+    [Fact]
+    public void Channel_points_are_numbered_1_to_361_in_the_usual_order()
+    {
+        Assert.Equal(1, AcupointLibrary.NumberOf("LU1"));
+        Assert.Equal(67, AcupointLibrary.NumberOf("ST36"));
+        Assert.Equal(361, AcupointLibrary.NumberOf("CV24"));
+        Assert.Null(AcupointLibrary.NumberOf("EX-HN3"));
+        Assert.Equal(Enumerable.Range(1, 361), AcupointLibrary.Ordered.Take(361).Select(p => AcupointLibrary.NumberOf(p.Code)!.Value));
+    }
 }
