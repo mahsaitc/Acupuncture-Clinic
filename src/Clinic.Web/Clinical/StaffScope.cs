@@ -26,6 +26,9 @@ public class StaffScope(ClinicDbContext db, UserManager<ApplicationUser> users, 
     /// <summary>True for a doctor who is not an admin: their pages show only their own work.</summary>
     public bool IsOwnOnly => User.IsInRole(Roles.Doctor) && !IsAdmin;
 
+    /// <summary>Notes patients leave for their doctor are for doctors and the admin, not for reception.</summary>
+    public bool CanReadDoctorNotes => IsAdmin || User.IsInRole(Roles.Doctor);
+
     /// <summary>The signed-in user's doctor profile, if they have one.</summary>
     public async Task<DoctorProfile?> DoctorAsync()
     {

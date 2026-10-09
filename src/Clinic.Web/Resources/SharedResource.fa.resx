@@ -2172,4 +2172,52 @@
   <data name="Required for doctors. No two people can have the same national code." xml:space="preserve">
     <value>برای پزشکان الزامی است. کد ملی هیچ دو نفری نمی‌تواند یکسان باشد.</value>
   </data>
+  <data name="Case summary" xml:space="preserve">
+    <value>خلاصه پرونده</value>
+  </data>
+  <data name="Only the clinic admin can open this page." xml:space="preserve">
+    <value>این صفحه فقط برای مدیر کلینیک قابل مشاهده است.</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>چاپ</value>
+  </data>
+  <data name="Treating doctors" xml:space="preserve">
+    <value>پزشکان معالج</value>
+  </data>
+  <data name="No doctor has treated this patient yet." xml:space="preserve">
+    <value>هنوز پزشکی برای این بیمار جلسه درمان ثبت نکرده است.</value>
+  </data>
+  <data name="{0} completed appointments" xml:space="preserve">
+    <value>{0} نوبت انجام‌شده</value>
+  </data>
+  <data name="Treatments" xml:space="preserve">
+    <value>درمان‌ها</value>
+  </data>
+  <data name="Treatment" xml:space="preserve">
+    <value>درمان</value>
+  </data>
+  <data name="Points" xml:space="preserve">
+    <value>نقاط</value>
+  </data>
+  <data name="Only the clinic admin can change a post once it is sent." xml:space="preserve">
+    <value>پس از ارسال مطلب، فقط مدیر کلینیک می‌تواند آن را تغییر دهد.</value>
+  </data>
+  <data name="Your post was sent to the clinic admin, who will publish it if approved." xml:space="preserve">
+    <value>مطلب شما برای مدیر کلینیک ارسال شد و در صورت تأیید منتشر می‌شود.</value>
+  </data>
+  <data name="The clinic admin reviews your post and publishes it. After you send it, only the admin can change or delete it." xml:space="preserve">
+    <value>مدیر کلینیک مطلب شما را بررسی و منتشر می‌کند. پس از ارسال، فقط مدیر می‌تواند آن را ویرایش یا حذف کند.</value>
+  </data>
+  <data name="Send to the admin" xml:space="preserve">
+    <value>ارسال برای مدیر</value>
+  </data>
+  <data name="Waiting for the admin" xml:space="preserve">
+    <value>در انتظار تأیید مدیر</value>
+  </data>
+  <data name="Waiting for review" xml:space="preserve">
+    <value>در انتظار بررسی</value>
+  </data>
+  <data name="Your posts are published after the clinic admin approves them." xml:space="preserve">
+    <value>مطالب شما پس از تأیید مدیر کلینیک منتشر می‌شوند.</value>
+  </data>
 </root>

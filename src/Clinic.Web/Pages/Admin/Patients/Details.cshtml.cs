@@ -16,6 +16,12 @@ public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userM
     public List<ContactMessage> Messages { get; private set; } = [];
     public PatientProfile? Profile { get; private set; }
 
+    /// <summary>Doctor names by profile id, to show who saw the patient at each appointment.</summary>
+    public Dictionary<int, string> DoctorNames { get; private set; } = [];
+
+    public bool ShowNotes => scope.CanReadDoctorNotes;
+    public bool CanSeeSummary => scope.IsAdmin;
+
     /// <summary>Counts only, and only for doctors; receptionists never see clinical data.</summary>
     public ClinicalSummary? Clinical { get; private set; }
 
@@ -37,6 +43,17 @@ public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userM
             .OrderByDescending(a => a.StartUtc)
             .Take(100)
             .ToListAsync();
+
+        DoctorNames = (await scope.DoctorsAsync()).ToDictionary(d => d.Id, d => d.Name);
+        var missing = Appointments.Select(a => a.DoctorProfileId).Where(id => !DoctorNames.ContainsKey(id)).Distinct().ToList();
+        if (missing.Count > 0)
+        {
+            // Doctors who have left the clinic are still named on their past appointments.
+            foreach (var d in await db.Doctors.Where(d => missing.Contains(d.Id)).Join(db.Users, d => d.UserId, u => u.Id, (d, u) => new { d.Id, u.FullName }).ToListAsync())
+            {
+                DoctorNames[d.Id] = d.FullName;
+            }
+        }
 
         Messages = await (await scope.MessagesAsync(db.ContactMessages)).AsNoTracking()
             .Where(m => m.UserId == id)

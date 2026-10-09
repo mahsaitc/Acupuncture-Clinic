@@ -19,6 +19,7 @@ public class AppointmentsModel(ClinicDbContext db, IBookingService booking, Clin
 
     public List<(int Id, string Name)> Doctors { get; private set; } = [];
     public bool CanFilter => !scope.IsOwnOnly;
+    public bool ShowNotes => scope.CanReadDoctorNotes;
 
     [BindProperty(SupportsGet = true)]
     public string? Date { get; set; }

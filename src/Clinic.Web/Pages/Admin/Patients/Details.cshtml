@@ -38,6 +38,10 @@
                 </div>
             </div>
         }
+        @if (Model.CanSeeSummary)
+        {
+            <a class="btn btn-outline-success w-100 mt-3" asp-page="./Summary" asp-route-id="@p.Id"><i class="bi bi-journal-medical me-1"></i>@L["Case summary"]</a>
+        }
         @if (User.IsInRole(Roles.Admin))
         {
             <a class="small d-inline-block mt-3" asp-page="/Admin/Audit" asp-route-patientId="@p.Id"><i class="bi bi-shield-check me-1"></i>@L["Access log for this patient"]</a>
@@ -58,9 +62,9 @@
                         {
                             <li class="d-flex justify-content-between align-items-center border-bottom pb-2">
                                 <div>
-                                    <div>@a.Service?.Name(english)</div>
+                                    <div>@a.Service?.Name(english) <span class="text-muted">·</span> <i class="bi bi-person-badge text-success"></i> @Model.DoctorNames.GetValueOrDefault(a.DoctorProfileId)</div>
                                     <div class="small text-muted">@Fmt.DateTime(a.StartUtc)</div>
-                                    @if (a.PatientNote is not null) { <div class="small fst-italic">@a.PatientNote</div> }
+                                    @if (Model.ShowNotes && a.PatientNote is not null) { <div class="small fst-italic">@a.PatientNote</div> }
                                 </div>
                                 <partial name="_StatusBadge" model="a.Status" />
                             </li>

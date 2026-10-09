@@ -26,6 +26,9 @@ public class EditModel(ClinicDbContext db, MediaStore media, TimeProvider time, 
 
     public string? CoverImagePath { get; private set; }
 
+    /// <summary>A doctor only writes new posts; the admin edits, publishes and deletes them.</summary>
+    public bool IsAdmin => User.IsInRole(Clinic.Domain.Roles.Admin);
+
     public class PostInput
     {
         [Required(ErrorMessage = "{0} is required.")]
@@ -66,6 +69,11 @@ public class EditModel(ClinicDbContext db, MediaStore media, TimeProvider time, 
 
     public async Task<IActionResult> OnGetAsync()
     {
+        if (Id is not null && !IsAdmin)
+        {
+            TempData["Message"] = l["Only the clinic admin can change a post once it is sent."].Value;
+            return RedirectToPage("./Index", new { kind = Kind });
+        }
         if (Id is null)
         {
             return Page();
@@ -95,6 +103,15 @@ public class EditModel(ClinicDbContext db, MediaStore media, TimeProvider time, 
 
     public async Task<IActionResult> OnPostAsync(IFormFile? cover, bool removeCover)
     {
+        if (Id is not null && !IsAdmin)
+        {
+            return Forbid();
+        }
+        if (!IsAdmin)
+        {
+            // The admin decides whether a doctor's post goes on the site.
+            Input.IsPublished = false;
+        }
         Post? post = null;
         if (Id is not null)
         {
@@ -179,6 +196,11 @@ public class EditModel(ClinicDbContext db, MediaStore media, TimeProvider time, 
             media.Delete(oldCover);
         }
 
+        if (!IsAdmin)
+        {
+            TempData["Message"] = l["Your post was sent to the clinic admin, who will publish it if approved."].Value;
+            return RedirectToPage("./Index", new { kind = Kind });
+        }
         TempData["Message"] = l["The post was saved."].Value;
         return RedirectToPage("./Edit", new { id = post.Id, kind = Kind });
     }

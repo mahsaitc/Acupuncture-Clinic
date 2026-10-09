@@ -131,7 +131,7 @@ else
                         <td>
                             @r.Patient
                             @if (r.Phone is not null) { <div class="small text-muted" dir="ltr">@r.Phone</div> }
-                            @if (r.Note is not null) { <div class="small fst-italic">@r.Note</div> }
+                            @if (Model.ShowNotes && r.Note is not null) { <div class="small fst-italic">@r.Note</div> }
                         </td>
                         <td>@r.Service?.Name(english)</td>
                         <td>@r.Doctor</td>
