@@ -42,7 +42,7 @@ public partial class ClinicalTests
         Assert.Contains("بیمار خودم", patients);
         Assert.DoesNotContain("بیمار همکار", patients);
 
-        var calendar = await client.GetStringAsync($"/Admin/Appointments?View=week&Date={day:yyyy-MM-dd}");
+        var calendar = await client.GetStringAsync($"/Admin/Appointments?View=week&Date={day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}");
         Assert.Contains("بیمار خودم", calendar);
         Assert.DoesNotContain("بیمار همکار", calendar);
 
@@ -113,7 +113,7 @@ public partial class ClinicalTests
             serviceId = (await db.Services.FirstAsync()).Id;
         }
         var client = await LoginAsync(patient);
-        var url = $"/Booking?ServiceId={serviceId}&DoctorId={doctorId}&Date={DateTime.UtcNow.AddDays(2):yyyy-MM-dd}";
+        var url = $"/Booking?ServiceId={serviceId}&DoctorId={doctorId}&Date={DateTime.UtcNow.AddDays(2).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}";
         var page = await client.GetStringAsync(url);
         Assert.Contains(doctor.FullName, page);
         var ticks = Regex.Match(page, "name=\"startTicks\" value=\"(\\d+)\"").Groups[1].Value;
