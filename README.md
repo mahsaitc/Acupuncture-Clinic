@@ -84,7 +84,7 @@ The charts can be rendered from the free Z-Anatomy 3D model instead of drawn (`t
 `docs/body-images-render-guide.fa.md`): `blender -b Z-Anatomy.blend --python tools/blender/render_views.py -- --charts ...`
 writes one PNG per chart and `charts-silhouettes.json`. Copy the PNGs to `src/Clinic.Web/wwwroot/img/charts/` and the JSON to
 `tools/charts/photo/silhouettes.json`, then run `python3 tools/charts/generate.py`: the points of `points.py` are moved onto the
-photos by landmarks (`tools/charts/photo.py`) and the app serves the PNGs. The ear chart stays a drawing. Without
+photos by landmarks (`tools/charts/photo.py`) and the app serves the PNGs. The ear chart is rendered too. Without
 `silhouettes.json` the generator keeps the drawings. Positions are a first placement: check them with
 `python3 tools/charts/preview.py sheet.html` and correct single points in `ADJUST` (`photo.py`).
 The model is CC BY-SA 4.0 (Z-Anatomy, from BodyParts3D): credit it in the app.

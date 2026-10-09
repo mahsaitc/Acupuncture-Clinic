@@ -29,7 +29,9 @@ def views():
 
 # Per-point corrections after the automatic placement, in chart units: {(view, code): (dx_or_dx, dy)}.
 # On symmetric charts (front, back, head-front) the first number is the distance from the midline.
-ADJUST = {}
+ADJUST = {
+    ("ear", "HX6,7i"): (-7.6, -12.8),  # the apex of the ear is the tip of the helix, higher than the landmark fit puts it
+}
 
 # Heights on the model, metres above the floor (Z-Anatomy region boxes). head_top is the scalp (parietal region), not the tips
 # of the hair (1.743).

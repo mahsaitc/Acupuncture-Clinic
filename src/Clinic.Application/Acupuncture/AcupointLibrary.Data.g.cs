@@ -4,7 +4,7 @@ namespace Clinic.Application.Acupuncture;
 public static partial class AcupointLibrary
 {
     /// <summary>Changes whenever a chart drawing changes, so browsers fetch the new images.</summary>
-    public const string ChartsVersion = "3ec815a978";
+    public const string ChartsVersion = "dc7092b119";
 
     private static readonly ChartView[] ViewData =
     [
@@ -17,7 +17,7 @@ public static partial class AcupointLibrary
         new("arm-outer", "arm", 160, 480, false, false, "png"),
         new("leg-inner", "leg", 160, 480, false, false, "png"),
         new("leg-outer", "leg", 160, 480, false, false, "png"),
-        new("ear", "ear", 200, 300, false, false),
+        new("ear", "ear", 200, 300, false, false, "png"),
     ];
 
     private static readonly Acupoint[] PointData =
@@ -391,27 +391,27 @@ public static partial class AcupointLibrary
         new("EX-LE4", "Neixiyan", "EX", false, [new("front", 15.8, 345.1)]),
         new("EX-UE9", "Baxie", "EX", false, [new("back", 67.5, 266.7)]),
         new("EX-LE10", "Bafeng", "EX", false, [new("front", 27.6, 456.4)]),
-        new("HX1", "Ear center", "EAR", false, [new("ear", 78, 120)]),
-        new("HX6,7i", "Ear apex", "EAR", false, [new("ear", 118, 26)]),
-        new("TF4", "Shenmen", "EAR", false, [new("ear", 112, 70)]),
-        new("AH6a", "Sympathetic", "EAR", false, [new("ear", 84, 90)]),
-        new("CO1", "Mouth", "EAR", false, [new("ear", 82, 133)]),
-        new("CO2", "Esophagus", "EAR", false, [new("ear", 94, 132)]),
-        new("CO3", "Cardia", "EAR", false, [new("ear", 106, 133)]),
-        new("CO4", "Stomach", "EAR", false, [new("ear", 119, 136)]),
-        new("CO5", "Duodenum", "EAR", false, [new("ear", 118, 113)]),
-        new("CO6", "Small intestine", "EAR", false, [new("ear", 103, 110)]),
-        new("CO7", "Large intestine", "EAR", false, [new("ear", 89, 107)]),
-        new("CO10", "Kidney", "EAR", false, [new("ear", 117, 102)]),
-        new("CO12", "Liver", "EAR", false, [new("ear", 132, 140)]),
-        new("CO13", "Spleen", "EAR", false, [new("ear", 130, 160)]),
-        new("CO14", "Lung", "EAR", false, [new("ear", 95, 176)]),
-        new("CO15", "Heart", "EAR", false, [new("ear", 109, 162)]),
-        new("CO17", "San jiao", "EAR", false, [new("ear", 104, 195)]),
-        new("CO18", "Endocrine", "EAR", false, [new("ear", 92, 207)]),
-        new("AT4", "Subcortex", "EAR", false, [new("ear", 117, 220)]),
-        new("TG", "Hunger", "EAR", false, [new("ear", 70, 176)]),
-        new("LO5", "Eye", "EAR", false, [new("ear", 108, 257)]),
+        new("HX1", "Ear center", "EAR", false, [new("ear", 67, 116.9)]),
+        new("HX6,7i", "Ear apex", "EAR", false, [new("ear", 113.5, 50.6)]),
+        new("TF4", "Shenmen", "EAR", false, [new("ear", 110, 95.2)]),
+        new("AH6a", "Sympathetic", "EAR", false, [new("ear", 76.7, 96.2)]),
+        new("CO1", "Mouth", "EAR", false, [new("ear", 70.2, 129.3)]),
+        new("CO2", "Esophagus", "EAR", false, [new("ear", 83.7, 134.9)]),
+        new("CO3", "Cardia", "EAR", false, [new("ear", 97.1, 142.1)]),
+        new("CO4", "Stomach", "EAR", false, [new("ear", 111.4, 151.3)]),
+        new("CO5", "Duodenum", "EAR", false, [new("ear", 112.5, 132.5)]),
+        new("CO6", "Small intestine", "EAR", false, [new("ear", 96, 122.2)]),
+        new("CO7", "Large intestine", "EAR", false, [new("ear", 80.6, 112.4)]),
+        new("CO10", "Kidney", "EAR", false, [new("ear", 112.5, 123.3)]),
+        new("CO12", "Liver", "EAR", false, [new("ear", 125.5, 161.4)]),
+        new("CO13", "Spleen", "EAR", false, [new("ear", 121.3, 176.3)]),
+        new("CO14", "Lung", "EAR", false, [new("ear", 80.5, 170.4)]),
+        new("CO15", "Heart", "EAR", false, [new("ear", 97.6, 166.7)]),
+        new("CO17", "San jiao", "EAR", false, [new("ear", 88.7, 190.3)]),
+        new("CO18", "Endocrine", "EAR", false, [new("ear", 74.1, 193.5)]),
+        new("AT4", "Subcortex", "EAR", false, [new("ear", 100.8, 217.1)]),
+        new("TG", "Hunger", "EAR", false, [new("ear", 52.5, 157.1)]),
+        new("LO5", "Eye", "EAR", false, [new("ear", 87, 241.7)]),
     ];
 
     private static readonly Protocol[] ProtocolData =

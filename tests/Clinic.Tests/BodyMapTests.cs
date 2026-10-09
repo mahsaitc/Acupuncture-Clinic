@@ -17,12 +17,11 @@ public class BodyMapTests
     }
 
     [Fact]
-    public void Charts_are_the_rendered_photos_except_the_ear()
+    public void Charts_are_the_rendered_photos()
     {
-        // The body, head, arm and leg charts are rendered from Z-Anatomy (tools/blender); only the ear chart is a drawing.
+        // All charts (body, head, arm, leg and ear) are rendered from Z-Anatomy (tools/blender).
         // If this fails, tools/charts/generate.py was run without the photo inputs: see CLAUDE.md before changing it.
-        Assert.All(AcupointLibrary.Views.Where(v => v.Key != "ear"), v => Assert.Equal("png", v.Extension));
-        Assert.Equal("svg", AcupointLibrary.FindView("ear")!.Extension);
+        Assert.All(AcupointLibrary.Views, v => Assert.Equal("png", v.Extension));
     }
 
     [Fact]
