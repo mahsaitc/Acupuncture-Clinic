@@ -759,3 +759,36 @@ a.kpi:hover {
     min-height: 3.5rem;
   }
 }
+
+/* Printing any panel page with the browser: only the content, with white margins on every side. */
+@media print {
+  @page {
+    margin: 14mm 12mm;
+  }
+
+  .admin-sidebar,
+  .admin-topbar,
+  .sticky-actions,
+  .form-errors,
+  .btn,
+  .no-print {
+    display: none !important;
+  }
+
+  .admin-body,
+  .admin-main {
+    background: #fff !important;
+  }
+
+  .admin-main {
+    margin: 0 !important;
+    padding: 0 6mm !important;
+    width: auto !important;
+  }
+
+  .card,
+  .card-soft {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+}

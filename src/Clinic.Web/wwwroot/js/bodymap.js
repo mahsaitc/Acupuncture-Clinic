@@ -189,9 +189,15 @@
         return points.length - 1;
     }
 
+    // The suggestion list numbers the 361 channel points: "36. ST5 Daying". Typing just the number works too.
+    const byNumber = new Map([...document.querySelectorAll('#point-names option')]
+        .map(o => /^(\d+)\.\s+(\S+)/.exec(o.value)).filter(Boolean).map(m => [m[1], byCode.get(m[2].toUpperCase())]));
+
     function findTyped(value) {
-        const typed = value.trim().toUpperCase();
+        let typed = value.trim().toUpperCase().replace(/[۰-۹]/g, d => d.charCodeAt(0) - 0x06F0);
         if (!typed) return null;
+        if (byNumber.has(typed)) return byNumber.get(typed);
+        typed = typed.replace(/^\d+\.\s*/, '');
         const code = typed.split(/\s+/)[0];
         return byCode.get(code)
             || library.points.find(p => p.label.toUpperCase() === typed)

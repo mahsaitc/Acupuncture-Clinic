@@ -1887,4 +1887,7 @@
   <data name="Next" xml:space="preserve">
     <value>بعدی</value>
   </data>
+  <data name="Type a point&#x27;s number (1 to 361), code or name and press Add; it is marked on every chart it appears on." xml:space="preserve">
+    <value>شماره (۱ تا ۳۶۱)، کد یا نام نقطه را بنویسید و «افزودن» را بزنید؛ روی همه تصویرهایی که آن نقطه را دارند علامت می‌خورد.</value>
+  </data>
 </root>
