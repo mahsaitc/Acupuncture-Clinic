@@ -1,6 +1,7 @@
 """Generates the point charts and the point library.
 
-    python3 tools/charts/generate.py
+    python3 tools/charts/generate.py          # photo charts when photo/silhouettes.json exists (see photo.py)
+    python3 tools/charts/generate.py --drawn  # the drawn charts, on purpose
 
 Writes src/Clinic.Web/wwwroot/img/charts/<view>.svg and
 src/Clinic.Application/Acupuncture/AcupointLibrary.Data.g.cs. Edit figures.py (drawings) or points.py
@@ -8,6 +9,7 @@ src/Clinic.Application/Acupuncture/AcupointLibrary.Data.g.cs. Edit figures.py (d
 """
 import hashlib
 import os
+import sys
 
 import photo
 from figures import VIEWS as FIGURES
@@ -27,8 +29,16 @@ def cs(text):
     return '"' + text.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
-PHOTO = photo.available()
+DRAWN = "--drawn" in sys.argv  # go back to the drawn charts on purpose
+PHOTO = photo.available() and not DRAWN
 PHOTO_VIEWS = set(photo.VIEWS) if PHOTO else set()
+if not PHOTO and not DRAWN:
+    left = [k for k in photo.VIEWS if os.path.exists(os.path.join(CHARTS, f"{k}.png"))]
+    if left:
+        sys.exit("The rendered photo charts are in use (" + ", ".join(left[:3]) + "...) but tools/charts/photo/silhouettes.json "
+                 "or tools/blender/charts.json is missing, so the charts would silently fall back to the drawings. Restore the "
+                 "file (python3 tools/charts/silhouettes.py rebuilds the silhouettes from the PNGs), or pass --drawn to go back "
+                 "to the drawings on purpose.")
 
 
 def placed(points):
