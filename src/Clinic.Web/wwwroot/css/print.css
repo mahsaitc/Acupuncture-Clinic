@@ -121,8 +121,13 @@ td.center {
   height: 2.1em;
 }
 
-.sessions .points {
+.sessions .points,
+.sessions .doctor {
   font-size: 9pt;
+}
+
+.sessions .nowrap {
+  white-space: nowrap;
 }
 
 .sign {

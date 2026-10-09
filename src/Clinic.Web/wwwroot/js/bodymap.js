@@ -202,7 +202,7 @@
         return points.length - 1;
     }
 
-    // The suggestion list numbers the 361 channel points: "36. ST5 Daying". Typing just the number works too.
+    // The suggestion list numbers every point: "36. ST5 Daying", channel points first. Typing just the number works too.
     const byNumber = new Map([...document.querySelectorAll('#point-names option')]
         .map(o => /^(\d+)\.\s+(\S+)/.exec(o.value)).filter(Boolean).map(m => [m[1], byCode.get(m[2].toUpperCase())]));
 

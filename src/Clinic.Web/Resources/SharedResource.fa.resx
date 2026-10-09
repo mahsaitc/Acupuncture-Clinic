@@ -1887,8 +1887,8 @@
   <data name="Next" xml:space="preserve">
     <value>بعدی</value>
   </data>
-  <data name="Type a point&#x27;s number (1 to 361), code or name and press Add; it is marked on every chart it appears on." xml:space="preserve">
-    <value>شماره (۱ تا ۳۶۱)، کد یا نام نقطه را بنویسید و «افزودن» را بزنید؛ روی همه تصویرهایی که آن نقطه را دارند علامت می‌خورد.</value>
+  <data name="Type a point&#x27;s number (1 to {0}), code or name and press Add; it is marked on every chart it appears on." xml:space="preserve">
+    <value>شماره (۱ تا {0})، کد یا نام نقطه را بنویسید و «افزودن» را بزنید؛ روی همه تصویرهایی که آن نقطه را دارند علامت می‌خورد.</value>
   </data>
   <data name="Body images" xml:space="preserve">
     <value>تصاویر بدن</value>
@@ -2219,5 +2219,17 @@
   </data>
   <data name="Your posts are published after the clinic admin approves them." xml:space="preserve">
     <value>مطالب شما پس از تأیید مدیر کلینیک منتشر می‌شوند.</value>
+  </data>
+  <data name="Only your own sessions with this patient are shown." xml:space="preserve">
+    <value>فقط جلسات درمانی خود شما با این بیمار نمایش داده می‌شود.</value>
+  </data>
+  <data name="Every doctor&#x27;s sessions with this patient. Only the clinic admin sees all doctors." xml:space="preserve">
+    <value>جلسات همه پزشکان با این بیمار. فقط مدیر کلینیک جلسات همه پزشکان را می‌بیند.</value>
+  </data>
+  <data name="Full print of the file" xml:space="preserve">
+    <value>پرینت جامع پرونده</value>
+  </data>
+  <data name="From the latest appointment" xml:space="preserve">
+    <value>از آخرین نوبت</value>
   </data>
 </root>

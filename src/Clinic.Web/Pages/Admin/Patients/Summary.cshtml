@@ -11,9 +11,15 @@
     <div>
         <a class="small" asp-page="./Details" asp-route-id="@p.Id"><i class="bi @(english ? "bi-arrow-left" : "bi-arrow-right") me-1"></i>@p.FullName</a>
         <h1 class="h3 mt-1">@L["Case summary"]: @p.FullName</h1>
-        <div class="text-muted small">@L["Only the clinic admin can open this page."]</div>
+        <div class="text-muted small">@(Model.IsOwnOnly ? L["Only your own sessions with this patient are shown."] : L["Every doctor's sessions with this patient. Only the clinic admin sees all doctors."])</div>
     </div>
-    <button type="button" class="btn btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer me-1"></i>@L["Print"]</button>
+    <div class="d-flex flex-wrap gap-2 d-print-none">
+        <button type="button" class="btn btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer me-1"></i>@L["Print"]</button>
+        @if (!Model.IsOwnOnly && User.IsInRole(Clinic.Domain.Roles.Doctor))
+        {
+            <a class="btn btn-success" asp-page="/Admin/Records/Print" asp-route-patientId="@p.Id" target="_blank"><i class="bi bi-file-earmark-medical me-1"></i>@L["Full print of the file"]</a>
+        }
+    </div>
 </div>
 
 <div class="row g-3 mb-4">

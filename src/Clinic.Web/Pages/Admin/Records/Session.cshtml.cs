@@ -23,7 +23,8 @@ public class SessionModel(
     AuditLog audit,
     ClinicTime clinicTime,
     TimeProvider time,
-    IStringLocalizer<SharedResource> l) : PageModel
+    IStringLocalizer<SharedResource> l,
+    StaffScope scope) : PageModel
 {
     public ApplicationUser Patient { get; private set; } = default!;
 
@@ -105,7 +106,7 @@ public class SessionModel(
             return Page();
         }
 
-        var session = await db.TreatmentSessions.AsNoTracking().Include(s => s.Points)
+        var session = await scope.Sessions(db.TreatmentSessions).AsNoTracking().Include(s => s.Points)
             .FirstOrDefaultAsync(s => s.Id == Id && s.PatientUserId == patientId);
         if (session is null)
         {
@@ -142,7 +143,7 @@ public class SessionModel(
         TreatmentSession? session = null;
         if (Id is not null)
         {
-            session = await db.TreatmentSessions.Include(s => s.Points).FirstOrDefaultAsync(s => s.Id == Id && s.PatientUserId == patientId);
+            session = await scope.Sessions(db.TreatmentSessions).Include(s => s.Points).FirstOrDefaultAsync(s => s.Id == Id && s.PatientUserId == patientId);
             if (session is null)
             {
                 return NotFound();
@@ -200,7 +201,7 @@ public class SessionModel(
 
     public async Task<IActionResult> OnPostDeleteAsync(string patientId)
     {
-        var session = await db.TreatmentSessions.FirstOrDefaultAsync(s => s.Id == Id && s.PatientUserId == patientId);
+        var session = await scope.Sessions(db.TreatmentSessions).FirstOrDefaultAsync(s => s.Id == Id && s.PatientUserId == patientId);
         if (session is null)
         {
             return NotFound();
@@ -222,7 +223,7 @@ public class SessionModel(
         }
         Patient = patient;
 
-        var previous = await db.TreatmentSessions.AsNoTracking().Include(s => s.Points)
+        var previous = await scope.Sessions(db.TreatmentSessions).AsNoTracking().Include(s => s.Points)
             .Where(s => s.PatientUserId == patientId && s.Id != Id && s.Points.Count > 0)
             .OrderByDescending(s => s.DateUtc)
             .FirstOrDefaultAsync();

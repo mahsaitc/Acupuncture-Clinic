@@ -23,7 +23,17 @@ public class IndexModel(ClinicDbContext db, Clinic.Web.Clinical.StaffScope scope
     public int PageCount => Math.Max(1, (int)Math.Ceiling(Total / (double)PageSize));
     public List<Row> Rows { get; private set; } = [];
 
-    public record Row(string Id, string FullName, string? Phone, string? Email, bool IsActive, DateTime CreatedUtc, int Visits, DateTime? NextUtc);
+    /// <summary>The admin and reception see each patient's doctor; a doctor's own list has no need for it.</summary>
+    public bool ShowDoctor => !scope.IsOwnOnly;
+
+    public Dictionary<int, string> DoctorNames { get; private set; } = [];
+
+    /// <summary>
+    /// <paramref name="DoctorId"/> is the treating doctor set on the patient's file, or else the doctor of their latest
+    /// appointment (<paramref name="DoctorFromBooking"/>).
+    /// </summary>
+    public record Row(string Id, string FullName, string? Phone, string? Email, bool IsActive, DateTime CreatedUtc, int Visits, DateTime? NextUtc,
+        int? DoctorId, bool DoctorFromBooking);
 
     public async Task OnGetAsync()
     {
@@ -52,7 +62,19 @@ public class IndexModel(ClinicDbContext db, Clinic.Web.Clinical.StaffScope scope
                 u.Id, u.FullName, u.PhoneNumber, u.Email, u.IsActive, u.CreatedUtc,
                 db.Appointments.Count(a => a.PatientUserId == u.Id && a.Status == AppointmentStatus.Completed),
                 db.Appointments.Where(a => a.PatientUserId == u.Id && a.StartUtc > now && a.Status != AppointmentStatus.Cancelled)
-                    .OrderBy(a => a.StartUtc).Select(a => (DateTime?)a.StartUtc).FirstOrDefault()))
+                    .OrderBy(a => a.StartUtc).Select(a => (DateTime?)a.StartUtc).FirstOrDefault(),
+                db.PatientProfiles.Where(p => p.UserId == u.Id).Select(p => p.DoctorProfileId).FirstOrDefault()
+                    ?? db.Appointments.Where(a => a.PatientUserId == u.Id && a.Status != AppointmentStatus.Cancelled)
+                        .OrderByDescending(a => a.StartUtc).Select(a => (int?)a.DoctorProfileId).FirstOrDefault(),
+                db.PatientProfiles.Where(p => p.UserId == u.Id).Select(p => p.DoctorProfileId).FirstOrDefault() == null))
             .ToListAsync();
+
+        if (ShowDoctor)
+        {
+            // Doctors who have left the clinic are still named.
+            DoctorNames = await db.Doctors.AsNoTracking()
+                .Join(db.Users, d => d.UserId, u => u.Id, (d, u) => new { d.Id, u.FullName })
+                .ToDictionaryAsync(d => d.Id, d => d.FullName);
+        }
     }
 }

@@ -49,7 +49,7 @@ public static partial class AcupointLibrary
 
     /// <summary>
     /// The 361 standard channel points in the conventional order (LU, LI, ST, SP, HT, SI, BL, KI, PC, SJ,
-    /// GB, LR, GV, CV, each by number), then the extra and ear points, which have no number.
+    /// GB, LR, GV, CV, each by number), then the extra and ear points; the numbering runs on through all of them.
     /// </summary>
     public static readonly IReadOnlyList<Acupoint> Ordered;
 
@@ -73,11 +73,14 @@ public static partial class AcupointLibrary
             .OrderBy(p => Array.IndexOf(ChannelOrder, p.Meridian))
             .ThenBy(p => int.Parse(p.Code[p.Meridian.Length..], System.Globalization.CultureInfo.InvariantCulture))
             .ToArray();
-        Numbers = channel.Select((p, i) => (p.Code, i + 1)).ToDictionary(x => x.Code, x => x.Item2, StringComparer.OrdinalIgnoreCase);
-        Ordered = [.. channel, .. PointData.Where(p => !Numbers.ContainsKey(p.Code))];
+        Ordered = [.. channel, .. PointData.Except(channel)];
+        Numbers = Ordered.Select((p, i) => (p.Code, i + 1)).ToDictionary(x => x.Code, x => x.Item2, StringComparer.OrdinalIgnoreCase);
     }
 
-    /// <summary>The point's place, 1 to 361, among the standard channel points; null for extra and ear points.</summary>
+    /// <summary>
+    /// The point's number in <see cref="Ordered"/>: 1 to 361 for the channel points, then on through the extra and ear points.
+    /// Null for a code that is not in the library.
+    /// </summary>
     public static int? NumberOf(string? code) => code is not null && Numbers.TryGetValue(code.Trim(), out var n) ? n : null;
 
     public static Acupoint? Find(string? code) => code is not null && ByCode.TryGetValue(code.Trim(), out var p) ? p : null;

@@ -10,7 +10,7 @@ namespace Clinic.Web.Clinical;
 
 /// <summary>
 /// What the signed-in staff member may see. The admin and the receptionist see the whole clinic; a doctor who is not
-/// an admin sees only their own appointments, messages and patients.
+/// an admin sees only their own appointments, messages, patients and treatment sessions.
 /// </summary>
 public class StaffScope(ClinicDbContext db, UserManager<ApplicationUser> users, IHttpContextAccessor http)
 {
@@ -61,6 +61,17 @@ public class StaffScope(ClinicDbContext db, UserManager<ApplicationUser> users, 
     /// <summary>Limits appointments to the doctor's own.</summary>
     public async Task<IQueryable<Appointment>> AppointmentsAsync(IQueryable<Appointment> appointments) =>
         await OwnDoctorIdAsync() is int doctorId ? appointments.Where(a => a.DoctorProfileId == doctorId) : appointments;
+
+    /// <summary>Limits treatment sessions to the ones the doctor held; the admin sees every doctor's sessions.</summary>
+    public IQueryable<TreatmentSession> Sessions(IQueryable<TreatmentSession> sessions)
+    {
+        if (!IsOwnOnly)
+        {
+            return sessions;
+        }
+        var userId = UserId;
+        return sessions.Where(s => s.DoctorUserId == userId);
+    }
 
     /// <summary>
     /// A doctor sees the messages sent to them; the receptionist sees the clinic's general messages; the admin sees all.

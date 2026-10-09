@@ -136,13 +136,15 @@
         <section class="break-before">
             <h2>@Fmt.Number(8). @L["Treatment sessions"]</h2>
             <table class="grid sessions">
-                <tr><th>@L["Session"]</th><th>@L["Date"]</th><th>@L["Weight / signs"]</th><th>@L["Points used"]</th></tr>
+                <tr><th>@L["Session"]</th><th>@L["Date"]</th><th>@L["Doctor"]</th><th>@L["Treatment"]</th><th>@L["Weight / signs"]</th><th>@L["Points used"]</th></tr>
                 @for (var n = 0; n < Math.Max(Clinic.Web.Pages.Admin.Records.PrintModel.MinSessionRows, Model.Sessions.Count); n++)
                 {
                     var s = n < Model.Sessions.Count ? Model.Sessions[n] : null;
                     <tr>
                         <td class="center">@Fmt.Number(n + 1)</td>
-                        <td>@(s is null ? "" : Fmt.Date(s.DateUtc))</td>
+                        <td class="nowrap">@(s is null ? "" : Fmt.Date(s.DateUtc))</td>
+                        <td class="doctor">@(s is null ? "" : Model.DoctorNames.GetValueOrDefault(s.DoctorUserId, "-"))</td>
+                        <td class="nowrap">@(s is null ? "" : L[s.Type.ToString()])</td>
                         <td>@(s?.WeightKg is double w ? Fmt.Number(w) + " " + L["kg"] : "") @(s?.Complaint)</td>
                         <td dir="ltr" class="points">@(s is null ? "" : string.Join(", ", s.Points.Select(pt => PointText(pt))))</td>
                     </tr>

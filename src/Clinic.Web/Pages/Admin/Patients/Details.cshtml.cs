@@ -20,7 +20,7 @@ public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userM
     public Dictionary<int, string> DoctorNames { get; private set; } = [];
 
     public bool ShowNotes => scope.CanReadDoctorNotes;
-    public bool CanSeeSummary => scope.IsAdmin;
+    public bool CanSeeSummary => scope.IsAdmin || User.IsInRole(Roles.Doctor);
 
     /// <summary>Counts only, and only for doctors; receptionists never see clinical data.</summary>
     public ClinicalSummary? Clinical { get; private set; }
@@ -63,7 +63,7 @@ public class DetailsModel(ClinicDbContext db, UserManager<ApplicationUser> userM
 
         if (User.IsInRole(Roles.Doctor))
         {
-            var sessions = db.TreatmentSessions.Where(s => s.PatientUserId == id);
+            var sessions = scope.Sessions(db.TreatmentSessions).Where(s => s.PatientUserId == id);
             Clinical = new ClinicalSummary(
                 await sessions.CountAsync(),
                 await db.MedicalFiles.CountAsync(f => f.PatientUserId == id),

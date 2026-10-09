@@ -13,12 +13,15 @@ using Microsoft.EntityFrameworkCore;
 namespace Clinic.Web.Pages.Admin.Patients;
 
 /// <summary>
-/// The admin's case summary: every doctor who treated the patient, how many sessions each held, and the points and
-/// treatments each used. Only the admin opens it.
+/// The case summary: every doctor who treated the patient, how many sessions each held, and the points and
+/// treatments each used. The admin sees every doctor; a doctor sees only their own part. Reception does not open it.
 /// </summary>
-[Authorize(Policy = Policies.Admin)]
-public class SummaryModel(ClinicDbContext db, UserManager<ApplicationUser> users, AuditLog audit) : PageModel
+[Authorize(Roles = $"{Roles.Admin},{Roles.Doctor}")]
+public class SummaryModel(ClinicDbContext db, UserManager<ApplicationUser> users, AuditLog audit, StaffScope scope) : PageModel
 {
+    /// <summary>True when the page shows only the signed-in doctor's own sessions.</summary>
+    public bool IsOwnOnly => scope.IsOwnOnly;
+
     public ApplicationUser Patient { get; private set; } = default!;
     public PatientProfile? Profile { get; private set; }
     public List<DoctorPart> Doctors { get; private set; } = [];
@@ -41,7 +44,7 @@ public class SummaryModel(ClinicDbContext db, UserManager<ApplicationUser> users
         Patient = patient;
         Profile = await db.PatientProfiles.AsNoTracking().FirstOrDefaultAsync(p => p.UserId == id);
 
-        var sessions = await db.TreatmentSessions.AsNoTracking().Include(s => s.Points)
+        var sessions = await scope.Sessions(db.TreatmentSessions).AsNoTracking().Include(s => s.Points)
             .Where(s => s.PatientUserId == id)
             .OrderBy(s => s.DateUtc)
             .ToListAsync();
@@ -50,6 +53,11 @@ public class SummaryModel(ClinicDbContext db, UserManager<ApplicationUser> users
             .Where(a => a.PatientUserId == id && a.Status == AppointmentStatus.Completed)
             .Join(db.Doctors, a => a.DoctorProfileId, d => d.Id, (a, d) => d.UserId)
             .ToListAsync();
+
+        if (scope.IsOwnOnly)
+        {
+            visits = visits.Where(v => v == scope.UserId).ToList();
+        }
 
         var doctorIds = sessions.Select(s => s.DoctorUserId).Concat(visits).Distinct().ToList();
         var names = await db.Users.Where(u => doctorIds.Contains(u.Id)).ToDictionaryAsync(u => u.Id, u => u.FullName);

@@ -164,13 +164,15 @@ public class BodyMapTests
     }
 
     [Fact]
-    public void Channel_points_are_numbered_1_to_361_in_the_usual_order()
+    public void Every_point_is_numbered_channel_points_first_in_the_usual_order()
     {
         Assert.Equal(1, AcupointLibrary.NumberOf("LU1"));
         Assert.Equal(67, AcupointLibrary.NumberOf("ST36"));
         Assert.Equal(361, AcupointLibrary.NumberOf("CV24"));
-        Assert.Null(AcupointLibrary.NumberOf("EX-HN3"));
-        Assert.Equal(Enumerable.Range(1, 361), AcupointLibrary.Ordered.Take(361).Select(p => AcupointLibrary.NumberOf(p.Code)!.Value));
+        Assert.Equal(362, AcupointLibrary.NumberOf("EX-HN1"));
+        Assert.Equal(AcupointLibrary.Points.Count, AcupointLibrary.Ordered.Count);
+        Assert.Equal(Enumerable.Range(1, AcupointLibrary.Ordered.Count), AcupointLibrary.Ordered.Select(p => AcupointLibrary.NumberOf(p.Code)!.Value));
+        Assert.Null(AcupointLibrary.NumberOf("XX99"));
     }
 
     [Fact]

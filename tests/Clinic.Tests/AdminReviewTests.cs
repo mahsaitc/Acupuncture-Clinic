@@ -2,6 +2,8 @@ using System.Net;
 using Clinic.Domain;
 using Clinic.Domain.Entities;
 using Clinic.Infrastructure.Data;
+using Clinic.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -68,19 +70,76 @@ public partial class ClinicalTests
             await db.SaveChangesAsync();
         }
 
-        var admin = await LoginAsync(await CreateUserAsync(Roles.Admin));
+        var admin = await LoginAsync(await ClinicAdminAsync());
         var summary = await admin.GetStringAsync($"/Admin/Patients/Summary?id={patient.Id}");
         Assert.Contains("دکتر اول", summary);
         Assert.Contains("دکتر دوم", summary);
         Assert.Contains("ST36 <span class=\"text-muted\">× ۲</span>", summary);
         Assert.Contains("CV12", summary);
 
-        foreach (var role in new[] { Roles.Doctor, Roles.Receptionist })
+        Assert.Contains($"/Admin/Records/Print?patientId={patient.Id}", summary);
+
+        // A doctor sees and prints only their own part.
+        var own = await (await LoginAsync(first)).GetStringAsync($"/Admin/Patients/Summary?id={patient.Id}");
+        Assert.Contains("دکتر اول", own);
+        Assert.DoesNotContain("دکتر دوم", own);
+        Assert.DoesNotContain("CV12", own);
+        Assert.DoesNotContain("/Admin/Records/Print", own);
+
+        var reception = await LoginAsync(await CreateUserAsync(Roles.Receptionist));
+        var response = await reception.GetAsync($"/Admin/Patients/Summary?id={patient.Id}");
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.StartsWith("/Account/AccessDenied", response.Headers.Location!.PathAndQuery);
+    }
+
+    [Fact]
+    public async Task Each_doctor_sees_only_their_own_sessions_and_the_admin_print_names_the_doctor_of_each()
+    {
+        var patient = await CreateUserAsync(Roles.Patient, "بیمار جلسات");
+        var first = await AssignAsync(await CreateUserAsync(Roles.Doctor, "دکتر جلسه اول"), patient);
+        var second = await CreateUserAsync(Roles.Doctor, "دکتر جلسه دوم");
+        int othersSession;
+        using (var scope = factory.Services.CreateScope())
         {
-            var other = await LoginAsync(role == Roles.Doctor ? first : await CreateUserAsync(role));
-            var response = await other.GetAsync($"/Admin/Patients/Summary?id={patient.Id}");
-            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-            Assert.StartsWith("/Account/AccessDenied", response.Headers.Location!.PathAndQuery);
+            var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+            var mine = new TreatmentSession { PatientUserId = patient.Id, DoctorUserId = first.Id, DateUtc = DateTime.UtcNow.AddDays(-2), Complaint = "شکایت جلسه اول" };
+            var others = new TreatmentSession { PatientUserId = patient.Id, DoctorUserId = second.Id, DateUtc = DateTime.UtcNow.AddDays(-1), Complaint = "شکایت جلسه دوم" };
+            db.TreatmentSessions.AddRange(mine, others);
+            await db.SaveChangesAsync();
+            othersSession = others.Id;
+        }
+
+        var doctor = await LoginAsync(first);
+        foreach (var url in new[] { $"/Admin/Records?patientId={patient.Id}", $"/Admin/Records/Print?patientId={patient.Id}" })
+        {
+            var page = await doctor.GetStringAsync(url);
+            Assert.Contains("دکتر جلسه اول", page);
+            Assert.DoesNotContain("دکتر جلسه دوم", page);
+        }
+        Assert.Equal(HttpStatusCode.NotFound, (await doctor.GetAsync($"/Admin/Records/Session?patientId={patient.Id}&id={othersSession}")).StatusCode);
+        var token = await TokenAsync(doctor, $"/Admin/Records/Session?patientId={patient.Id}");
+        var delete = await doctor.PostAsync($"/Admin/Records/Session?handler=Delete&patientId={patient.Id}&id={othersSession}",
+            new FormUrlEncodedContent([new("__RequestVerificationToken", token)]));
+        Assert.Equal(HttpStatusCode.NotFound, delete.StatusCode);
+
+        var admin = await LoginAsync(await ClinicAdminAsync());
+        var print = await admin.GetStringAsync($"/Admin/Records/Print?patientId={patient.Id}");
+        Assert.Contains("شکایت جلسه اول", print);
+        Assert.Contains("شکایت جلسه دوم", print);
+        Assert.Contains("<td class=\"doctor\">دکتر جلسه اول</td>", print);
+        Assert.Contains("<td class=\"doctor\">دکتر جلسه دوم</td>", print);
+    }
+
+    [Fact]
+    public async Task Admin_and_reception_see_the_treating_doctor_in_the_patient_list()
+    {
+        var patient = await CreateUserAsync(Roles.Patient, $"بیمار فهرست {Guid.NewGuid():N}");
+        await AssignAsync(await CreateUserAsync(Roles.Doctor, "دکتر فهرست"), patient);
+        foreach (var role in new[] { Roles.Admin, Roles.Receptionist })
+        {
+            var list = await (await LoginAsync(await CreateUserAsync(role))).GetStringAsync($"/Admin/Patients?Q={Uri.EscapeDataString(patient.FullName)}");
+            Assert.Contains("پزشک معالج", list);
+            Assert.Contains("دکتر فهرست", list);
         }
     }
 
@@ -106,5 +165,15 @@ public partial class ClinicalTests
         Assert.DoesNotContain("یادداشت خصوصی برای پزشک", details);
         Assert.DoesNotContain("پیام محرمانه برای پزشک", details);
         Assert.DoesNotContain("پیام محرمانه برای پزشک", await reception.GetStringAsync("/Admin/Messages"));
+    }
+
+    /// <summary>An admin who is also a doctor, like the clinic's own admin account.</summary>
+    private async Task<ApplicationUser> ClinicAdminAsync()
+    {
+        var admin = await CreateUserAsync(Roles.Admin);
+        using var scope = factory.Services.CreateScope();
+        var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        await users.AddToRoleAsync((await users.FindByIdAsync(admin.Id))!, Roles.Doctor);
+        return admin;
     }
 }

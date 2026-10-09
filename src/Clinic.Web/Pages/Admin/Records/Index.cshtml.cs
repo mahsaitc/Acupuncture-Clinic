@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Clinic.Web.Pages.Admin.Records;
 
 [Authorize(Policy = Policies.Doctor)]
-public class IndexModel(ClinicDbContext db, UserManager<ApplicationUser> users, AuditLog audit, TimeProvider time) : PageModel
+public class IndexModel(ClinicDbContext db, UserManager<ApplicationUser> users, AuditLog audit, TimeProvider time, StaffScope scope) : PageModel
 {
     public ApplicationUser Patient { get; private set; } = default!;
     public MedicalRecord? Record { get; private set; }
@@ -38,7 +38,7 @@ public class IndexModel(ClinicDbContext db, UserManager<ApplicationUser> users, 
         Record = await db.MedicalRecords.AsNoTracking().FirstOrDefaultAsync(r => r.PatientUserId == patientId);
         Profile = await db.PatientProfiles.AsNoTracking().FirstOrDefaultAsync(p => p.UserId == patientId);
         Age = Profile?.AgeOn(DateOnly.FromDateTime(time.GetUtcNow().UtcDateTime));
-        Sessions = await db.TreatmentSessions.AsNoTracking()
+        Sessions = await scope.Sessions(db.TreatmentSessions).AsNoTracking()
             .Include(s => s.Points)
             .Where(s => s.PatientUserId == patientId)
             .OrderByDescending(s => s.DateUtc)

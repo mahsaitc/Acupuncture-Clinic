@@ -22,6 +22,10 @@
             <tr>
                 <th>@L["Name"]</th>
                 <th>@L["Mobile number"]</th>
+                @if (Model.ShowDoctor)
+                {
+                    <th>@L["Treating doctor"]</th>
+                }
                 <th>@L["Completed visits"]</th>
                 <th>@L["Next appointment"]</th>
                 <th>@L["Registered on"]</th>
@@ -33,6 +37,23 @@
                 <tr class="@(r.IsActive ? "" : "table-secondary")">
                     <td><a class="fw-semibold" asp-page="./Details" asp-route-id="@r.Id">@r.FullName</a><div class="small text-muted" dir="ltr">@r.Email</div></td>
                     <td dir="ltr" class="text-nowrap">@r.Phone</td>
+                    @if (Model.ShowDoctor)
+                    {
+                        <td class="text-nowrap">
+                            @if (r.DoctorId is int d && Model.DoctorNames.TryGetValue(d, out var doctorName))
+                            {
+                                @doctorName
+                                @if (r.DoctorFromBooking)
+                                {
+                                    <div class="small text-muted">@L["From the latest appointment"]</div>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                    }
                     <td>@Fmt.Number(r.Visits)</td>
                     <td class="text-nowrap">@(r.NextUtc is DateTime next ? Fmt.DateTime(next) : "-")</td>
                     <td class="text-nowrap small">@Fmt.Date(r.CreatedUtc)</td>

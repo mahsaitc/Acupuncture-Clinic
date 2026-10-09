@@ -26,14 +26,13 @@
                     </div>
 
                     <div class="point-tools mb-3">
-                        <label class="form-label small text-muted mb-1" for="point-search">@L["Type a point's number (1 to 361), code or name and press Add; it is marked on every chart it appears on."]</label>
+                        <label class="form-label small text-muted mb-1" for="point-search">@L["Type a point's number (1 to {0}), code or name and press Add; it is marked on every chart it appears on.", AcupointLibrary.Ordered.Count]</label>
                         <div class="input-group">
                             <input class="form-control" id="point-search" list="point-names" dir="ltr" autocomplete="off" />
                             <datalist id="point-names">
                                 @foreach (var p in AcupointLibrary.Ordered)
                                 {
-                                    var n = AcupointLibrary.NumberOf(p.Code);
-                                    <option value="@(n is int num ? $"{num}. {p.Label}" : p.Label)"></option>
+                                    <option value="@($"{AcupointLibrary.NumberOf(p.Code)}. {p.Label}")"></option>
                                 }
                             </datalist>
                             <select class="form-select flex-grow-0 w-auto" id="point-side" aria-label="@L["Side"]">
