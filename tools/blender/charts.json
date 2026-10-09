@@ -136,8 +136,8 @@
         200,
         300
       ],
-      "include": "^(Anterior notch of auricle|Antihelix|Antitragus|Apex of auricle|Auricular region|Auricular tubercle|Cavity of concha|Concha of auricle|Crura of antihelix|Cymba conchae|Eminentia conchae|Eminentia fossae triangularis|Eminentia scaphae|Fossa antihelica|Helix|Intertragic incisure|Lobule of auricle|Posterior auricular groove|Scapha|Tragus|Triangular fossa)\\.l$"
+      "include": "^(Anterior notch of auricle|Antihelix|Antitragus|Apex of auricle|Auricular tubercle|Cavity of concha|Concha of auricle|Crura of antihelix|Cymba conchae|Eminentia conchae|Eminentia fossae triangularis|Eminentia scaphae|Fossa antihelica|Helix|Intertragic incisure|Lobule of auricle|Scapha|Tragus|Triangular fossa)\\.l$"
     }
   },
-  "_comment_ear": "The left ear seen from the side (face on the left), only the parts of the auricle; 3900 px per metre."
+  "_comment_ear": "The left ear seen from the side (face on the left), only the parts of the auricle itself: the skin around it (Auricular region, Posterior auricular groove) is left out so no scalp shows behind the ear; 3900 px per metre."
 }
