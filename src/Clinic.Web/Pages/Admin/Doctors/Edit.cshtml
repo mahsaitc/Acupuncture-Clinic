@@ -1,0 +1,115 @@
+@page
+@using Clinic.Domain.Entities
+@model Clinic.Web.Pages.Admin.Doctors.EditModel
+@{
+    ViewData["Title"] = L["Edit doctor's file"];
+    var english = CulturePath.IsEnglish;
+    string Size(long bytes) => bytes >= 1024 * 1024 ? L["{0} MB", Fmt.Number((bytes / 1048576.0).ToString("0.0"))] : L["{0} KB", Fmt.Number(Math.Max(1, (bytes + 1023) / 1024).ToString())];
+}
+
+<div class="page-head">
+    <div>
+        <a class="small" asp-page="./Patients" asp-route-id="@Model.Doctor.Id"><i class="bi @(english ? "bi-arrow-left" : "bi-arrow-right") me-1"></i>@Model.DoctorUser.FullName</a>
+        <h1 class="h3 mt-1">@L["Edit doctor's file"]</h1>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <form method="post" asp-route-id="@Model.Doctor.Id" class="card card-soft">
+            <div class="card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label asp-for="Input.FullName" class="form-label"></label>
+                        <input asp-for="Input.FullName" class="form-control" />
+                        <span asp-validation-for="Input.FullName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                        <input asp-for="Input.PhoneNumber" class="form-control" dir="ltr" inputmode="numeric" maxlength="11" />
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Input.Email" class="form-label"></label>
+                        <input asp-for="Input.Email" class="form-control" dir="ltr" />
+                        <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="Input.NationalCode" class="form-label"></label>
+                        <input asp-for="Input.NationalCode" class="form-control" dir="ltr" inputmode="numeric" maxlength="10" />
+                        <span asp-validation-for="Input.NationalCode" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="Input.MedicalCouncilNumber" class="form-label"></label>
+                        <input asp-for="Input.MedicalCouncilNumber" class="form-control" dir="ltr" inputmode="numeric" />
+                        <span asp-validation-for="Input.MedicalCouncilNumber" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="Input.SpecialtyFa" class="form-label"></label>
+                        <input asp-for="Input.SpecialtyFa" class="form-control" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="Input.SpecialtyEn" class="form-label"></label>
+                        <input asp-for="Input.SpecialtyEn" class="form-control" dir="ltr" />
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Input.BioFa" class="form-label"></label>
+                        <textarea asp-for="Input.BioFa" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Input.BioEn" class="form-label"></label>
+                        <textarea asp-for="Input.BioEn" class="form-control" rows="3" dir="ltr"></textarea>
+                    </div>
+                </div>
+                <div class="form-errors mt-3"></div>
+                <button type="submit" class="btn btn-success mt-3"><i class="bi bi-check-lg me-1"></i>@L["Save"]</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-5">
+        <section class="card card-soft">
+            <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-folder2-open me-2 text-success"></i>@L["Documents"]</h2>
+                @if (Model.Doctor.Documents.Count == 0)
+                {
+                    <p class="text-muted small">@L["No documents were uploaded."]</p>
+                }
+                <div class="doc-grid mb-3">
+                    @foreach (var d in Model.Doctor.Documents.OrderBy(d => d.Kind).ThenBy(d => d.UploadedUtc))
+                    {
+                        <div class="doc-tile">
+                            <a href="@Url.Page("/Admin/DoctorRequests", "Document", new { id = d.Id })" target="_blank" rel="noopener" class="text-reset text-decoration-none d-grid gap-1">
+                                @if (d.IsImage)
+                                {
+                                    <img src="@Url.Page("/Admin/DoctorRequests", "Document", new { id = d.Id })" alt="" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <span class="doc-icon"><i class="bi bi-file-earmark-pdf"></i></span>
+                                }
+                                <span class="doc-name">@L[Clinic.Web.Pages.Admin.DoctorRequestsModel.KindName(d.Kind)]</span>
+                                <span class="small text-muted">@Size(d.SizeBytes) · @Fmt.Date(d.UploadedUtc)</span>
+                            </a>
+                            <form method="post" asp-page-handler="DeleteDocument" asp-route-id="@Model.Doctor.Id" asp-route-documentId="@d.Id" onsubmit="return confirm('@L["Delete this document?"]')">
+                                <button type="submit" class="btn btn-link btn-sm text-danger p-0">@L["Delete"]</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+                <form method="post" asp-page-handler="Upload" asp-route-id="@Model.Doctor.Id" enctype="multipart/form-data" class="border-top pt-3">
+                    <h3 class="h6">@L["Add a document"]</h3>
+                    <select name="kind" class="form-select mb-2" aria-label="@L["Document type"]">
+                        @foreach (var kind in Enum.GetValues<DoctorDocumentKind>())
+                        {
+                            <option value="@kind">@L[Clinic.Web.Pages.Admin.DoctorRequestsModel.KindName(kind)]</option>
+                        }
+                    </select>
+                    <input type="file" name="file" class="form-control mb-2" accept="@Clinic.Web.Clinical.PrivateFileStore.DocumentAccept" data-max-bytes="@Clinic.Web.Clinical.PrivateFileStore.DocumentMaxBytes" data-max-bytes-msg="@L["The file is larger than 2 MB."]" required />
+                    <div class="form-text mb-2">@L["JPG, PNG, WEBP or PDF, at most 2 MB."]</div>
+                    <button type="submit" class="btn btn-outline-success btn-sm"><i class="bi bi-cloud-arrow-up me-1"></i>@L["Upload"]</button>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>

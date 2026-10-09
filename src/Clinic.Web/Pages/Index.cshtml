@@ -132,6 +132,11 @@
     </section>
 }
 
+@if (Model.Results is { Show: true } results && (results.Tiles.Count > 0 || results.Charts.Count > 0))
+{
+    <partial name="_HomeResults" model="results" />
+}
+
 <section class="section pb-0">
     <div class="container">
         <div class="cta-band d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">

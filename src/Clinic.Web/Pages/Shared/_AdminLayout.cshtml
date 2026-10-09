@@ -69,6 +69,7 @@
                 @if (isAdmin)
                 {
                     <a class="@Active("/Admin/Site")" asp-page="/Admin/Site"><i class="bi bi-house-gear"></i>@L["Home page and contact"]</a>
+                    <a class="@Active("/Admin/Results")" asp-page="/Admin/Results"><i class="bi bi-bar-chart-line"></i>@L["Results on the home page"]</a>
 
                     <div class="admin-nav-group">@L["Settings"]</div>
                     <a class="@Active("/Admin/Users")" asp-page="/Admin/Users"><i class="bi bi-person-gear"></i>@L["Users"]</a>
@@ -94,6 +95,10 @@
                 @if (TempData["Message"] is string message)
                 {
                     <div class="alert alert-success">@message</div>
+                }
+                @if (TempData["Error"] is string error)
+                {
+                    <div class="alert alert-danger">@error</div>
                 }
                 @RenderBody()
             </main>

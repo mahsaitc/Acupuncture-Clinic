@@ -2319,4 +2319,166 @@
   <data name="Your reply was sent." xml:space="preserve">
     <value>پاسخ شما ارسال شد.</value>
   </data>
+  <data name="Approved" xml:space="preserve">
+    <value>تأیید شده</value>
+  </data>
+  <data name="Waiting for approval" xml:space="preserve">
+    <value>در انتظار تأیید</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>غیرفعال</value>
+  </data>
+  <data name="Upcoming appointments" xml:space="preserve">
+    <value>نوبت‌های پیش رو</value>
+  </data>
+  <data name="Doctor&#x27;s sign-up file" xml:space="preserve">
+    <value>پرونده ثبت‌نام پزشک</value>
+  </data>
+  <data name="Edit doctor&#x27;s file" xml:space="preserve">
+    <value>ویرایش پرونده پزشک</value>
+  </data>
+  <data name="Sign-up date" xml:space="preserve">
+    <value>تاریخ ثبت‌نام</value>
+  </data>
+  <data name="This doctor has no upcoming appointments." xml:space="preserve">
+    <value>این پزشک نوبت پیش رویی ندارد.</value>
+  </data>
+  <data name="About the doctor (Persian)" xml:space="preserve">
+    <value>درباره پزشک (فارسی)</value>
+  </data>
+  <data name="About the doctor (English)" xml:space="preserve">
+    <value>درباره پزشک (انگلیسی)</value>
+  </data>
+  <data name="The doctor&#x27;s file was saved." xml:space="preserve">
+    <value>پرونده پزشک ذخیره شد.</value>
+  </data>
+  <data name="Choose a file first." xml:space="preserve">
+    <value>ابتدا یک فایل انتخاب کنید.</value>
+  </data>
+  <data name="The document was added." xml:space="preserve">
+    <value>مدرک اضافه شد.</value>
+  </data>
+  <data name="The document was deleted." xml:space="preserve">
+    <value>مدرک حذف شد.</value>
+  </data>
+  <data name="Delete this document?" xml:space="preserve">
+    <value>این مدرک حذف شود؟</value>
+  </data>
+  <data name="Add a document" xml:space="preserve">
+    <value>افزودن مدرک</value>
+  </data>
+  <data name="Document type" xml:space="preserve">
+    <value>نوع مدرک</value>
+  </data>
+  <data name="JPG, PNG, WEBP or PDF, at most 2 MB." xml:space="preserve">
+    <value>JPG، PNG، WEBP یا PDF، حداکثر ۲ مگابایت.</value>
+  </data>
+  <data name="Results" xml:space="preserve">
+    <value>نتایج</value>
+  </data>
+  <data name="Sample data" xml:space="preserve">
+    <value>داده‌های نمونه</value>
+  </data>
+  <data name="Before treatment" xml:space="preserve">
+    <value>قبل از درمان</value>
+  </data>
+  <data name="After treatment" xml:space="preserve">
+    <value>بعد از درمان</value>
+  </data>
+  <data name="Change" xml:space="preserve">
+    <value>تغییر</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>مقدار</value>
+  </data>
+  <data name="Results on the home page" xml:space="preserve">
+    <value>نتایج درمان در صفحه اصلی</value>
+  </data>
+  <data name="Headline figures, charts and tables shown at the bottom of the home page." xml:space="preserve">
+    <value>آمار کلیدی، نمودارها و جدول‌هایی که پایین صفحه اصلی نمایش داده می‌شوند.</value>
+  </data>
+  <data name="View on the site" xml:space="preserve">
+    <value>مشاهده در سایت</value>
+  </data>
+  <data name="Replace the current figures with the sample figures?" xml:space="preserve">
+    <value>ارقام فعلی با ارقام نمونه جایگزین شوند؟</value>
+  </data>
+  <data name="Restore sample figures" xml:space="preserve">
+    <value>بازگرداندن ارقام نمونه</value>
+  </data>
+  <data name="These are sample figures, not clinic data. The home page marks them as sample data. Replace them with the clinic&#x27;s own results and untick “Sample data” before launch." xml:space="preserve">
+    <value>این ارقام نمونه هستند، نه داده واقعی کلینیک، و در صفحه اصلی با برچسب «داده‌های نمونه» نمایش داده می‌شوند. پیش از راه‌اندازی سایت، آن‌ها را با نتایج واقعی کلینیک جایگزین کنید و تیک «داده‌های نمونه» را بردارید.</value>
+  </data>
+  <data name="Show on the home page" xml:space="preserve">
+    <value>نمایش در صفحه اصلی</value>
+  </data>
+  <data name="Sample data (marked as such on the home page)" xml:space="preserve">
+    <value>داده‌های نمونه (در صفحه اصلی با برچسب نمونه)</value>
+  </data>
+  <data name="Source note (Persian)" xml:space="preserve">
+    <value>توضیح منبع (فارسی)</value>
+  </data>
+  <data name="Source note (English)" xml:space="preserve">
+    <value>توضیح منبع (انگلیسی)</value>
+  </data>
+  <data name="For example: number of patients, the period, and “results vary from person to person”." xml:space="preserve">
+    <value>مثلاً: تعداد بیماران، بازه زمانی و «نتیجه درمان در افراد مختلف متفاوت است».</value>
+  </data>
+  <data name="Headline figures" xml:space="preserve">
+    <value>آمار کلیدی</value>
+  </data>
+  <data name="To remove a row, clear its value or press ×." xml:space="preserve">
+    <value>برای حذف یک ردیف، مقدارش را پاک کنید یا × را بزنید.</value>
+  </data>
+  <data name="Icon" xml:space="preserve">
+    <value>آیکون</value>
+  </data>
+  <data name="Figure" xml:space="preserve">
+    <value>عدد</value>
+  </data>
+  <data name="Label (Persian)" xml:space="preserve">
+    <value>برچسب (فارسی)</value>
+  </data>
+  <data name="Label (English)" xml:space="preserve">
+    <value>برچسب (انگلیسی)</value>
+  </data>
+  <data name="New chart" xml:space="preserve">
+    <value>نمودار جدید</value>
+  </data>
+  <data name="Chart {0}" xml:space="preserve">
+    <value>نمودار {0}</value>
+  </data>
+  <data name="Fill this in to add a chart. Leave it empty to add nothing." xml:space="preserve">
+    <value>برای افزودن نمودار این بخش را پر کنید؛ اگر خالی بماند چیزی اضافه نمی‌شود.</value>
+  </data>
+  <data name="Chart type" xml:space="preserve">
+    <value>نوع نمودار</value>
+  </data>
+  <data name="Bars (one value per row)" xml:space="preserve">
+    <value>میله‌ای (یک مقدار در هر ردیف)</value>
+  </data>
+  <data name="Before and after treatment" xml:space="preserve">
+    <value>قبل و بعد از درمان</value>
+  </data>
+  <data name="Unit (Persian)" xml:space="preserve">
+    <value>واحد (فارسی)</value>
+  </data>
+  <data name="Unit (English)" xml:space="preserve">
+    <value>واحد (انگلیسی)</value>
+  </data>
+  <data name="Also show a table" xml:space="preserve">
+    <value>نمایش جدول هم</value>
+  </data>
+  <data name="Value (or before treatment)" xml:space="preserve">
+    <value>مقدار (یا قبل از درمان)</value>
+  </data>
+  <data name="To remove a chart, clear its title and all its rows. Save to get more empty rows." xml:space="preserve">
+    <value>برای حذف نمودار، عنوان و همه ردیف‌هایش را پاک کنید. برای ردیف‌های خالی بیشتر، ذخیره کنید.</value>
+  </data>
+  <data name="The results on the home page were saved." xml:space="preserve">
+    <value>نتایج صفحه اصلی ذخیره شد.</value>
+  </data>
+  <data name="The sample figures were restored." xml:space="preserve">
+    <value>ارقام نمونه بازگردانده شد.</value>
+  </data>
 </root>

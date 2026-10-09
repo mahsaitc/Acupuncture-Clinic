@@ -36,12 +36,31 @@ public class SiteContent
     public string? TelegramUrl { get; set; }
     public string? YouTubeUrl { get; set; }
 
+    /// <summary>The home page's treatment results (<see cref="ClinicResults"/>) as JSON; null shows the sample figures.</summary>
+    public string? ResultsJson { get; set; }
+
     public DateTime UpdatedUtc { get; set; } = DateTime.UtcNow;
 
     public string HeroTitle(bool english) => english ? HeroTitleEn : HeroTitleFa;
     public string HeroSubtitle(bool english) => english ? HeroSubtitleEn : HeroSubtitleFa;
     public string? Address(bool english) => english ? AddressEn : AddressFa;
     public string? OpeningHours(bool english) => english ? OpeningHoursEn : OpeningHoursFa;
+
+    public ClinicResults Results()
+    {
+        if (string.IsNullOrWhiteSpace(ResultsJson))
+        {
+            return ClinicResults.Sample();
+        }
+        try
+        {
+            return System.Text.Json.JsonSerializer.Deserialize<ClinicResults>(ResultsJson) ?? ClinicResults.Sample();
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return ClinicResults.Sample();
+        }
+    }
 
     public bool HasSocialLinks => InstagramUrl is not null || WhatsAppUrl is not null || TelegramUrl is not null || YouTubeUrl is not null;
 }

@@ -1,0 +1,118 @@
+@using Clinic.Domain.Entities
+@model ClinicResults
+@{
+    var english = CulturePath.IsEnglish;
+    // Figures are typed with Latin digits; Persian pages show Persian digits and the Persian percent sign.
+    string N(string text) => english ? text : Fmt.Number(text).Replace('%', '٪');
+    string V(double value) => N(value.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture));
+    string Width(double value, double max) => (max <= 0 ? 0 : Math.Clamp(value / max * 100, 0, 100)).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + "%";
+}
+<section class="section results" id="results">
+    <div class="container">
+        <div class="section-title">
+            <div class="kicker">@L["Results"]</div>
+            <h2>@Model.Title(english)</h2>
+            @if (Model.IsSample)
+            {
+                <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis border border-warning-subtle mt-2"><i class="bi bi-info-circle me-1"></i>@L["Sample data"]</span>
+            }
+        </div>
+
+        @if (Model.Tiles.Count > 0)
+        {
+            <div class="row g-3 mb-4">
+                @foreach (var t in Model.Tiles)
+                {
+                    <div class="col-6 col-lg-3">
+                        <div class="result-tile h-100">
+                            <i class="bi bi-@t.Icon result-icon" aria-hidden="true"></i>
+                            <div class="result-value" dir="ltr">@N(t.Value)</div>
+                            <div class="result-label">@t.Label(english)</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="row g-4">
+            @{ var charts = Model.Charts.Where(c => c.Rows.Count > 0).ToList(); }
+            @for (var ci = 0; ci < charts.Count; ci++)
+            {
+                var c = charts[ci];
+                var unit = c.Unit(english);
+                var max = c.Rows.Max(r => Math.Max(r.Value, r.After ?? 0));
+                // Two charts a row; an odd last chart takes the whole row.
+                <div class="col-lg-@(ci == charts.Count - 1 && charts.Count % 2 == 1 ? "12" : "6")">
+                    <figure class="result-chart h-100 mb-0">
+                        <figcaption class="h6 mb-3">@c.Title(english)</figcaption>
+                        @if (c.Kind == ResultChartKind.BeforeAfter)
+                        {
+                            <div class="result-legend small mb-2">
+                                <span><i class="swatch before"></i>@L["Before treatment"]</span>
+                                <span><i class="swatch after"></i>@L["After treatment"]</span>
+                            </div>
+                        }
+                        <div class="result-bars">
+                            @foreach (var r in c.Rows)
+                            {
+                                <div class="result-bar-row">
+                                    <div class="result-bar-label">@r.Label(english)</div>
+                                    <div class="result-bar-tracks">
+                                        @if (c.Kind == ResultChartKind.BeforeAfter)
+                                        {
+                                            <div class="result-track"><span class="result-fill before" style="width: @Width(r.Value, max)"></span><b>@V(r.Value) @unit</b></div>
+                                            <div class="result-track"><span class="result-fill" style="width: @Width(r.After ?? 0, max)"></span><b>@(r.After is double a ? V(a) : "-") @unit</b></div>
+                                        }
+                                        else
+                                        {
+                                            <div class="result-track"><span class="result-fill" style="width: @Width(r.Value, max)"></span><b>@V(r.Value) @unit</b></div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        @if (c.ShowTable)
+                        {
+                            <div class="table-responsive mt-3">
+                                <table class="table table-sm mb-0 result-table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            @if (c.Kind == ResultChartKind.BeforeAfter)
+                                            {
+                                                <th>@L["Before treatment"]</th><th>@L["After treatment"]</th><th>@L["Change"]</th>
+                                            }
+                                            else
+                                            {
+                                                <th>@(string.IsNullOrEmpty(unit) ? L["Value"] : unit)</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var r in c.Rows)
+                                        {
+                                            <tr>
+                                                <td>@r.Label(english)</td>
+                                                <td>@V(r.Value)</td>
+                                                @if (c.Kind == ResultChartKind.BeforeAfter)
+                                                {
+                                                    <td>@(r.After is double a ? V(a) : "-")</td>
+                                                    <td class="text-success" dir="ltr">@(r.After is double a2 && r.Value != 0 ? N(((a2 - r.Value) / r.Value * 100).ToString("+0;-0", System.Globalization.CultureInfo.InvariantCulture) + "%") : "-")</td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </figure>
+                </div>
+            }
+        </div>
+
+        @if (Model.Note(english) is { Length: > 0 } note)
+        {
+            <p class="small text-muted text-center mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>@note</p>
+        }
+    </div>
+</section>
