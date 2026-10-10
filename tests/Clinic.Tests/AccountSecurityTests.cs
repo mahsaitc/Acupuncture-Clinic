@@ -136,11 +136,27 @@ public partial class AccountSecurityTests(StaffSecurityWebFactory factory) : ICl
         await EnableTwoFactorAsync(doctor);
         var client = await LoginAsync(admin);
 
+        // Without the phone, the doctor guesses codes until the account locks.
+        var guessing = NewClient();
+        await PostFormAsync(guessing, "/Account/Login", new() { ["Input.Email"] = doctor.Email!, ["Input.Password"] = Password });
+        for (var i = 0; i < 5; i++)
+        {
+            await PostFormAsync(guessing, "/Account/LoginWith2fa", new() { ["Code"] = "000000" });
+        }
+
         await PostFormAsync(client, $"/Admin/Users?handler=ResetTwoFactor&id={doctor.Id}", [], tokenFrom: "/Admin/Users");
 
         using var scope = factory.Services.CreateScope();
         var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         Assert.False((await users.FindByIdAsync(doctor.Id))!.TwoFactorEnabled);
+
+        // The doctor logs in with the old password and is sent to set up the new phone.
+        var doctorClient = NewClient();
+        var login = await PostFormAsync(doctorClient, "/Account/Login", new() { ["Input.Email"] = doctor.Email!, ["Input.Password"] = Password });
+        Assert.Equal(HttpStatusCode.Redirect, login.StatusCode);
+        Assert.DoesNotContain("LoginWith2fa", login.Headers.Location!.OriginalString);
+        var panel = await doctorClient.GetAsync("/Admin");
+        Assert.Contains("/Account/Manage/TwoFactor", panel.Headers.Location!.OriginalString);
     }
 
     [Fact]

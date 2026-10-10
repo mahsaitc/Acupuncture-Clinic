@@ -139,6 +139,9 @@ public class UsersModel(ClinicDbContext db, UserManager<ApplicationUser> userMan
 
         await userManager.SetTwoFactorEnabledAsync(user, false);
         await userManager.ResetAuthenticatorKeyAsync(user);
+        // Someone without their phone has usually tried codes until the account locked; let them back in at once.
+        await userManager.SetLockoutEndDateAsync(user, null);
+        await userManager.ResetAccessFailedCountAsync(user);
         await userManager.UpdateSecurityStampAsync(user);
         TempData["Message"] = l["Two-step login of {0} was turned off. They set it up again with their new phone.", user.FullName].Value;
         return RedirectToPage(new { Q });
