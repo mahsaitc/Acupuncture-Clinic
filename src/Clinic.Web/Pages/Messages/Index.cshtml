@@ -1,0 +1,58 @@
+@page
+@model Clinic.Web.Pages.Messages.IndexModel
+@{
+    ViewData["Title"] = L["My messages"];
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-1">@L["My messages"]</h1>
+        <p class="text-muted mb-0">@L["Your messages to the clinic and to your doctor, with their replies."]</p>
+    </div>
+    <a class="btn btn-success" asp-page="/Contact"><i class="bi bi-envelope-plus me-1"></i>@L["New message"]</a>
+</div>
+
+@if (Model.Messages.Count == 0)
+{
+    <p class="text-muted">@L["You have not sent any messages yet."]</p>
+}
+
+<div class="d-grid gap-3">
+    @foreach (var m in Model.Messages)
+    {
+        <div class="card card-soft" id="m@(m.Id)">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+                    <h2 class="h6 mb-0">@m.Subject</h2>
+                    <div class="small text-muted text-nowrap">@Fmt.DateTime(m.CreatedUtc)</div>
+                </div>
+                <div class="message-thread mb-3">
+                    <div class="message-reply from-patient"><div style="white-space: pre-line">@m.Body</div></div>
+                    @foreach (var r in m.Replies)
+                    {
+                        <div class="message-reply @(r.FromClinic ? "from-clinic" : "from-patient")">
+                            <div class="small text-muted mb-1">
+                                <i class="bi @(r.FromClinic ? "bi-hospital" : "bi-person") me-1"></i>
+                                <strong>@(r.FromClinic ? Model.AuthorNames.GetValueOrDefault(r.AuthorUserId, L["The clinic"]) : L["You"])</strong>
+                                · @Fmt.DateTime(r.CreatedUtc)
+                                @if (r.EditedUtc is not null) { <span>· @L["edited"]</span> }
+                            </div>
+                            <div style="white-space: pre-line">@r.Body</div>
+                        </div>
+                    }
+                </div>
+                @if (!m.Replies.Any(r => r.FromClinic))
+                {
+                    <div class="small text-muted mb-2"><i class="bi bi-hourglass-split me-1"></i>@L["Waiting for the clinic's reply."]</div>
+                }
+                <details class="reply-box">
+                    <summary class="btn btn-sm btn-outline-success"><i class="bi bi-reply me-1"></i>@L["Reply"]</summary>
+                    <form class="mt-2" method="post" asp-page-handler="Reply" asp-route-id="@m.Id">
+                        <textarea name="body" class="form-control mb-2" rows="3" maxlength="@Clinic.Web.Pages.Admin.MessagesModel.MaxReplyLength" required placeholder="@L["Write your reply"]"></textarea>
+                        <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-reply me-1"></i>@L["Send reply"]</button>
+                    </form>
+                </details>
+            </div>
+        </div>
+    }
+</div>

@@ -7,13 +7,19 @@ using Clinic.Infrastructure.Data;
 using Clinic.Web;
 using Clinic.Web.Localization;
 using Clinic.Web.Media;
+using Clinic.Web.Security;
+using Clinic.Web.Seo;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddClinicInfrastructure(builder.Configuration);
+// Do not tell visitors which web server runs the site.
+builder.WebHost.ConfigureKestrel(o => o.AddServerHeader = false);
+
+builder.Services.AddClinicInfrastructure(builder.Configuration, builder.Environment.ContentRootPath);
 // Emit Persian text as-is instead of &#x...; entities.
 builder.Services.Configure<Microsoft.Extensions.WebEncoders.WebEncoderOptions>(o =>
     o.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All));
@@ -23,24 +29,50 @@ builder.Services.AddScoped<SiteContentProvider>();
 builder.Services.AddSingleton<Clinic.Web.Content.MarkdownRenderer>();
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<Clinic.Web.Content.ContactThrottle>();
+builder.Services.AddSingleton<Clinic.Web.Security.BotCheck>();
+builder.Services.AddSingleton<Clinic.Web.Security.EmailSender>();
+// Password reset links work for two hours.
+builder.Services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromHours(2));
+builder.Services.AddClinicRequestLimits();
+// Behind nginx or another proxy on the same server, trust its X-Forwarded-For/Proto so HTTPS and visitor IPs are right.
+var behindProxy = builder.Configuration.GetValue("ReverseProxy:Enabled", false);
+builder.Services.Configure<ForwardedHeadersOptions>(o => o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
 // Allow the hero video upload through the form reader; the page itself enforces the real limit.
 builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(o => o.MultipartBodyLengthLimit = MediaStore.MaxVideoBytes + MediaStore.MaxImageBytes + 1024 * 1024);
 builder.Services.AddScoped<IdentityErrorDescriber, LocalizedIdentityErrorDescriber>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<Clinic.Web.Clinical.PrivateFileStore>();
+builder.Services.AddScoped<Clinic.Web.Clinical.AuditLog>();
+builder.Services.AddScoped<Clinic.Web.Clinical.StaffScope>();
+builder.Services.AddScoped<Clinic.Web.Clinical.VisitLog>();
+builder.Services.AddScoped<Clinic.Web.Clinical.NationalCodeIndex>();
+builder.Services.AddScoped<Clinic.Web.Pages.Admin.Patients.PatientRegistration>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddRazorPages(options =>
     {
         // The whole management panel needs a staff role; pages narrow it further with [Authorize(Policy = ...)].
         options.Conventions.AuthorizeFolder("/Admin", Policies.Staff);
+        // Staff set up two-step login before the panel opens (Security:RequireStaffTwoFactor).
+        options.Conventions.AddFolderApplicationModelConvention("/Admin", m => m.Filters.Add(new RequireTwoFactorFilter()));
+        // Medical records are for doctors only, never receptionists.
+        options.Conventions.AuthorizeFolder("/Admin/Records", Policies.Doctor);
+        // A doctor who is not the admin opens only their own patients.
+        options.Conventions.AddFolderApplicationModelConvention("/Admin/Records", m => m.Filters.Add(new Clinic.Web.Clinical.PatientAccessFilter("patientId")));
+        options.Conventions.AddFolderApplicationModelConvention("/Admin/Patients", m => m.Filters.Add(new Clinic.Web.Clinical.PatientAccessFilter("id")));
+        options.Conventions.AuthorizeFolder("/Files");
+        options.Conventions.AuthorizeFolder("/Messages");
         options.Conventions.AuthorizeFolder("/Appointments");
         options.Conventions.AuthorizeFolder("/Booking");
     })
+    .AddMvcOptions(o => o.ModelBinderProviders.Insert(0, new NumberBinder.Provider()))
     .AddViewLocalization()
     .AddDataAnnotationsLocalization(options =>
         options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy(Policies.Admin, p => p.RequireRole(Roles.Admin))
+    .AddPolicy(Policies.Owner, p => p.RequireRole(Roles.Owner))
     .AddPolicy(Policies.Doctor, p => p.RequireRole(Roles.Doctor))
     .AddPolicy(Policies.Content, p => p.RequireRole(Roles.Admin, Roles.Doctor))
     .AddPolicy(Policies.Staff, p => p.RequireRole(Roles.Admin, Roles.Doctor, Roles.Receptionist));
@@ -77,6 +109,15 @@ if (app.Configuration.GetValue("Database:MigrateOnStartup", true))
         await scope.ServiceProvider.GetRequiredService<ClinicDbContext>().Database.MigrateAsync();
     }
     await DbSeeder.SeedAsync(app.Services);
+    using (var scope = app.Services.CreateScope())
+    {
+        await scope.ServiceProvider.GetRequiredService<Clinic.Web.Clinical.NationalCodeIndex>().BackfillAsync();
+    }
+}
+
+if (behindProxy)
+{
+    app.UseForwardedHeaders();
 }
 
 if (!app.Environment.IsDevelopment())
@@ -87,7 +128,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCulturePathPrefix();
+app.UseSecurityHeaders(upgradeInsecureRequests: !app.Environment.IsDevelopment());
 app.UseRequestLocalization();
+app.UseRateLimiter();
 
 // Uploaded public media (hero video and poster). Medical files are never stored here.
 var media = app.Services.GetRequiredService<MediaStore>();
@@ -105,6 +148,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+app.MapClinicSeo();
 app.MapRazorPages()
    .WithStaticAssets();
 

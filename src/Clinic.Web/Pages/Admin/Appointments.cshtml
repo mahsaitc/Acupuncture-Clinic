@@ -8,19 +8,108 @@
     string Iso(DateOnly d) => d.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 }
 
+@{
+    var mode = Model.Mode;
+    string ModeKey(Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView v) => v.ToString().ToLowerInvariant();
+    var current = ModeKey(mode);
+    var title = mode switch
+    {
+        Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Week => $"{Fmt.Day(Model.From)} - {Fmt.Day(Model.To.AddDays(-1))}",
+        Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Month => Fmt.MonthAndYear(Model.Day),
+        Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Upcoming => $"{Fmt.Day(Model.From)} - {Fmt.Day(Model.To.AddDays(-1))}",
+        _ => Fmt.Day(Model.Day),
+    };
+}
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-    <h1 class="h3 mb-0">@L["Clinic calendar"]</h1>
+    <h1 class="h3 mb-0">@(Model.CanFilter ? L["Clinic calendar"] : L["My appointments"])</h1>
+    @if (Model.CanFilter && Model.Doctors.Count > 1)
+    {
+        <form method="get">
+            <input type="hidden" name="View" value="@current" />
+            <input type="hidden" name="Date" value="@Iso(Model.Day)" />
+            <select class="form-select" name="DoctorId" data-autosubmit aria-label="@L["Doctor"]">
+                <option value="">@L["All doctors"]</option>
+                @foreach (var d in Model.Doctors) { <option value="@d.Id" selected="@(Model.DoctorId == d.Id)">@d.Name</option> }
+            </select>
+        </form>
+    }
+    <div class="btn-group" role="group" aria-label="@L["View"]">
+        @foreach (var v in Enum.GetValues<Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView>())
+        {
+            <a class="btn @(v == mode ? "btn-success" : "btn-outline-success")" asp-route-View="@ModeKey(v)" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Iso(Model.Day)">@(v switch { Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Week => L["Weekly"], Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Month => L["Monthly"], Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Upcoming => L["Next 7 days"], _ => L["Daily"] })</a>
+        }
+    </div>
     <div class="btn-group" dir="ltr">
-        <a class="btn btn-outline-secondary" asp-route-Date="@Iso(Model.Day.AddDays(english ? -1 : 1))">@(english ? "‹" : "›")</a>
-        <span class="btn btn-light disabled">@Fmt.Day(Model.Day)</span>
-        <a class="btn btn-outline-secondary" asp-route-Date="@Iso(Model.Day.AddDays(english ? 1 : -1))">@(english ? "›" : "‹")</a>
+        <a class="btn btn-outline-secondary" asp-route-View="@current" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Iso(Model.Step(english ? -1 : 1))" aria-label="@(english ? L["Previous"] : L["Next"])">@(english ? "‹" : "›")</a>
+        <span class="btn btn-light disabled calendar-title">@title</span>
+        <a class="btn btn-outline-secondary" asp-route-View="@current" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Iso(Model.Step(english ? 1 : -1))" aria-label="@(english ? L["Next"] : L["Previous"])">@(english ? "›" : "‹")</a>
     </div>
     <a class="btn btn-success" asp-page="/Booking/Index">@L["New appointment"]</a>
 </div>
 
-@if (Model.Rows.Count == 0)
+@if (mode == Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Week)
 {
-    <p class="text-muted">@L["No appointments on this day."]</p>
+    <div class="week-grid">
+        @for (var d = Model.From; d < Model.To; d = d.AddDays(1))
+        {
+            var rows = Model.ByDay[d].ToList();
+            <section class="week-day @(d == Model.Day ? "is-focus" : "")">
+                <a class="week-day-head" asp-route-View="day" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Iso(d)">
+                    <span>@Fmt.DayName(d)</span>
+                    <strong>@Fmt.DayOfMonth(d)</strong>
+                    @if (rows.Count > 0) { <span class="badge rounded-pill bg-success">@Fmt.Number(rows.Count)</span> }
+                </a>
+                @if (rows.Count == 0)
+                {
+                    <div class="text-muted small p-2">-</div>
+                }
+                @foreach (var r in rows)
+                {
+                    <div class="cal-item status-@r.Status.ToString().ToLowerInvariant()">
+                        <div class="d-flex justify-content-between gap-1">
+                            <span class="fw-semibold">@Fmt.Time(r.StartUtc)</span>
+                            <partial name="_StatusBadge" model="r.Status" />
+                        </div>
+                        <div>@r.Patient</div>
+                        <div class="small text-muted">@r.Service?.Name(english)</div>
+                        <div class="small text-muted">@r.Doctor</div>
+                    </div>
+                }
+            </section>
+        }
+    </div>
+}
+else if (mode == Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Month)
+{
+    <div class="month-grid">
+        @for (var i = 0; i < 7; i++)
+        {
+            <div class="month-weekday">@Fmt.DayName(Model.From.AddDays(i))</div>
+        }
+        @for (var d = Model.From; d < Model.To; d = d.AddDays(1))
+        {
+            var rows = Model.ByDay[d].ToList();
+            var outside = d < Model.MonthStart || d > Model.MonthEnd;
+            <a class="month-day @(outside ? "outside" : "") @(rows.Count > 0 ? "has-items" : "")" asp-route-View="day" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Iso(d)">
+                <span class="d-flex justify-content-between">
+                    <strong>@Fmt.DayOfMonth(d)</strong>
+                    @if (rows.Count > 0) { <span class="badge rounded-pill bg-success">@Fmt.Number(rows.Count)</span> }
+                </span>
+                @foreach (var r in rows.Take(3))
+                {
+                    <span class="month-item status-@r.Status.ToString().ToLowerInvariant()">@Fmt.Time(r.StartUtc) @r.Patient</span>
+                }
+                @if (rows.Count > 3) { <span class="small text-muted">@L["and {0} more", Fmt.Number(rows.Count - 3)]</span> }
+            </a>
+        }
+    </div>
+}
+else
+{
+var upcoming = mode == Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Upcoming;
+if (Model.Rows.Count == 0)
+{
+    <p class="text-muted">@(upcoming ? L["No appointments in these days."] : L["No appointments on this day."])</p>
 }
 else
 {
@@ -37,14 +126,21 @@ else
                 </tr>
             </thead>
             <tbody>
+                @{ DateOnly? lastDay = null; }
                 @foreach (var r in Model.Rows)
                 {
+                    var rowDay = DateOnly.FromDateTime(Model.LocalTime(r.StartUtc));
+                    if (upcoming && rowDay != lastDay)
+                    {
+                        lastDay = rowDay;
+                        <tr class="day-group"><th colspan="6">@Fmt.Day(rowDay) <span class="badge rounded-pill bg-success ms-1">@Fmt.Number(Model.ByDay[rowDay].Count())</span></th></tr>
+                    }
                     <tr>
                         <td class="text-nowrap">@Fmt.Time(r.StartUtc)</td>
                         <td>
                             @r.Patient
                             @if (r.Phone is not null) { <div class="small text-muted" dir="ltr">@r.Phone</div> }
-                            @if (r.Note is not null) { <div class="small fst-italic">@r.Note</div> }
+                            @if (Model.ShowNotes && r.Note is not null) { <div class="small fst-italic">@r.Note</div> }
                         </td>
                         <td>@r.Service?.Name(english)</td>
                         <td>@r.Doctor</td>
@@ -54,11 +150,11 @@ else
                             {
                                 @foreach (var s in Clinic.Web.Pages.Admin.AppointmentsModel.SettableStatuses)
                                 {
-                                    <form method="post" asp-page-handler="Status" asp-route-id="@r.Id" asp-route-status="@s" asp-route-Date="@Model.Date" class="d-inline">
+                                    <form method="post" asp-page-handler="Status" asp-route-id="@r.Id" asp-route-status="@s" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Model.Date" asp-route-View="@current" class="d-inline">
                                         <button type="submit" class="btn btn-sm btn-outline-secondary" disabled="@(r.Status == s)">@L[s.ToString()]</button>
                                     </form>
                                 }
-                                <form method="post" asp-page-handler="Cancel" asp-route-id="@r.Id" asp-route-Date="@Model.Date" class="d-inline">
+                                <form method="post" asp-page-handler="Cancel" asp-route-id="@r.Id" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Model.Date" asp-route-View="@current" class="d-inline">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">@L["Cancel"]</button>
                                 </form>
                             }
@@ -68,4 +164,5 @@ else
             </tbody>
         </table>
     </div>
+}
 }

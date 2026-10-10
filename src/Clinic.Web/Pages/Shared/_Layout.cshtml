@@ -2,6 +2,7 @@
 @{
     var english = CulturePath.IsEnglish;
     var site = await SiteContent.GetAsync();
+    var brand = await SiteContent.BrandAsync();
     var fullWidth = ViewData["FullWidth"] as bool? == true;
 }
 <!DOCTYPE html>
@@ -9,15 +10,22 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - @L["Acupuncture Clinic"]</title>
-    @if (ViewData["Description"] is string description)
+    <title>@ViewData["Title"] - @brand.Name</title>
+    @if (brand.CustomLogo)
     {
-        <meta name="description" content="@description" />
+        <link rel="icon" href="@brand.LogoPath" />
+        <link rel="apple-touch-icon" href="@brand.LogoPath" />
     }
-    <link rel="alternate" hreflang="@(english ? "fa" : "en")" href="@CulturePath.SwitchUrl(Context.Request)" />
+    else
+    {
+        <link rel="icon" href="~/favicon.ico" sizes="any" />
+        <link rel="icon" href="~/img/favicon-32.png" type="image/png" />
+        <link rel="apple-touch-icon" href="~/img/apple-touch-icon.png" />
+    }
+    <partial name="_SeoHead" />
     <link rel="stylesheet" href="~/lib/vazirmatn/vazirmatn.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
-    <meta name="theme-color" content="#4b5d2e" />
+    <meta name="theme-color" content="@brand.MetaColor" />
     @if (english)
     {
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -27,12 +35,14 @@
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     }
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/refresh.css" media="screen" asp-append-version="true" />
+    <partial name="_BrandTheme" model="brand" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light site-nav sticky-top">
+        <nav class="navbar navbar-expand-xl navbar-light site-nav sticky-top">
             <div class="container">
-                <a class="navbar-brand" asp-page="/Index"><span class="brand-mark"><i class="bi bi-flower1" aria-hidden="true"></i></span>@L["Acupuncture Clinic"]</a>
+                <a class="navbar-brand" asp-page="/Index"><img src="@brand.LogoPath" alt="" class="brand-logo" width="44" height="51" /><span class="brand-text"><span>@brand.Title</span><small>@brand.Subtitle</small></span></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                         aria-expanded="false" aria-label="@L["Menu"]">
                     <span class="navbar-toggler-icon"></span>
@@ -47,9 +57,11 @@
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item"><a class="nav-link" asp-page="/Appointments/Mine">@L["My appointments"]</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Files/Index">@L["My files"]</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Messages/Index">@L["My messages"]</a></li>
                         }
                     </ul>
-                    <ul class="navbar-nav align-items-lg-center gap-lg-2">
+                    <ul class="navbar-nav align-items-xl-center gap-xl-2">
                         <li class="nav-item">
                             <a class="nav-link" href="@CulturePath.SwitchUrl(Context.Request)" hreflang="@(english ? "fa" : "en")">@(english ? "فارسی" : "English")</a>
                         </li>
@@ -59,6 +71,7 @@
                         }
                         @if (User.Identity?.IsAuthenticated == true)
                         {
+                            <li class="nav-item"><a class="nav-link" asp-page="/Account/Manage/Index" title="@L["Account security"]" aria-label="@L["Account security"]"><i class="bi bi-shield-lock" aria-hidden="true"></i><span class="d-xl-none ms-1">@L["Account security"]</span></a></li>
                             <li class="nav-item">
                                 <form method="post" asp-page="/Account/Logout" class="d-inline">
                                     <button type="submit" class="btn btn-link nav-link">@L["Log out"]</button>
@@ -68,7 +81,13 @@
                         else
                         {
                             <li class="nav-item"><a class="nav-link" asp-page="/Account/Login">@L["Log in"]</a></li>
-                            <li class="nav-item"><a class="btn btn-success" asp-page="/Account/Register">@L["Sign up"]</a></li>
+                            <li class="nav-item dropdown">
+                                <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">@L["Sign up"]</button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" asp-page="/Account/Register"><i class="bi bi-person me-2"></i>@L["Patient sign up"]</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Account/RegisterDoctor"><i class="bi bi-heart-pulse me-2"></i>@L["Doctor sign up"]</a></li>
+                                </ul>
+                            </li>
                         }
                     </ul>
                 </div>
@@ -92,7 +111,7 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-5">
-                    <h2 class="d-flex align-items-center gap-2"><span class="brand-mark"><i class="bi bi-flower1" aria-hidden="true"></i></span>@L["Acupuncture Clinic"]</h2>
+                    <h2 class="d-flex align-items-center gap-2"><span class="brand-logo-chip"><img src="@brand.LogoPath" alt="" class="brand-logo" width="44" height="51" /></span>@brand.Name</h2>
                     <p class="mt-3 mb-0">@site.HeroSubtitle(english)</p>
                 </div>
                 <div class="col-sm-6 col-lg-4">
@@ -121,12 +140,15 @@
                 </div>
             </div>
             <hr class="border-secondary-subtle my-4" />
-            <div class="small">&copy; @Fmt.Number(english ? DateTime.UtcNow.Year.ToString() : Clinic.Application.Common.JalaliDate.Year(DateTime.UtcNow).ToString()) @L["Acupuncture Clinic"]</div>
+            <div class="small">&copy; @Fmt.Number(english ? DateTime.UtcNow.Year.ToString() : Clinic.Application.Common.JalaliDate.Year(DateTime.UtcNow).ToString()) @brand.Name</div>
         </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/nav.js" asp-append-version="true"></script>
+    <script src="~/js/behaviors.js" asp-append-version="true"></script>
+    <partial name="_FormScripts" />
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

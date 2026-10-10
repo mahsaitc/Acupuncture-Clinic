@@ -1,0 +1,7 @@
+@inject Clinic.Web.Security.BotCheck Bots
+@* Hidden inputs of the invisible bot check (Security/BotCheck.cs). Place inside the form. *@
+<input type="hidden" name="@Clinic.Web.Security.BotCheck.StampField" value="@Bots.NewStamp()" />
+<div class="visually-hidden" aria-hidden="true">
+    <label for="@Clinic.Web.Security.BotCheck.TrapField">Home page</label>
+    <input id="@Clinic.Web.Security.BotCheck.TrapField" name="@Clinic.Web.Security.BotCheck.TrapField" tabindex="-1" autocomplete="off" />
+</div>

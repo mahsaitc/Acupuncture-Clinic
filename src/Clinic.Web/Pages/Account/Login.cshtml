@@ -5,7 +5,7 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
+    <div class="col-md-6 col-lg-5 auth-panel">
         <h1 class="h3 mb-4">@L["Log in"]</h1>
         <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
@@ -25,8 +25,9 @@
             </div>
             <button type="submit" class="btn btn-success w-100">@L["Log in"]</button>
         </form>
+        <p class="mt-3 mb-0"><a asp-page="./ForgotPassword">@L["Forgot your password?"]</a></p>
         <p class="mt-3">
-            @L["No account yet?"] <a asp-page="./Register">@L["Sign up"]</a>
+            @L["No account yet?"] <a asp-page="./Register">@L["Patient sign up"]</a> · <a asp-page="./RegisterDoctor">@L["Doctor sign up"]</a>
         </p>
     </div>
 </div>

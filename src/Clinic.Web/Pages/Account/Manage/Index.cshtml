@@ -1,0 +1,77 @@
+@page
+@model Clinic.Web.Pages.Account.Manage.IndexModel
+@{
+    ViewData["Title"] = L["Account security"];
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h1 class="h3 mb-4">@L["Account security"]</h1>
+
+        @if (Model.RecoveryCodes is string[] codes)
+        {
+            <partial name="_RecoveryCodes" model="codes" />
+        }
+
+        <div class="card mb-4">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-3"><i class="bi bi-shield-lock me-2" aria-hidden="true"></i>@L["Two-step login"]</h2>
+                @if (Model.TwoFactorEnabled)
+                {
+                    <p class="text-success mb-2"><i class="bi bi-check-circle me-1" aria-hidden="true"></i>@L["Two-step login is on. After your password, the site asks for the code from your authenticator app."]</p>
+                    <p class="small text-muted">@L["Recovery codes left: {0}", Fmt.Number(Model.RecoveryCodesLeft)]</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <form method="post" asp-page-handler="RecoveryCodes" data-confirm="@L["Make new recovery codes? The old ones stop working."]">
+                            <button type="submit" class="btn btn-outline-secondary">@L["New recovery codes"]</button>
+                        </form>
+                        <a class="btn btn-outline-secondary" asp-page="./TwoFactor">@L["Set up on a new phone"]</a>
+                        @if (!Model.TwoFactorRequired)
+                        {
+                            <form method="post" asp-page-handler="Disable" data-confirm="@L["Turn off two-step login?"]">
+                                <button type="submit" class="btn btn-outline-danger">@L["Turn off"]</button>
+                            </form>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>@L["Protect your account with a 6-digit code from an authenticator app on your phone, in addition to your password."]</p>
+                    <a class="btn btn-success" asp-page="./TwoFactor">@L["Set up two-step login"]</a>
+                }
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-3"><i class="bi bi-key me-2" aria-hidden="true"></i>@L["Change password"]</h2>
+                @if (Model.IsStaff)
+                {
+                    <p class="small text-muted">@L["Staff passwords must be at least {0} characters.", Fmt.Number(Clinic.Web.Security.PasswordPolicy.StaffMinLength)]</p>
+                }
+                <form method="post" asp-page-handler="Password">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="mb-3">
+                        <label asp-for="Input.CurrentPassword" class="form-label"></label>
+                        <input asp-for="Input.CurrentPassword" class="form-control" autocomplete="current-password" dir="ltr" />
+                        <span asp-validation-for="Input.CurrentPassword" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.NewPassword" class="form-label"></label>
+                        <input asp-for="Input.NewPassword" class="form-control" autocomplete="new-password" dir="ltr" />
+                        <span asp-validation-for="Input.NewPassword" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                        <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" dir="ltr" />
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                    </div>
+                    <button type="submit" class="btn btn-success">@L["Change password"]</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Clinic.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ClinicDbContext))]
-    [Migration("20261006210752_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20261009121022_PatientInsurance")]
+    partial class PatientInsurance
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,6 +61,45 @@ namespace Clinic.Infrastructure.Data.Migrations
                     b.HasIndex("DoctorProfileId", "StartUtc");
 
                     b.ToTable("Appointments");
+                });
+
+            modelBuilder.Entity("Clinic.Domain.Entities.AuditEntry", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("EntityId")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Ip")
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PatientUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("TimestampUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TimestampUtc");
+
+                    b.HasIndex("PatientUserId", "TimestampUtc");
+
+                    b.ToTable("AuditEntries");
                 });
 
             modelBuilder.Entity("Clinic.Domain.Entities.ClinicService", b =>
@@ -177,6 +216,345 @@ namespace Clinic.Infrastructure.Data.Migrations
                     b.ToTable("Doctors");
                 });
 
+            modelBuilder.Entity("Clinic.Domain.Entities.MedicalFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PatientUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StoredName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("TakenOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UploadedByUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UploadedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("VisibleToPatient")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StoredName")
+                        .IsUnique();
+
+                    b.HasIndex("UploadedByUserId");
+
+                    b.HasIndex("PatientUserId", "UploadedUtc");
+
+                    b.ToTable("MedicalFiles");
+                });
+
+            modelBuilder.Entity("Clinic.Domain.Entities.MedicalRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AfterCareAdvice")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Appetite")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Areas")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double?>("ArmCm")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ChiefComplaint")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Conditions")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("ConsentSignedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Cravings")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Diagnosis")
+                        .HasMaxLength(8000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Digestion")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DoctorNotes")
+                        .HasMaxLength(8000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DrugAllergies")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Energy")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Goals")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("GoalsNotes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool?>("HasDrugAllergy")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("HasOtherAllergy")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double?>("HeightCm")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("HipCm")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Icd10")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("LastMenstrualPeriod")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LongTermGoals")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Medications")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Menstrual")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Methods")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Mood")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ObservedChanges")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OtherAllergies")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OtherAreas")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OtherConditions")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PatientUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("PlannedSessions")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ProblemDuration")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Pulse")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SessionInterval")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ShortTermGoals")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Sleep")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Surgeries")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TcmPattern")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("ThighCm")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("TongueCoating")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TongueColor")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("WaistCm")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("WeightAfterKg")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("WeightKg")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientUserId")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecords");
+                });
+
+            modelBuilder.Entity("Clinic.Domain.Entities.PatientProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(400)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("BirthDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Children")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Education")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EmergencyContactName")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EmergencyContactPhone")
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FatherName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("FirstVisitDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Gender")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("HasSupplementaryInsurance")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Insurance")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("InsuranceProvider")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LandlinePhone")
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("MaritalStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("NationalCode")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Occupation")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Referral")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ReferralSource")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("PatientProfiles");
+                });
+
             modelBuilder.Entity("Clinic.Domain.Entities.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -249,6 +627,48 @@ namespace Clinic.Infrastructure.Data.Migrations
                     b.HasIndex("Kind", "IsPublished", "PublishedUtc");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("Clinic.Domain.Entities.SessionPoint", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Side")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TreatmentSessionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("View")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("X")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Y")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TreatmentSessionId");
+
+                    b.ToTable("SessionPoints");
                 });
 
             modelBuilder.Entity("Clinic.Domain.Entities.SiteContent", b =>
@@ -338,6 +758,69 @@ namespace Clinic.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SiteContent");
+                });
+
+            modelBuilder.Entity("Clinic.Domain.Entities.TreatmentSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Complaint")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DoctorUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("NeedleRetentionMinutes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("NextPlan")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(4000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("PainScore")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PatientUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Reactions")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("WaistCm")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("WeightKg")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorUserId");
+
+                    b.HasIndex("PatientUserId", "DateUtc");
+
+                    b.ToTable("TreatmentSessions");
                 });
 
             modelBuilder.Entity("Clinic.Domain.Entities.WorkingHour", b =>
@@ -607,11 +1090,68 @@ namespace Clinic.Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Clinic.Domain.Entities.MedicalFile", b =>
+                {
+                    b.HasOne("Clinic.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("PatientUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clinic.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UploadedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clinic.Domain.Entities.MedicalRecord", b =>
+                {
+                    b.HasOne("Clinic.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("PatientUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clinic.Domain.Entities.PatientProfile", b =>
+                {
+                    b.HasOne("Clinic.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Clinic.Domain.Entities.Post", b =>
                 {
                     b.HasOne("Clinic.Infrastructure.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("AuthorUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clinic.Domain.Entities.SessionPoint", b =>
+                {
+                    b.HasOne("Clinic.Domain.Entities.TreatmentSession", null)
+                        .WithMany("Points")
+                        .HasForeignKey("TreatmentSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clinic.Domain.Entities.TreatmentSession", b =>
+                {
+                    b.HasOne("Clinic.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("DoctorUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clinic.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("PatientUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -679,6 +1219,11 @@ namespace Clinic.Infrastructure.Data.Migrations
             modelBuilder.Entity("Clinic.Domain.Entities.DoctorProfile", b =>
                 {
                     b.Navigation("WorkingHours");
+                });
+
+            modelBuilder.Entity("Clinic.Domain.Entities.TreatmentSession", b =>
+                {
+                    b.Navigation("Points");
                 });
 #pragma warning restore 612, 618
         }

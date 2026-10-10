@@ -3,6 +3,7 @@ using Clinic.Domain;
 using Clinic.Domain.Entities;
 using Clinic.Infrastructure.Data;
 using Clinic.Infrastructure.Identity;
+using Clinic.Web.Branding;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,19 +47,38 @@ public class UsersModel(ClinicDbContext db, UserManager<ApplicationUser> userMan
     public async Task<IActionResult> OnPostToggleRoleAsync(string id, string role)
     {
         var user = await userManager.FindByIdAsync(id);
-        if (user is null || !Roles.All.Contains(role) || IsSelfAdminChange(id, role))
+        if (user is null || !Roles.All.Contains(role) || IsSelfAdminChange(id, role) || await OwnerGuard.IsProtectedAsync(userManager, user, User))
         {
             return RedirectToPage(new { Q });
         }
 
+        var profile = role == Roles.Doctor ? await db.Doctors.FirstOrDefaultAsync(d => d.UserId == id) : null;
         if (await userManager.IsInRoleAsync(user, role))
         {
             await userManager.RemoveFromRoleAsync(user, role);
+            // A former doctor no longer appears in the booking list; their history stays.
+            if (profile is not null)
+            {
+                profile.IsApproved = false;
+            }
         }
         else
         {
             await userManager.AddToRoleAsync(user, role);
+            // Giving the doctor role makes the user a bookable doctor at once.
+            if (role == Roles.Doctor)
+            {
+                if (profile is null)
+                {
+                    db.Doctors.Add(new DoctorProfile { UserId = id, MedicalCouncilNumber = "", IsApproved = true });
+                }
+                else
+                {
+                    profile.IsApproved = true;
+                }
+            }
         }
+        await db.SaveChangesAsync();
         await userManager.UpdateSecurityStampAsync(user);
         return RedirectToPage(new { Q });
     }
@@ -66,7 +86,7 @@ public class UsersModel(ClinicDbContext db, UserManager<ApplicationUser> userMan
     public async Task<IActionResult> OnPostToggleActiveAsync(string id)
     {
         var user = await userManager.FindByIdAsync(id);
-        if (user is null || id == CurrentUserId)
+        if (user is null || id == CurrentUserId || await OwnerGuard.IsProtectedAsync(userManager, user, User))
         {
             return RedirectToPage(new { Q });
         }
@@ -78,26 +98,56 @@ public class UsersModel(ClinicDbContext db, UserManager<ApplicationUser> userMan
         return RedirectToPage(new { Q });
     }
 
-    public async Task<IActionResult> OnPostApproveDoctorAsync(string id)
+    /// <summary>Gives a user a new password, e.g. a patient registered at the front desk without email, or someone locked out.</summary>
+    public async Task<IActionResult> OnPostSetPasswordAsync(string id, string? newPassword)
     {
         var user = await userManager.FindByIdAsync(id);
-        var profile = await db.Doctors.FirstOrDefaultAsync(d => d.UserId == id);
-        if (user is null || profile is null)
+        if (user is null || id == CurrentUserId || await OwnerGuard.IsProtectedAsync(userManager, user, User))
         {
             return RedirectToPage(new { Q });
         }
 
-        profile.IsApproved = true;
-        await db.SaveChangesAsync();
-        if (!await userManager.IsInRoleAsync(user, Roles.Doctor))
+        var password = newPassword ?? "";
+        var errors = Clinic.Web.Security.PasswordPolicy.Check(password, await Clinic.Web.Security.PasswordPolicy.IsStaffAsync(userManager, user), user.Email, user.PhoneNumber, l);
+        IdentityResult? result = null;
+        if (errors.Count == 0)
         {
-            await userManager.AddToRoleAsync(user, Roles.Doctor);
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            result = await userManager.ResetPasswordAsync(user, token, password);
+            errors.AddRange(result.Errors.Select(e => e.Description));
         }
-        await userManager.UpdateSecurityStampAsync(user);
+        if (errors.Count > 0)
+        {
+            TempData["Error"] = string.Join(" ", errors);
+            return RedirectToPage(new { Q });
+        }
 
-        TempData["Message"] = l["The doctor account was approved."].Value;
+        await userManager.SetLockoutEndDateAsync(user, null);
+        await userManager.ResetAccessFailedCountAsync(user);
+        TempData["Message"] = l["The new password of {0} was saved. Give it to them in person and ask them to change it.", user.FullName].Value;
         return RedirectToPage(new { Q });
     }
+
+    /// <summary>Turns off two-step login for someone who lost their phone and their recovery codes; they set it up again at the next login.</summary>
+    public async Task<IActionResult> OnPostResetTwoFactorAsync(string id)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null || id == CurrentUserId || await OwnerGuard.IsProtectedAsync(userManager, user, User))
+        {
+            return RedirectToPage(new { Q });
+        }
+
+        await userManager.SetTwoFactorEnabledAsync(user, false);
+        await userManager.ResetAuthenticatorKeyAsync(user);
+        // Someone without their phone has usually tried codes until the account locked; let them back in at once.
+        await userManager.SetLockoutEndDateAsync(user, null);
+        await userManager.ResetAccessFailedCountAsync(user);
+        await userManager.UpdateSecurityStampAsync(user);
+        TempData["Message"] = l["Two-step login of {0} was turned off. They set it up again with their new phone.", user.FullName].Value;
+        return RedirectToPage(new { Q });
+    }
+
+    public string? CurrentUser => CurrentUserId;
 
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 

@@ -1,0 +1,58 @@
+@using Clinic.Application.Acupuncture
+@using Clinic.Web.Clinical
+@model Clinic.Web.Clinical.BodyMap
+@{
+    static string F(double v) => v.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+    var first = true;
+}
+<div class="body-map @(Model.Editable ? "editable" : "")">
+    <ul class="nav nav-pills chart-pages mb-3" role="tablist">
+        @foreach (var pg in AcupointLibrary.Pages)
+        {
+            var count = Model.Points.Count(p => AcupointLibrary.Views.Where(v => v.Page == pg).Any(v => AcupointLibrary.Markers(p, v).Any()));
+            <li class="nav-item" role="presentation">
+                <button type="button" class="nav-link @(first ? "active" : "")" data-bs-toggle="pill" data-bs-target="#chart-page-@pg" data-page="@pg" role="tab" aria-selected="@(first ? "true" : "false")">
+                    @L[ChartText.Page(pg)] <span class="badge rounded-pill chart-count" data-page-count="@pg">@count</span>
+                </button>
+            </li>
+            first = false;
+        }
+    </ul>
+    <div class="tab-content" dir="ltr">
+        @{ first = true; }
+        @foreach (var pg in AcupointLibrary.Pages)
+        {
+            <div class="tab-pane fade @(first ? "show active" : "")" id="chart-page-@pg" role="tabpanel" data-page="@pg">
+                <div class="chart-row chart-row-@pg">
+                    @foreach (var view in AcupointLibrary.Views.Where(v => v.Page == pg))
+                    {
+                        var caption = L[ChartText.View(view.Key)].Value;
+                        <figure class="body-view">
+                            <svg viewBox="0 0 @F(view.Width) @F(view.Height)" data-view="@view.Key" role="img" aria-label="@caption">
+                                <image href="@view.Image" width="@F(view.Width)" height="@F(view.Height)" />
+                                @if (view.Symmetric)
+                                {
+                                    <g class="side-labels"><text x="6" y="@F(view.Height - 5)" class="side-label">@(view.FacesViewer ? L["Right"] : L["Left"])</text>
+                                    <text x="@F(view.Width - 6)" y="@F(view.Height - 5)" class="side-label" text-anchor="end">@(view.FacesViewer ? L["Left"] : L["Right"])</text></g>
+                                }
+                                <g class="markers">
+                                    @foreach (var p in Model.Points)
+                                    {
+                                        foreach (var m in AcupointLibrary.Markers(p, view))
+                                        {
+                                            var before = view.Symmetric ? m.X < view.Midline : m.X > view.Width * 0.65;
+                                            <g class="marker"><circle cx="@F(m.X)" cy="@F(m.Y)" r="4" /><text x="@F(before ? m.X - 6 : m.X + 6)" y="@F(m.Y + 2.4)" text-anchor="@(before ? "end" : "start")">@(p.Code ?? p.Label)</text><title>@p.Label@(p.Note is null ? "" : " - " + p.Note)</title></g>
+                                        }
+                                    }
+                                </g>
+                            </svg>
+                            <figcaption>@caption</figcaption>
+                        </figure>
+                    }
+                </div>
+            </div>
+            first = false;
+        }
+    </div>
+    <p class="small text-muted text-center mt-3 mb-0" dir="auto">@L["Body images"]: <a href="https://www.z-anatomy.com" target="_blank" rel="noopener">Z-Anatomy</a> / BodyParts3D (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>) - @L["Rendered from a free 3D model and edited for this clinic"]</p>
+</div>

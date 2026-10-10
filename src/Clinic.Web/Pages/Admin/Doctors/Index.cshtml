@@ -1,0 +1,57 @@
+@page
+@model Clinic.Web.Pages.Admin.Doctors.IndexModel
+@{
+    ViewData["Title"] = L["Doctors"];
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="h3">@L["Doctors"]</h1>
+        <div class="text-muted">@L["Click a doctor's name to see their patients."]</div>
+    </div>
+</div>
+
+@if (Model.Rows.Count == 0)
+{
+    <p class="text-muted">@L["No doctors yet."]</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover bg-white align-middle">
+            <thead>
+                <tr>
+                    <th>@L["Name"]</th>
+                    <th>@L["Specialty"]</th>
+                    <th>@L["Medical Council number"]</th>
+                    @if (Model.ShowNationalCode)
+                    {
+                        <th>@L["National code"]</th>
+                    }
+                    <th>@L["Mobile number"]</th>
+                    <th>@L["Patients"]</th>
+                    <th>@L["Last visit"]</th>
+                    <th>@L["Last patient"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.Rows)
+                {
+                    <tr class="@(r.User.IsActive ? "" : "table-secondary")">
+                        <td><a class="fw-semibold" asp-page="./Patients" asp-route-id="@r.Doctor.Id">@r.User.FullName</a><div class="small text-muted" dir="ltr">@r.User.Email</div></td>
+                        <td>@(CulturePath.IsEnglish ? r.Doctor.SpecialtyEn : r.Doctor.SpecialtyFa)</td>
+                        <td dir="ltr" class="text-nowrap">@Fmt.Number(r.Doctor.MedicalCouncilNumber)</td>
+                        @if (Model.ShowNationalCode)
+                        {
+                            <td dir="ltr" class="text-nowrap">@(r.Doctor.NationalCode is { } nc ? Fmt.Number(nc) : "-")</td>
+                        }
+                        <td dir="ltr" class="text-nowrap">@(r.User.PhoneNumber is { } ph ? Fmt.Number(ph) : "-")</td>
+                        <td>@Fmt.Number(r.Patients)</td>
+                        <td class="text-nowrap">@(r.Last is { } last ? Fmt.Date(last.Utc) : "-")</td>
+                        <td>@(r.Last?.PatientName ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

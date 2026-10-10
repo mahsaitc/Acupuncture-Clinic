@@ -1,0 +1,9 @@
+@model Clinic.Web.Clinical.CheckGroup
+<div class="check-chips" role="group">
+    @foreach (var o in Model.Options)
+    {
+        var id = $"{Model.Name.Replace('.', '_')}_{o.Value}";
+        <input type="@(Model.Single ? "radio" : "checkbox")" class="btn-check" name="@Model.Name" id="@id" value="@o.Value" checked="@o.Checked" autocomplete="off" />
+        <label class="btn btn-sm check-chip" for="@id">@L[o.Label]</label>
+    }
+</div>

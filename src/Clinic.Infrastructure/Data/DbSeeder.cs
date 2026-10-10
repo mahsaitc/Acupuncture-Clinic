@@ -25,7 +25,7 @@ public static class DbSeeder
         var config = sp.GetRequiredService<IConfiguration>();
         var logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger(typeof(DbSeeder));
 
-        foreach (var role in Roles.All)
+        foreach (var role in Roles.All.Append(Roles.Owner))
         {
             if (!await roleManager.RoleExistsAsync(role))
             {
@@ -48,6 +48,12 @@ public static class DbSeeder
             await db.SaveChangesAsync();
         }
 
+        await SeedAdminAsync(db, userManager, config, logger);
+        await SeedOwnerAsync(userManager, config, logger);
+    }
+
+    private static async Task SeedAdminAsync(ClinicDbContext db, UserManager<ApplicationUser> userManager, IConfiguration config, ILogger logger)
+    {
         var adminEmail = config["Seed:AdminEmail"];
         var adminPassword = config["Seed:AdminPassword"];
         if (string.IsNullOrWhiteSpace(adminEmail) || string.IsNullOrWhiteSpace(adminPassword))
@@ -80,5 +86,95 @@ public static class DbSeeder
             IsApproved = true,
         });
         await db.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Makes the account named by <c>Owner:Email</c> the one and only site owner (and an admin). The owner role cannot be
+    /// given from any page; whoever controls the server's configuration decides it. If the account does not exist yet and
+    /// <c>Owner:Password</c> is set, it is created; if it exists, <c>Owner:Password</c> becomes its password. Without
+    /// <c>Owner:Email</c> nothing changes.
+    /// </summary>
+    private static async Task SeedOwnerAsync(UserManager<ApplicationUser> userManager, IConfiguration config, ILogger logger)
+    {
+        var email = config["Owner:Email"]?.Trim();
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return;
+        }
+
+        var password = config["Owner:Password"];
+        var owner = await userManager.FindByEmailAsync(email);
+        if (owner is null)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                logger.LogWarning("Owner:Email {Email} has no account yet; set Owner:Password to create it.", email);
+                return;
+            }
+            owner = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                FullName = config["Owner:Name"] ?? "Owner",
+            };
+            var created = await userManager.CreateAsync(owner, password);
+            if (!created.Succeeded)
+            {
+                logger.LogError("Could not create the site owner: {Errors}", string.Join("; ", created.Errors.Select(e => e.Description)));
+                return;
+            }
+        }
+
+        else if (!string.IsNullOrWhiteSpace(password) && !await userManager.CheckPasswordAsync(owner, password))
+        {
+            // Owner:Password on an existing account sets its password (a way back in when it is forgotten) and lifts a lockout.
+            var token = await userManager.GeneratePasswordResetTokenAsync(owner);
+            var reset = await userManager.ResetPasswordAsync(owner, token, password);
+            if (!reset.Succeeded)
+            {
+                logger.LogError("Could not set the site owner's password: {Errors}", string.Join("; ", reset.Errors.Select(e => e.Description)));
+            }
+            await userManager.SetLockoutEndDateAsync(owner, null);
+            await userManager.ResetAccessFailedCountAsync(owner);
+        }
+
+        // Two-step login stays as the owner set it, whatever the password above does. Owner:ResetTwoFactor=true turns it
+        // off once (lost phone and recovery codes); remove the setting again after logging in.
+        if (config.GetValue("Owner:ResetTwoFactor", false) && owner.TwoFactorEnabled)
+        {
+            await userManager.SetTwoFactorEnabledAsync(owner, false);
+            await userManager.ResetAuthenticatorKeyAsync(owner);
+            logger.LogWarning("Owner:ResetTwoFactor turned off two-step login for the site owner. Remove the setting now.");
+        }
+
+        foreach (var other in await userManager.GetUsersInRoleAsync(Roles.Owner))
+        {
+            if (other.Id != owner.Id)
+            {
+                await userManager.RemoveFromRoleAsync(other, Roles.Owner);
+                await userManager.UpdateSecurityStampAsync(other);
+            }
+        }
+
+        var changed = false;
+        foreach (var role in new[] { Roles.Owner, Roles.Admin })
+        {
+            if (!await userManager.IsInRoleAsync(owner, role))
+            {
+                await userManager.AddToRoleAsync(owner, role);
+                changed = true;
+            }
+        }
+        if (!owner.IsActive)
+        {
+            owner.IsActive = true;
+            await userManager.UpdateAsync(owner);
+            changed = true;
+        }
+        if (changed)
+        {
+            await userManager.UpdateSecurityStampAsync(owner);
+        }
     }
 }

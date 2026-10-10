@@ -26,8 +26,33 @@ public partial class LocalizationTests
         used.UnionWith(Enum.GetNames<Domain.Entities.AppointmentStatus>());
         used.UnionWith(Enum.GetNames<DayOfWeek>());
         used.UnionWith(Domain.Roles.All);
+        used.UnionWith(Enum.GetNames<Domain.Entities.Gender>());
+        used.UnionWith(Enum.GetNames<Domain.Entities.SessionType>());
+        used.UnionWith(Enum.GetNames<Domain.Entities.FileCategory>());
+        used.UnionWith(Enum.GetNames<Domain.Entities.AuditAction>());
+        used.UnionWith(Enum.GetNames<Domain.Entities.MaritalStatus>());
+        foreach (var flags in new[]
+        {
+            typeof(Domain.Entities.TreatmentGoal), typeof(Domain.Entities.ReferralChannel), typeof(Domain.Entities.MedicalCondition), typeof(Domain.Entities.SleepQuality),
+            typeof(Domain.Entities.AppetiteLevel), typeof(Domain.Entities.EnergyLevel), typeof(Domain.Entities.TasteCraving),
+            typeof(Domain.Entities.DigestionState), typeof(Domain.Entities.MenstrualState), typeof(Domain.Entities.Mood),
+            typeof(Domain.Entities.PulseQuality), typeof(Domain.Entities.TreatmentArea), typeof(Domain.Entities.TreatmentMethod),
+        })
+        {
+            used.UnionWith(Enum.GetNames(flags).Where(n => n != "None"));
+        }
+        used.UnionWith(["No allergy", "Has an allergy", "Has it", "Does not have it"]);
+        used.UnionWith(Web.Pages.Admin.Patients.PatientInput.Occupations);
+        used.UnionWith(Web.Pages.Admin.Patients.PatientInput.EducationLevels);
+        used.UnionWith(Enum.GetValues<Domain.Entities.DoctorDocumentKind>().Select(Web.Pages.Admin.DoctorRequestsModel.KindName));
+        used.UnionWith(Enum.GetValues<Domain.Entities.BasicInsurance>().Select(Web.Pages.Admin.Patients.PatientInput.InsuranceName));
+        used.UnionWith(Enum.GetNames<Domain.Entities.PointSide>());
+        used.UnionWith(Application.Acupuncture.AcupointLibrary.Pages.Select(Web.Clinical.ChartText.Page));
+        used.UnionWith(Application.Acupuncture.AcupointLibrary.Views.Select(v => Web.Clinical.ChartText.View(v.Key)));
+        used.UnionWith(Application.Acupuncture.AcupointLibrary.Protocols.Select(p => p.Name));
 
-        Assert.Empty(used.Except(translated).Order());
+        var missing = used.Except(translated).Order().ToList();
+        Assert.True(missing.Count == 0, "Missing Persian translations:\n" + string.Join("\n", missing));
     }
 
     private static string RepoRoot()

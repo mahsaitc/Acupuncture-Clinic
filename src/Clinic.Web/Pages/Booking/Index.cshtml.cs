@@ -21,6 +21,7 @@ public class IndexModel(
     ClinicTime clinicTime,
     TimeProvider time,
     UserManager<ApplicationUser> userManager,
+    DisplayFormat Fmt,
     IStringLocalizer<SharedResource> l) : PageModel
 {
     /// <summary>How many days ahead patients may book.</summary>
@@ -56,10 +57,21 @@ public class IndexModel(
         var patientId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         if (IsStaff && !string.IsNullOrWhiteSpace(patientEmail))
         {
-            var patient = await userManager.FindByEmailAsync(patientEmail.Trim());
-            if (patient is null)
+            // Staff book for a patient by email or by mobile (patients registered at the front desk often have no email).
+            var key = patientEmail.Trim();
+            ApplicationUser? patient;
+            if (key.Contains('@'))
             {
-                ModelState.AddModelError(string.Empty, l["No patient with this email was found."]);
+                patient = await userManager.FindByEmailAsync(key);
+            }
+            else
+            {
+                var mobile = Clinic.Web.Pages.Admin.Patients.PatientRegistration.NormalizeMobile(key);
+                patient = await db.Users.FirstOrDefaultAsync(u => u.PhoneNumber == mobile);
+            }
+            if (patient is null || !await userManager.IsInRoleAsync(patient, Roles.Patient))
+            {
+                ModelState.AddModelError(string.Empty, l["No patient with this mobile or email was found."]);
                 return Page();
             }
             patientId = patient.Id;
@@ -71,6 +83,24 @@ public class IndexModel(
         {
             ModelState.AddModelError(string.Empty, l["This time is no longer available. Please choose another time."]);
             return Page();
+        }
+
+        // A note left with the booking also reaches the doctor's inbox, where it can be read and archived.
+        if (!string.IsNullOrWhiteSpace(note) && await userManager.FindByIdAsync(patientId) is { } patientUser)
+        {
+            db.ContactMessages.Add(new Clinic.Domain.Entities.ContactMessage
+            {
+                Name = patientUser.FullName,
+                Phone = patientUser.PhoneNumber ?? "-",
+                Email = patientUser.Email,
+                Subject = l["Note with the appointment on {0}", Fmt.DateTime(startUtc)],
+                Body = note.Trim(),
+                UserId = patientUser.Id,
+                DoctorProfileId = DoctorId,
+                AppointmentId = result.AppointmentId,
+                CreatedUtc = time.GetUtcNow().UtcDateTime,
+            });
+            await db.SaveChangesAsync();
         }
 
         TempData["Message"] = l["Your appointment was booked."].Value;

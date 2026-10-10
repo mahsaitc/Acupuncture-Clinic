@@ -1,0 +1,50 @@
+@page
+@using Clinic.Web.Clinical
+@model Clinic.Web.Pages.Admin.Reports.ChartsModel
+@inject Clinic.Web.Media.SiteContentProvider SiteContent
+@{
+    var brand = await SiteContent.BrandAsync();
+    ViewData["Title"] = L["Clinic charts"];
+    var grainNames = new Dictionary<PeriodKind, string> { [PeriodKind.Week] = L["Weekly"], [PeriodKind.Month] = L["Monthly"], [PeriodKind.Year] = L["Yearly"] };
+}
+
+<div class="print-letterhead d-none d-print-flex">
+    <img src="@brand.LogoPath" alt="" width="52" height="60" />
+    <div>
+        <div class="fw-bold">@brand.Name</div>
+        <div>@L["Clinic charts"] · @grainNames[Model.Grain] · @Model.RangeText</div>
+    </div>
+    <div class="ms-auto small">@L["Print date"]: @Fmt.Date(DateTime.UtcNow)</div>
+</div>
+
+<div class="page-head">
+    <div>
+        <h1 class="h3">@L["Clinic charts"]</h1>
+        <div class="text-muted">@Model.RangeText · @L["{0} visits", Fmt.Number(Model.VisitCount)]</div>
+    </div>
+    <form method="get" class="d-flex flex-wrap gap-2 d-print-none">
+        <div class="btn-group" role="group">
+            @foreach (var g in Clinic.Web.Pages.Admin.Reports.ChartsModel.Grains)
+            {
+                <a class="btn @(Model.Grain == g ? "btn-success" : "btn-outline-success")" asp-route-Grain="@g">@grainNames[g]</a>
+            }
+        </div>
+        <input type="hidden" name="Grain" value="@Model.Grain" />
+        <select class="form-select w-auto" name="Count" data-autosubmit aria-label="@L["How many periods"]">
+            @foreach (var n in Model.Grain == PeriodKind.Year ? new[] { 2, 3, 5, 10 } : new[] { 4, 6, 12, 24 })
+            {
+                <option value="@n" selected="@(Model.Count == n)">@L["Last {0}", Fmt.Number(n)]</option>
+            }
+        </select>
+        <button type="button" class="btn btn-outline-secondary" data-print><i class="bi bi-printer me-1"></i>@L["Print"]</button>
+    </form>
+</div>
+
+<div class="row g-4" id="clinic-charts" data-pie="@L["Share of the whole period"]" data-over-time="@L["Over time"]"></div>
+
+<script type="application/json" id="charts-data">@Html.Raw(Model.ChartsJson.Replace("</", "<\\/"))</script>
+
+@section Scripts {
+    <script src="~/lib/chartjs/chart.umd.min.js"></script>
+    <script src="~/js/clinic-charts.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,116 @@
+@page
+@using Clinic.Domain.Entities
+@model Clinic.Web.Pages.Admin.Patients.SummaryModel
+@inject Clinic.Web.Media.SiteContentProvider SiteContent
+@{
+    var brand = await SiteContent.BrandAsync();
+    ViewData["Title"] = L["Case summary"];
+    var english = CulturePath.IsEnglish;
+    var p = Model.Patient;
+}
+
+<div class="print-letterhead d-none d-print-flex">
+    <img src="@brand.LogoPath" alt="" width="52" height="60" />
+    <div>
+        <div class="fw-bold">@brand.Name</div>
+        <div>@L["Case summary"]: @p.FullName</div>
+        <div>@(Model.IsOwnOnly ? L["Treating doctor"] : L["Printed by"]): <strong>@Model.PrintedBy</strong></div>
+    </div>
+    <div class="ms-auto small">@L["Print date"]: @Fmt.Date(DateTime.UtcNow)</div>
+</div>
+
+<div class="page-head">
+    <div>
+        <a class="small d-print-none" asp-page="./Details" asp-route-id="@p.Id"><i class="bi @(english ? "bi-arrow-left" : "bi-arrow-right") me-1"></i>@p.FullName</a>
+        <h1 class="h3 mt-1">@L["Case summary"]: @p.FullName</h1>
+        <div class="text-muted small">@(Model.IsOwnOnly ? L["Only your own sessions with this patient are shown."] : L["Every doctor's sessions with this patient. Only the clinic admin sees all doctors."])</div>
+    </div>
+    <div class="d-flex flex-wrap gap-2 d-print-none">
+        <button type="button" class="btn btn-outline-secondary" data-print><i class="bi bi-printer me-1"></i>@L["Print"]</button>
+        @if (!Model.IsOwnOnly && User.IsInRole(Clinic.Domain.Roles.Doctor))
+        {
+            <a class="btn btn-success" asp-page="/Admin/Records/Print" asp-route-patientId="@p.Id" target="_blank"><i class="bi bi-file-earmark-medical me-1"></i>@L["Full print of the file"]</a>
+        }
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-4"><div class="kpi"><div class="stat-icon"><i class="bi bi-person-badge"></i></div><div><div class="kpi-value">@Fmt.Number(Model.Doctors.Count)</div><div class="kpi-label">@L["Treating doctors"]</div></div></div></div>
+    <div class="col-sm-4"><div class="kpi"><div class="stat-icon"><i class="bi bi-clipboard2-pulse"></i></div><div><div class="kpi-value">@Fmt.Number(Model.SessionCount)</div><div class="kpi-label">@L["Treatment sessions"]</div></div></div></div>
+    @if (Model.Profile?.FirstVisitDate is DateOnly first)
+    {
+        <div class="col-sm-4"><div class="kpi"><div class="stat-icon"><i class="bi bi-calendar-event"></i></div><div><div class="kpi-value fs-6">@Fmt.Day(first)</div><div class="kpi-label">@L["Date of first visit"]</div></div></div></div>
+    }
+</div>
+
+@if (Model.Doctors.Count == 0)
+{
+    <p class="text-muted">@L["No doctor has treated this patient yet."]</p>
+}
+
+@foreach (var d in Model.Doctors)
+{
+    <section class="card card-soft mb-4 summary-doctor">
+        <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+                <h2 class="h5 mb-0"><i class="bi bi-person-badge me-2 text-success"></i>@d.Name</h2>
+                <div class="small">
+                    <strong>@Fmt.Number(d.Sessions.Count)</strong> @L["sessions"]
+                    @if (d.Visits > 0) { <span class="text-muted">· @L["{0} completed appointments", Fmt.Number(d.Visits)]</span> }
+                    @if (d.Sessions.Count > 0) { <span class="text-muted">· @Fmt.Date(d.Sessions[0].DateUtc) - @Fmt.Date(d.Sessions[^1].DateUtc)</span> }
+                </div>
+            </div>
+
+            @if (d.Treatments.Count > 0)
+            {
+                <h3 class="h6">@L["Treatments"]</h3>
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    @foreach (var t in d.Treatments)
+                    {
+                        <span class="badge bg-success-subtle text-success-emphasis fs-6 fw-normal">@L[t.Type.ToString()] × @Fmt.Number(t.Count)</span>
+                    }
+                </div>
+            }
+
+            @if (d.Points.Count > 0)
+            {
+                <h3 class="h6">@L["Points used"]</h3>
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    @foreach (var pt in d.Points)
+                    {
+                        <span class="badge bg-light text-dark border fw-normal" dir="ltr">@pt.Label <span class="text-muted">× @Fmt.Number(pt.Count)</span></span>
+                    }
+                </div>
+            }
+
+            @if (d.Sessions.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr><th>#</th><th>@L["Date"]</th><th>@L["Treatment"]</th><th>@L["Points"]</th><th>@L["Chief complaint"]</th></tr>
+                        </thead>
+                        <tbody>
+                            @for (var n = 0; n < d.Sessions.Count; n++)
+                            {
+                                var s = d.Sessions[n];
+                                <tr>
+                                    <td>@Fmt.Number(n + 1)</td>
+                                    <td class="text-nowrap">@Fmt.Date(s.DateUtc)</td>
+                                    <td class="text-nowrap">@L[s.Type.ToString()]</td>
+                                    <td class="small" dir="ltr">@string.Join("، ", s.Points.Select(x => x.Label))</td>
+                                    <td class="small">@s.Complaint</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+<div class="print-signature d-none d-print-flex">
+    <div>@(Model.IsOwnOnly ? L["Treating doctor"] : L["Printed by"]): <strong>@Model.PrintedBy</strong></div>
+    <div>@L["Signature and stamp"]: ..............................</div>
+</div>

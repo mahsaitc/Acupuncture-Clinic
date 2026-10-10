@@ -1,0 +1,192 @@
+@page
+@using Clinic.Domain.Entities
+@using Clinic.Web.Clinical
+@model Clinic.Web.Pages.Admin.Records.PrintModel
+@inject Clinic.Web.Media.SiteContentProvider SiteContent
+@{
+    var brand = await SiteContent.BrandAsync();
+    Layout = null;
+    var english = CulturePath.IsEnglish;
+    var r = Model.Record;
+    var p = Model.Profile;
+    var u = Model.Patient;
+}
+<!DOCTYPE html>
+<html lang="@(english ? "en" : "fa")" dir="@(english ? "ltr" : "rtl")">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>@L["Intake form"] - @u.FullName</title>
+    <link rel="stylesheet" href="~/lib/vazirmatn/vazirmatn.css" />
+    <link rel="stylesheet" href="~/css/print.css" asp-append-version="true" />
+    <meta name="robots" content="noindex" />
+    <script src="~/js/behaviors.js" asp-append-version="true" defer></script>
+</head>
+<body>
+    <div class="toolbar no-print">
+        <button type="button" data-print>@L["Print or save as PDF"]</button>
+        <a href="@Url.Page("./Index", new { patientId = u.Id })">@L["Back to the record"]</a>
+    </div>
+
+    <main class="sheet">
+        <header class="form-head">
+            <img src="@brand.LogoPath" alt="" class="form-logo" />
+            <div>
+                <div class="clinic-name">@brand.Name</div>
+                <h1>@L["Patient intake form: acupuncture and embedding"]</h1>
+            </div>
+        </header>
+
+        <section>
+            <h2>@Fmt.Number(1). @L["Personal and contact details"]</h2>
+            <table class="grid">
+                <tr>
+                    <th>@L["Full name"]</th><td>@u.FullName</td>
+                    <th>@L["Age"]</th><td>@(Model.Age is int age ? Fmt.Number(age) : "")</td>
+                    <th>@L["Gender"]</th><td>@(p?.Gender is Gender g ? L[g.ToString()] : "")</td>
+                </tr>
+                <tr>
+                    <th>@L["Father's name"]</th><td>@p?.FatherName</td>
+                    <th>@L["Birth date"]</th><td>@(p?.BirthDate is DateOnly b ? Fmt.Day(b) : "")</td>
+                    <th>@L["National code"]</th><td>@(p?.NationalCode is { } nc ? Fmt.Number(nc) : "")</td>
+                </tr>
+                <tr>
+                    <th>@L["Marital status"]</th><td>@(p?.MaritalStatus is MaritalStatus m ? L[m.ToString()] : "")</td>
+                    <th>@L["Number of children"]</th><td>@(p?.Children is int kids ? Fmt.Number(kids) : "")</td>
+                    <th>@L["Occupation"]</th><td>@(p?.Occupation is { } job ? L[job] : "")</td>
+                </tr>
+                <tr>
+                    <th>@L["Phone"]</th><td dir="ltr">@u.PhoneNumber @(p?.LandlinePhone is { } tel ? " / " + tel : "")</td>
+                    <th>@L["Email"]</th><td dir="ltr">@u.Email</td>
+                    <th>@L["Date of first visit"]</th><td>@(p?.FirstVisitDate is DateOnly fv ? Fmt.Day(fv) : "")</td>
+                </tr>
+                <tr>
+                    <th>@L["Address"]</th><td colspan="5">@p?.City@(p?.City is not null && p?.Address is not null ? "، " : "")@p?.Address</td>
+                </tr>
+            </table>
+        </section>
+
+        <section>
+            <h2>@Fmt.Number(2). @L["Reason for the visit and treatment goals"]</h2>
+            <p><b>@L["Chief complaint"]:</b> @r.ChiefComplaint</p>
+            <p><b>@L["How long has it been going on?"]</b> @r.ProblemDuration</p>
+            <p><b>@L["Goals of the visit"]:</b> @Boxes(r.Goals) @r.GoalsNotes</p>
+        </section>
+
+        <section>
+            <h2>@Fmt.Number(3). @L["Medical history, medications and allergies"]</h2>
+            <p><b>@L["Conditions"]:</b> @Boxes(r.Conditions)</p>
+            <p><b>@L["Other conditions"]:</b> @r.OtherConditions</p>
+            <p><b>@L["Current medications"]:</b> @r.Medications</p>
+            <p><b>@L["Surgeries"]:</b> @r.Surgeries</p>
+            <p><b>@L["Drug allergy"]:</b> @Box(r.HasDrugAllergy == false) @L["No allergy"] &nbsp; @Box(r.HasDrugAllergy == true) @L["Has an allergy"] &nbsp; @L["Drug or substance"]: @r.DrugAllergies</p>
+            <p><b>@L["Non-drug allergy"]:</b> @Box(r.HasOtherAllergy == false) @L["No allergy"] &nbsp; @Box(r.HasOtherAllergy == true) @L["Has an allergy"] &nbsp; @L["Substance"]: @r.OtherAllergies</p>
+        </section>
+
+        <section>
+            <h2>@Fmt.Number(4). @L["General state of the body"]</h2>
+            <table class="grid">
+                <tr><th>@L["Sleep"]</th><td>@One(r.Sleep)</td><th>@L["Appetite"]</th><td>@One(r.Appetite)</td></tr>
+                <tr><th>@L["Craving for sweet, salty or sour"]</th><td>@Boxes(r.Cravings)</td><th>@L["Digestion"]</th><td>@Boxes(r.Digestion)</td></tr>
+                <tr><th>@L["Energy level"]</th><td>@One(r.Energy)</td><th>@L["Mood"]</th><td>@Boxes(r.Mood)</td></tr>
+                @if (p?.Gender != Gender.Male)
+                {
+                    <tr><th>@L["Menstrual cycle (women)"]</th><td>@Boxes(r.Menstrual)</td><th>@L["Last menstrual period"]</th><td>@(r.LastMenstrualPeriod is DateOnly lmp ? Fmt.Day(lmp) : "")</td></tr>
+                }
+            </table>
+        </section>
+
+        <section>
+            <h2>@Fmt.Number(5). @L["Measurements and body indices"]</h2>
+            <table class="grid center">
+                <tr>
+                    <th>@L["Weight before treatment (kg)"]</th><th>@L["Weight after treatment (kg)"]</th><th>@L["Height (cm)"]</th><th>@L["BMI"]</th><th>@L["BMR"]</th>
+                </tr>
+                <tr>
+                    <td>@N(r.WeightKg)</td><td>@N(r.WeightAfterKg)</td><td>@N(r.HeightCm)</td><td>@N(r.Bmi)</td><td>@(r.Bmr(Model.Age, p?.Gender) is int bmr ? Fmt.Number(bmr) : "")</td>
+                </tr>
+                <tr>
+                    <th>@L["Waist (cm)"]</th><th>@L["Hips (cm)"]</th><th>@L["Thigh (cm)"]</th><th>@L["Arm (cm)"]</th><th></th>
+                </tr>
+                <tr>
+                    <td>@N(r.WaistCm)</td><td>@N(r.HipCm)</td><td>@N(r.ThighCm)</td><td>@N(r.ArmCm)</td><td></td>
+                </tr>
+            </table>
+            <p><b>@L["Changes observed"]:</b> @r.ObservedChanges</p>
+        </section>
+
+        <section>
+            <h2>@Fmt.Number(6). @L["Acupuncture diagnosis (TCM)"]</h2>
+            <p><b>@L["Pulse"]:</b> @Boxes(r.Pulse)</p>
+            <p><b>@L["Tongue colour"]:</b> @r.TongueColor &nbsp; / &nbsp; <b>@L["Tongue coating"]:</b> @r.TongueCoating</p>
+            <p><b>@L["Type of imbalance"]:</b> @r.TcmPattern</p>
+            @if (r.Diagnosis is not null || r.Icd10 is not null)
+            {
+                <p><b>@L["Medical diagnosis"]:</b> @r.Diagnosis <span dir="ltr">@r.Icd10</span></p>
+            }
+        </section>
+
+        <section>
+            <h2>@Fmt.Number(7). @L["Treatment plan"]</h2>
+            <p><b>@L["Short-term goals"]:</b> @r.ShortTermGoals</p>
+            <p><b>@L["Long-term goals"]:</b> @r.LongTermGoals</p>
+            <p><b>@L["Treatment areas"]:</b> @Boxes(r.Areas) @r.OtherAreas</p>
+            <p><b>@L["Treatment method"]:</b> @Boxes(r.Methods)</p>
+            <p><b>@L["Suggested number of sessions"]:</b> @(r.PlannedSessions is int ps ? Fmt.Number(ps) : "") &nbsp; <b>@L["Time between sessions"]:</b> @r.SessionInterval</p>
+            <p><b>@L["Advice after treatment"]:</b> @r.AfterCareAdvice</p>
+        </section>
+
+        <section class="break-before">
+            <h2>@Fmt.Number(8). @L["Treatment sessions"]</h2>
+            <table class="grid sessions">
+                <tr><th>@L["Session"]</th><th>@L["Date"]</th><th>@L["Doctor"]</th><th>@L["Treatment"]</th><th>@L["Weight / signs"]</th><th>@L["Points used"]</th></tr>
+                @for (var n = 0; n < Math.Max(Clinic.Web.Pages.Admin.Records.PrintModel.MinSessionRows, Model.Sessions.Count); n++)
+                {
+                    var s = n < Model.Sessions.Count ? Model.Sessions[n] : null;
+                    <tr>
+                        <td class="center">@Fmt.Number(n + 1)</td>
+                        <td class="nowrap">@(s is null ? "" : Fmt.Date(s.DateUtc))</td>
+                        <td class="doctor">@(s is null ? "" : Model.DoctorNames.GetValueOrDefault(s.DoctorUserId, "-"))</td>
+                        <td class="nowrap">@(s is null ? "" : L[s.Type.ToString()])</td>
+                        <td>@(s?.WeightKg is double w ? Fmt.Number(w) + " " + L["kg"] : "") @(s?.Complaint)</td>
+                        <td dir="ltr" class="points">@(s is null ? "" : string.Join(", ", s.Points.Select(pt => PointText(pt))))</td>
+                    </tr>
+                }
+            </table>
+        </section>
+
+        <section>
+            <h2>@Fmt.Number(9). @L["Patient consent"]</h2>
+            <p>@L["I, {0}, fully informed about acupuncture and embedding treatment and aware that temporary bruising or pain may occur, consent to the treatment.", u.FullName]</p>
+            <p class="sign"><span>@L["Patient's signature"]: ..............................</span><span>@L["Date"]: @(r.ConsentSignedUtc is DateTime c ? Fmt.Date(c) : "..............................")</span></p>
+        </section>
+
+        <section>
+            <h2>@Fmt.Number(10). @L["Doctor's notes"]</h2>
+            <p class="notes">@r.DoctorNotes</p>
+        </section>
+
+        <footer class="form-foot">@brand.Name@if (Model.ClinicPhone is { } phone) { <span> · @L["Phone"]: <span dir="ltr">@Fmt.Number(phone)</span></span> }</footer>
+    </main>
+</body>
+</html>
+
+@functions {
+    private static string Box(bool on) => on ? "☑" : "☐";
+
+    private string Boxes<T>(T value) where T : struct, Enum =>
+        string.Join("  ", CheckGroup.Flags("", value).Options.Select(o => $"{Box(o.Checked)} {L[o.Label]}"));
+
+    private string One<T>(T? value) where T : struct, Enum =>
+        string.Join("  ", CheckGroup.One("", value).Options.Select(o => $"{Box(o.Checked)} {L[o.Label]}"));
+
+    private string N(double? v) => v is double d ? Fmt.Number(d) : "";
+
+    private static string PointText(SessionPoint p) => (p.Code ?? p.Label) + p.Side switch
+    {
+        PointSide.Right => " (R)",
+        PointSide.Left => " (L)",
+        _ => "",
+    };
+}

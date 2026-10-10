@@ -12,5 +12,11 @@ public class ApplicationUser : IdentityUser
     /// <summary>Admins can deactivate an account without deleting its history.</summary>
     public bool IsActive { get; set; } = true;
 
+    /// <summary>
+    /// A keyed hash of the national code, so that no two accounts, whatever their role, share one.
+    /// The code itself is stored encrypted on the patient or doctor profile.
+    /// </summary>
+    public string? NationalCodeHash { get; set; }
+
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
 }

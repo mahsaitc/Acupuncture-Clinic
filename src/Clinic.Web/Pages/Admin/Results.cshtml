@@ -1,0 +1,246 @@
+@page
+@using Clinic.Domain.Entities
+@using Clinic.Web.Localization
+@model Clinic.Web.Pages.Admin.ResultsModel
+@{
+    ViewData["Title"] = L["Results on the home page"];
+    var r = Model.Results;
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="h3">@L["Results on the home page"]</h1>
+        <div class="text-muted">@L["Headline figures, charts and tables shown at the bottom of the home page."]</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" asp-page="/Index" asp-fragment="results" target="_blank"><i class="bi bi-eye me-1"></i>@L["View on the site"]</a>
+        <form method="post" asp-page-handler="Sample" data-confirm="@L["Replace the current figures with the sample figures?"]">
+            <button type="submit" class="btn btn-outline-warning">@L["Restore sample figures"]</button>
+        </form>
+    </div>
+</div>
+
+@if (r.IsSample)
+{
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle me-1"></i>@L["These are sample figures, not clinic data. The home page marks them as sample data. Replace them with the clinic's own results and untick “Sample data” before launch."]
+    </div>
+}
+
+<form method="post" enctype="multipart/form-data">
+    <section class="card card-soft mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-4 mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" asp-for="Results.Show" />
+                    <label class="form-check-label" asp-for="Results.Show">@L["Show on the home page"]</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" asp-for="Results.IsSample" />
+                    <label class="form-check-label" asp-for="Results.IsSample">@L["Sample data (marked as such on the home page)"]</label>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="Results_TitleFa">@L["Title (Persian)"]</label>
+                    <input class="form-control" id="Results_TitleFa" name="Results.TitleFa" value="@r.TitleFa" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="Results_TitleEn">@L["Title (English)"]</label>
+                    <input class="form-control" id="Results_TitleEn" name="Results.TitleEn" value="@r.TitleEn" dir="ltr" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="Results_NoteFa">@L["Source note (Persian)"]</label>
+                    <textarea class="form-control" id="Results_NoteFa" name="Results.NoteFa" rows="2">@r.NoteFa</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="Results_NoteEn">@L["Source note (English)"]</label>
+                    <textarea class="form-control" id="Results_NoteEn" name="Results.NoteEn" rows="2" dir="ltr">@r.NoteEn</textarea>
+                </div>
+                <div class="col-12 form-text mt-0">@L["For example: number of patients, the period, and “results vary from person to person”."]</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card card-soft mb-4">
+        <div class="card-body">
+            <h2 class="h5">@L["Headline figures"]</h2>
+            <p class="small text-muted">@L["To remove a row, clear its value or press ×."]</p>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle results-edit">
+                    <thead><tr><th>@L["Icon"]</th><th>@L["Figure"]</th><th>@L["Label (Persian)"]</th><th>@L["Label (English)"]</th><th></th></tr></thead>
+                    <tbody>
+                        @for (var i = 0; i < r.Tiles.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <select class="form-select form-select-sm" name="Results.Tiles[@i].Icon" aria-label="@L["Icon"]">
+                                        @foreach (var icon in Clinic.Web.Pages.Admin.ResultsModel.Icons)
+                                        {
+                                            <option value="@icon" selected="@(r.Tiles[i].Icon == icon)">@icon</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td><input class="form-control form-control-sm" name="Results.Tiles[@i].Value" value="@r.Tiles[i].Value" dir="ltr" placeholder="91%" style="min-width: 6rem" /></td>
+                                <td><input class="form-control form-control-sm" name="Results.Tiles[@i].LabelFa" value="@r.Tiles[i].LabelFa" /></td>
+                                <td><input class="form-control form-control-sm" name="Results.Tiles[@i].LabelEn" value="@r.Tiles[i].LabelEn" dir="ltr" /></td>
+                                <td><button type="button" class="btn btn-sm btn-outline-danger clear-row" aria-label="@L["Remove"]">×</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    @for (var c = 0; c < r.Charts.Count; c++)
+    {
+        var chart = r.Charts[c];
+        var isNew = c == r.Charts.Count - 1;
+        <section class="card card-soft mb-4">
+            <div class="card-body">
+                <h2 class="h5">@(isNew ? L["New chart"] : L["Chart {0}", Fmt.Number(c + 1)])</h2>
+                @if (isNew)
+                {
+                    <p class="small text-muted">@L["Fill this in to add a chart. Leave it empty to add nothing."]</p>
+                }
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">@L["Title (Persian)"]</label>
+                        <input class="form-control" name="Results.Charts[@c].TitleFa" value="@chart.TitleFa" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">@L["Title (English)"]</label>
+                        <input class="form-control" name="Results.Charts[@c].TitleEn" value="@chart.TitleEn" dir="ltr" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Chart type"]</label>
+                        <select class="form-select" name="Results.Charts[@c].Kind">
+                            <option value="@ResultChartKind.Bars" selected="@(chart.Kind == ResultChartKind.Bars)">@L["Bars (one value per row)"]</option>
+                            <option value="@ResultChartKind.BeforeAfter" selected="@(chart.Kind == ResultChartKind.BeforeAfter)">@L["Before and after treatment"]</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">@L["Unit (Persian)"]</label>
+                        <input class="form-control" name="Results.Charts[@c].UnitFa" value="@chart.UnitFa" placeholder="کیلوگرم" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">@L["Unit (English)"]</label>
+                        <input class="form-control" name="Results.Charts[@c].UnitEn" value="@chart.UnitEn" dir="ltr" placeholder="kg" />
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="Results.Charts[@c].ShowTable" value="true" id="table-@c" checked="@chart.ShowTable" />
+                            <input type="hidden" name="Results.Charts[@c].ShowTable" value="false" />
+                            <label class="form-check-label" for="table-@c">@L["Also show a table"]</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle results-edit mb-0">
+                        <thead><tr><th>@L["Label (Persian)"]</th><th>@L["Label (English)"]</th><th>@L["Value (or before treatment)"]</th><th>@L["After treatment"]</th><th></th></tr></thead>
+                        <tbody>
+                            @for (var i = 0; i < chart.Rows.Count; i++)
+                            {
+                                var row = chart.Rows[i];
+                                var blank = row.LabelFa.Length == 0 && row.LabelEn.Length == 0;
+                                <tr>
+                                    <td><input class="form-control form-control-sm" name="Results.Charts[@c].Rows[@i].LabelFa" value="@row.LabelFa" /></td>
+                                    <td><input class="form-control form-control-sm" name="Results.Charts[@c].Rows[@i].LabelEn" value="@row.LabelEn" dir="ltr" /></td>
+                                    <td><input class="form-control form-control-sm" name="Results.Charts[@c].Rows[@i].Value" value="@(blank ? "" : NumberBinder.Format(row.Value))" dir="ltr" inputmode="decimal" /></td>
+                                    <td><input class="form-control form-control-sm" name="Results.Charts[@c].Rows[@i].After" value="@NumberBinder.Format(row.After)" dir="ltr" inputmode="decimal" /></td>
+                                    <td><button type="button" class="btn btn-sm btn-outline-danger clear-row" aria-label="@L["Remove"]">×</button></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="form-text">@L["To remove a chart, clear its title and all its rows. Save to get more empty rows."]</div>
+            </div>
+        </section>
+    }
+
+    <section class="card card-soft mb-4">
+        <div class="card-body">
+            <h2 class="h5">@L["What patients say"]</h2>
+            <p class="small text-muted">@L["Publish a patient's words only with their consent, and without their full name. Leave the text empty to remove an item."]</p>
+            @for (var i = 0; i < r.Testimonials.Count; i++)
+            {
+                var t = r.Testimonials[i];
+                <div class="border rounded-3 p-3 mb-3">
+                    <div class="row g-2">
+                        <div class="col-md-3"><label class="form-label small">@L["Name or initials (Persian)"]</label><input class="form-control form-control-sm" name="Results.Testimonials[@i].NameFa" value="@t.NameFa" /></div>
+                        <div class="col-md-3"><label class="form-label small">@L["Name or initials (English)"]</label><input class="form-control form-control-sm" name="Results.Testimonials[@i].NameEn" value="@t.NameEn" dir="ltr" /></div>
+                        <div class="col-md-3"><label class="form-label small">@L["Condition (Persian)"]</label><input class="form-control form-control-sm" name="Results.Testimonials[@i].ConditionFa" value="@t.ConditionFa" /></div>
+                        <div class="col-md-3"><label class="form-label small">@L["Condition (English)"]</label><input class="form-control form-control-sm" name="Results.Testimonials[@i].ConditionEn" value="@t.ConditionEn" dir="ltr" /></div>
+                        <div class="col-md-3"><label class="form-label small">@L["Treatment (Persian)"]</label><input class="form-control form-control-sm" name="Results.Testimonials[@i].TreatmentFa" value="@t.TreatmentFa" /></div>
+                        <div class="col-md-3"><label class="form-label small">@L["Treatment (English)"]</label><input class="form-control form-control-sm" name="Results.Testimonials[@i].TreatmentEn" value="@t.TreatmentEn" dir="ltr" /></div>
+                        <div class="col-md-2">
+                            <label class="form-label small">@L["Stars"]</label>
+                            <select class="form-select form-select-sm" name="Results.Testimonials[@i].Rating">
+                                @for (var star = 5; star >= 1; star--) { <option value="@star" selected="@(t.Rating == star)">@Fmt.Number(star)</option> }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small">@L["Picture (optional)"]</label>
+                            <input type="hidden" name="Results.Testimonials[@i].PhotoPath" value="@t.PhotoPath" />
+                            <input type="file" class="form-control form-control-sm" name="tphoto@(i)" accept="image/jpeg,image/png,image/webp" />
+                            @if (t.PhotoPath is { } photo)
+                            {
+                                <div class="d-flex align-items-center gap-2 mt-1"><img src="@photo" alt="" width="36" height="36" class="rounded-circle object-fit-cover" /><label class="small"><input type="checkbox" name="tremove@(i)" value="true" /> @L["Remove picture"]</label></div>
+                            }
+                        </div>
+                        <div class="col-md-6"><label class="form-label small">@L["Text (Persian)"]</label><textarea class="form-control form-control-sm" rows="3" name="Results.Testimonials[@i].TextFa">@t.TextFa</textarea></div>
+                        <div class="col-md-6"><label class="form-label small">@L["Text (English)"]</label><textarea class="form-control form-control-sm" rows="3" name="Results.Testimonials[@i].TextEn" dir="ltr">@t.TextEn</textarea></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section class="card card-soft mb-4">
+        <div class="card-body">
+            <h2 class="h5">@L["Why our clinic"]</h2>
+            <p class="small text-muted">@L["Short promotional items with a picture or an icon. Leave the title empty to remove an item."]</p>
+            @for (var i = 0; i < r.Highlights.Count; i++)
+            {
+                var h = r.Highlights[i];
+                <div class="border rounded-3 p-3 mb-3">
+                    <div class="row g-2">
+                        <div class="col-md-2">
+                            <label class="form-label small">@L["Icon"]</label>
+                            <select class="form-select form-select-sm" name="Results.Highlights[@i].Icon">
+                                @foreach (var icon in Clinic.Web.Pages.Admin.ResultsModel.Icons) { <option value="@icon" selected="@(h.Icon == icon)">@icon</option> }
+                            </select>
+                        </div>
+                        <div class="col-md-5"><label class="form-label small">@L["Title (Persian)"]</label><input class="form-control form-control-sm" name="Results.Highlights[@i].TitleFa" value="@h.TitleFa" /></div>
+                        <div class="col-md-5"><label class="form-label small">@L["Title (English)"]</label><input class="form-control form-control-sm" name="Results.Highlights[@i].TitleEn" value="@h.TitleEn" dir="ltr" /></div>
+                        <div class="col-md-4"><label class="form-label small">@L["Text (Persian)"]</label><textarea class="form-control form-control-sm" rows="2" name="Results.Highlights[@i].TextFa">@h.TextFa</textarea></div>
+                        <div class="col-md-4"><label class="form-label small">@L["Text (English)"]</label><textarea class="form-control form-control-sm" rows="2" name="Results.Highlights[@i].TextEn" dir="ltr">@h.TextEn</textarea></div>
+                        <div class="col-md-4">
+                            <label class="form-label small">@L["Picture (optional)"]</label>
+                            <input type="hidden" name="Results.Highlights[@i].ImagePath" value="@h.ImagePath" />
+                            <input type="file" class="form-control form-control-sm" name="hphoto@(i)" accept="image/jpeg,image/png,image/webp" />
+                            @if (h.ImagePath is { } image)
+                            {
+                                <div class="d-flex align-items-center gap-2 mt-1"><img src="@image" alt="" width="48" height="32" class="rounded object-fit-cover" /><label class="small"><input type="checkbox" name="hremove@(i)" value="true" /> @L["Remove picture"]</label></div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <div class="sticky-actions">
+        <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-check-lg me-1"></i>@L["Save"]</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.clear-row').forEach(b => b.addEventListener('click', () => {
+            b.closest('tr').querySelectorAll('input').forEach(i => i.value = '');
+        }));
+    </script>
+}

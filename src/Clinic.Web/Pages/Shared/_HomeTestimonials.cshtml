@@ -1,0 +1,46 @@
+@using Clinic.Domain.Entities
+@model ClinicResults
+@{
+    var english = CulturePath.IsEnglish;
+}
+<section class="section testimonials" id="testimonials">
+    <div class="container">
+        <div class="section-title">
+            <div class="kicker">@L["Patient satisfaction"]</div>
+            <h2>@L["What our patients say"]</h2>
+            @if (Model.IsSample)
+            {
+                <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis border border-warning-subtle mt-2"><i class="bi bi-info-circle me-1"></i>@L["Sample data"]</span>
+            }
+        </div>
+        <div class="row g-4">
+            @foreach (var t in Model.Testimonials)
+            {
+                var name = t.Name(english);
+                <div class="col-md-6 col-lg-4">
+                    <figure class="testimonial-card h-100 mb-0">
+                        <i class="bi bi-quote testimonial-quote" aria-hidden="true"></i>
+                        <div class="testimonial-stars" aria-label="@L["{0} out of 5 stars", Fmt.Number(t.Rating)]">
+                            @for (var s = 1; s <= 5; s++) { <i class="bi @(s <= t.Rating ? "bi-star-fill" : "bi-star")" aria-hidden="true"></i> }
+                        </div>
+                        <blockquote class="mb-4">@t.Text(english)</blockquote>
+                        <figcaption class="d-flex align-items-center gap-3">
+                            @if (t.PhotoPath is { } photo)
+                            {
+                                <img class="testimonial-avatar" src="@photo" alt="" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span class="testimonial-avatar initial" aria-hidden="true">@(name.Replace("خانم", "").Replace("آقای", "").Replace("Mrs.", "").Replace("Mr.", "").Trim().FirstOrDefault())</span>
+                            }
+                            <div>
+                                <div class="fw-semibold">@name</div>
+                                <div class="small text-muted">@string.Join(" · ", new[] { t.Condition(english), t.Treatment(english) }.Where(x => !string.IsNullOrEmpty(x)))</div>
+                            </div>
+                        </figcaption>
+                    </figure>
+                </div>
+            }
+        </div>
+    </div>
+</section>

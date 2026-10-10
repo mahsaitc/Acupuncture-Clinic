@@ -1,4 +1,4 @@
-using System.Security.Claims;
+using Clinic.Web.Clinical;
 using Clinic.Domain.Entities;
 using Clinic.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -9,10 +9,15 @@ using Microsoft.Extensions.Localization;
 
 namespace Clinic.Web.Pages.Admin;
 
-/// <summary>A doctor's weekly working hours, which drive the free slots shown to patients.</summary>
-[Authorize(Policy = Policies.Doctor)]
-public class ScheduleModel(ClinicDbContext db, IStringLocalizer<SharedResource> l) : PageModel
+/// <summary>Each doctor's weekly working hours, which drive the free slots shown to patients. Only the admin sets them.</summary>
+[Authorize(Policy = Policies.Admin)]
+public class ScheduleModel(ClinicDbContext db, StaffScope scope, IStringLocalizer<SharedResource> l) : PageModel
 {
+    [BindProperty(SupportsGet = true)]
+    public int? DoctorId { get; set; }
+
+    public List<(int Id, string Name)> Doctors { get; private set; } = [];
+
     /// <summary>Iranian week order, Saturday first.</summary>
     public static readonly DayOfWeek[] WeekOrder =
     [
@@ -33,7 +38,7 @@ public class ScheduleModel(ClinicDbContext db, IStringLocalizer<SharedResource> 
         var profile = await LoadProfileAsync();
         if (profile is null)
         {
-            return RedirectToPage();
+            return RedirectToPage(new { DoctorId });
         }
 
         if (end <= start)
@@ -49,7 +54,7 @@ public class ScheduleModel(ClinicDbContext db, IStringLocalizer<SharedResource> 
             profile.WorkingHours.Add(new WorkingHour { DayOfWeek = day, Start = start, End = end });
             await db.SaveChangesAsync();
         }
-        return RedirectToPage();
+        return RedirectToPage(new { DoctorId });
     }
 
     public async Task<IActionResult> OnPostRemoveAsync(int id)
@@ -61,12 +66,17 @@ public class ScheduleModel(ClinicDbContext db, IStringLocalizer<SharedResource> 
             db.WorkingHours.Remove(block);
             await db.SaveChangesAsync();
         }
-        return RedirectToPage();
+        return RedirectToPage(new { DoctorId });
     }
 
-    private Task<DoctorProfile?> LoadProfileAsync()
+    /// <summary>The chosen doctor, or the first one (the admin's own profile when they are a doctor).</summary>
+    private async Task<DoctorProfile?> LoadProfileAsync()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-        return db.Doctors.Include(d => d.WorkingHours).FirstOrDefaultAsync(d => d.UserId == userId);
+        Doctors = await scope.DoctorsAsync();
+        if (DoctorId is null || Doctors.All(d => d.Id != DoctorId))
+        {
+            DoctorId = (await scope.DoctorAsync())?.Id is int own && Doctors.Any(d => d.Id == own) ? own : Doctors.FirstOrDefault().Id;
+        }
+        return await db.Doctors.Include(d => d.WorkingHours).FirstOrDefaultAsync(d => d.Id == DoctorId && d.IsApproved);
     }
 }

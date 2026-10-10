@@ -167,3 +167,838 @@ a.kpi:hover {
   min-height: 22rem;
   line-height: 1.9;
 }
+
+/* Medical record */
+.record-tabs .btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 575.98px) {
+  .record-tabs {
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+.record-vitals {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .5rem;
+}
+
+.record-vitals > div {
+  background: var(--olive-50);
+  border-radius: .75rem;
+  padding: .5rem .65rem;
+}
+
+.record-vitals span {
+  display: block;
+  font-size: .75rem;
+  color: #6c757d;
+}
+
+.record-vitals strong {
+  font-size: 1.05rem;
+}
+
+.record-dl dt {
+  font-size: .8rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.record-dl dd {
+  margin-bottom: .6rem;
+}
+
+.sticky-actions {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: .5rem;
+  padding: .75rem 0;
+  background: linear-gradient(transparent, #f3f4ee 35%);
+  z-index: 5;
+}
+
+.session-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: .75rem;
+}
+
+.session-item {
+  display: block;
+  padding: .85rem 1rem;
+  border: 1px solid rgba(0, 0, 0, .07);
+  border-inline-start: 4px solid var(--olive-500);
+  border-radius: .75rem;
+  color: inherit;
+  text-decoration: none;
+  transition: background .15s ease;
+}
+
+.session-item:hover {
+  background: var(--olive-50);
+}
+
+.point-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+}
+
+.point-chip {
+  font-size: .72rem;
+  font-weight: 600;
+  padding: .1rem .45rem;
+  border-radius: 999px;
+  background: #fbeee9;
+  color: #9b3b22;
+}
+
+.file-thumbs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .5rem;
+}
+
+.file-thumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .25rem;
+  font-size: .7rem;
+  color: inherit;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.file-thumb img,
+.file-thumb i {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: .5rem;
+  background: var(--olive-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: var(--olive-600);
+}
+
+.file-thumb span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Weight chart */
+.weight-chart svg {
+  width: 100%;
+  height: auto;
+  font-family: inherit;
+}
+
+.weight-chart .grid {
+  stroke: rgba(0, 0, 0, .07);
+}
+
+.weight-chart text {
+  font-size: 11px;
+  fill: #6c757d;
+}
+
+.weight-chart .line {
+  fill: none;
+  stroke: var(--olive-600);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.weight-chart .dot {
+  fill: #fff;
+  stroke: var(--olive-700);
+  stroke-width: 2;
+}
+
+.pain-chart .line {
+  stroke: #c0563b;
+}
+
+.pain-chart .dot {
+  stroke: #a3432c;
+}
+
+/* Point charts */
+.chart-pages {
+  gap: .35rem;
+  flex-wrap: wrap;
+}
+
+.chart-pages .nav-link {
+  padding: .35rem .8rem;
+  border-radius: 999px;
+  color: var(--olive-700);
+  background: var(--olive-50);
+}
+
+.chart-pages .nav-link.active {
+  background: var(--olive-600);
+  color: #fff;
+}
+
+.chart-count {
+  background: rgba(0, 0, 0, .08);
+  color: inherit;
+  font-weight: 600;
+}
+
+.chart-row {
+  display: grid;
+  gap: .75rem;
+  margin-inline: auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 520px;
+}
+
+.chart-row-body {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 640px;
+}
+
+.chart-row-head {
+  max-width: 600px;
+}
+
+.chart-row-arm,
+.chart-row-leg {
+  max-width: 400px;
+}
+
+.chart-row-ear {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 340px;
+}
+
+.body-view {
+  position: relative;
+  margin: 0;
+  text-align: center;
+}
+
+.zoom-tools {
+  position: absolute;
+  top: .4rem;
+  inset-inline-end: .4rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.zoom-tools .btn {
+  padding: .1rem .35rem;
+  line-height: 1.2;
+  opacity: .85;
+}
+
+.zoom-level {
+  font-size: .72rem;
+  color: var(--muted);
+  min-width: 2rem;
+}
+
+.body-map .marker > g {
+  transform: scale(var(--marker-scale, 1));
+}
+
+.body-view svg.zoomed {
+  cursor: grab;
+  touch-action: none;
+}
+
+.body-view svg.zoomed:active {
+  cursor: grabbing;
+}
+
+.body-view svg {
+  width: 100%;
+  height: auto;
+  background: radial-gradient(ellipse at 50% 40%, #fff, var(--olive-50));
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, .05);
+}
+
+.body-map.editable svg {
+  cursor: crosshair;
+}
+
+.body-view figcaption {
+  font-weight: 600;
+  font-size: .9rem;
+  margin-top: .35rem;
+  color: var(--olive-700);
+}
+
+.body-map .side-label {
+  font-size: 9px;
+  fill: #8a8f7a;
+}
+
+.body-map .marker circle {
+  fill: #c2452d;
+  stroke: #fff;
+  stroke-width: 1.4;
+}
+
+.body-map .marker text {
+  font-size: 6.5px;
+  font-weight: 700;
+  fill: #7a2a1a;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, .85);
+  stroke-width: 2px;
+  pointer-events: none;
+}
+
+.body-map.editable .marker {
+  cursor: pointer;
+}
+
+.body-map .marker.selected circle {
+  fill: var(--olive-600);
+  r: 5.5;
+}
+
+.body-map .marker.pending circle {
+  fill: rgba(255, 255, 255, .6);
+  stroke: var(--olive-700);
+  stroke-width: 1.6;
+  stroke-dasharray: 2 1.5;
+}
+
+.body-map .marker.pending text {
+  fill: var(--olive-800, #3f4d20);
+}
+
+.body-map .marker.pulse circle {
+  animation: marker-pulse 1.4s ease-out 2;
+}
+
+@keyframes marker-pulse {
+  0% { stroke-width: 1.4; stroke: #fff; }
+  40% { stroke-width: 7; stroke: rgba(194, 69, 45, .35); }
+  100% { stroke-width: 1.4; stroke: #fff; }
+}
+
+.point-locate {
+  color: var(--olive-700);
+}
+
+.point-list {
+  display: grid;
+  gap: .4rem;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.point-row {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  padding: .4rem;
+  border-radius: .6rem;
+}
+
+.point-row.selected {
+  background: var(--olive-50);
+}
+
+.point-dot {
+  width: .7rem;
+  height: .7rem;
+  margin-top: .55rem;
+  border-radius: 50%;
+  background: #c2452d;
+  flex: none;
+}
+
+.point-side {
+  margin-top: .35rem;
+  min-width: 2.5rem;
+}
+
+@media (max-width: 575.98px) {
+  /* Bigger charts are easier to tap on a phone. */
+  .chart-row-body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chart-row-head {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 340px;
+  }
+}
+
+
+/* Patient personal details: label above value, two columns on wider screens. */
+.profile-dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: .75rem 1.25rem;
+  margin: 0;
+}
+
+.profile-dl .wide {
+  grid-column: 1 / -1;
+}
+
+.profile-dl dt {
+  font-size: .8rem;
+  font-weight: 500;
+  color: var(--bs-secondary-color);
+}
+
+.profile-dl dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Medical record: the clinic's intake form, one card per numbered section. */
+.intake-form {
+  max-width: 1100px;
+}
+
+.intake-section {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, .06);
+  border-radius: 1rem;
+  padding: 1.1rem 1.25rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
+}
+
+.intake-section > h2 {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: .9rem;
+  color: var(--olive-900);
+}
+
+.intake-no {
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--olive-600);
+  color: #fff;
+  font-size: .9rem;
+}
+
+.intake-section .card {
+  box-shadow: none;
+  margin-bottom: 0 !important;
+}
+
+.intake-section .form-label {
+  font-weight: 500;
+}
+
+.check-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+}
+
+.check-chip {
+  border: 1px solid var(--olive-200, #d5dbc4);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--olive-900);
+  padding: .25rem .8rem;
+}
+
+.check-chip:hover {
+  background: var(--olive-50);
+}
+
+.btn-check:checked + .check-chip {
+  background: var(--olive-600);
+  border-color: var(--olive-600);
+  color: #fff;
+}
+
+.btn-check:focus-visible + .check-chip {
+  outline: 2px solid var(--olive-600);
+  outline-offset: 2px;
+}
+
+.index-box {
+  padding: .45rem .75rem;
+  border-radius: .5rem;
+  background: var(--olive-50);
+  min-height: calc(1.5em + .75rem + 2px);
+}
+
+.consent-text {
+  padding: .75rem 1rem;
+  border-radius: .6rem;
+  background: var(--olive-50);
+  line-height: 1.9;
+}
+
+.session-no {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  margin-inline-end: .35rem;
+  border-radius: 50%;
+  background: var(--olive-50);
+  color: var(--olive-700);
+  font-size: .8rem;
+}
+
+/* ------------------------------------------------------------------ clinic calendar: week and month */
+.calendar-title {
+  min-width: 12rem;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: .5rem;
+}
+
+.week-day {
+  background: #fff;
+  border: 1px solid #e3e6d8;
+  border-radius: .7rem;
+  min-height: 12rem;
+  overflow: hidden;
+}
+
+.week-day.is-focus {
+  border-color: var(--olive-500);
+}
+
+.week-day-head {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .45rem .6rem;
+  background: var(--olive-50);
+  color: var(--olive-900);
+  text-decoration: none;
+  border-bottom: 1px solid #e3e6d8;
+}
+
+.week-day-head strong {
+  font-size: 1.15rem;
+}
+
+.week-day-head .badge {
+  margin-inline-start: auto;
+}
+
+.cal-item {
+  margin: .4rem;
+  padding: .35rem .5rem;
+  border-radius: .5rem;
+  background: #f7f8f2;
+  border-inline-start: 3px solid var(--olive-500);
+  font-size: .88rem;
+}
+
+.cal-item.status-cancelled,
+.month-item.status-cancelled {
+  opacity: .55;
+  text-decoration: line-through;
+}
+
+.cal-item.status-noshow {
+  border-inline-start-color: #d32f2f;
+}
+
+.cal-item.status-completed {
+  border-inline-start-color: #2e7d32;
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.month-weekday {
+  text-align: center;
+  font-size: .85rem;
+  color: var(--muted);
+  padding: .25rem 0;
+}
+
+.month-day {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 6.5rem;
+  padding: .35rem .45rem;
+  background: #fff;
+  border: 1px solid #e3e6d8;
+  border-radius: .55rem;
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.month-day:hover {
+  border-color: var(--olive-500);
+}
+
+.month-day.outside {
+  background: transparent;
+  color: var(--muted);
+}
+
+.month-day.has-items {
+  background: #fbfcf7;
+}
+
+.month-item {
+  font-size: .78rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: var(--olive-50);
+  border-radius: .3rem;
+  padding: 0 .3rem;
+}
+
+@media (max-width: 991.98px) {
+  .week-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .week-day {
+    min-height: 0;
+  }
+
+  .month-item {
+    display: none;
+  }
+
+  .month-day {
+    min-height: 3.5rem;
+  }
+}
+
+/* Printing any panel page with the browser: only the content, with white margins on every side. */
+@media print {
+  @page {
+    margin: 14mm 12mm;
+  }
+
+  .print-letterhead {
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid var(--olive-700);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  .print-letterhead img {
+    object-fit: contain;
+  }
+
+  .print-signature {
+    justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 8px;
+    border-top: 1px solid #ccc;
+  }
+
+  .admin-sidebar,
+  .admin-topbar,
+  .sticky-actions,
+  .form-errors,
+  .btn,
+  .no-print {
+    display: none !important;
+  }
+
+  .admin-body,
+  .admin-main {
+    background: #fff !important;
+  }
+
+  .admin-main {
+    margin: 0 !important;
+    padding: 0 6mm !important;
+    width: auto !important;
+  }
+
+  .card,
+  .card-soft {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+}
+
+/* Doctor request documents */
+.doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: .75rem; }
+.doc-tile {
+    display: flex; flex-direction: column; gap: .25rem; padding: .5rem; border: 1px solid var(--bs-border-color);
+    border-radius: .75rem; background: #fff; color: inherit; text-decoration: none;
+}
+.doc-tile:hover { border-color: var(--bs-success); }
+.doc-tile img { width: 100%; height: 7rem; object-fit: cover; border-radius: .5rem; background: #f3f3ef; }
+.doc-icon { display: grid; place-items: center; height: 7rem; font-size: 2.5rem; color: #b33; background: #f8f3f3; border-radius: .5rem; }
+.doc-name { font-weight: 600; font-size: .9rem; }
+
+/* Clinic charts and reports */
+.chart-box {
+  position: relative;
+  height: 280px;
+}
+
+.chart-box.pie {
+  height: 260px;
+}
+
+@media print {
+  .chart-card {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+
+  #clinic-charts > div {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  .report-table {
+    font-size: 10pt;
+  }
+}
+
+/* Signed-in user's name and role at the top of the panel. */
+.admin-user {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  min-width: 0;
+}
+
+.admin-user-avatar {
+  flex: none;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--olive-100);
+  color: var(--olive-700);
+  font-size: 1.15rem;
+}
+
+.admin-user-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  min-width: 0;
+}
+
+.admin-user-text strong {
+  color: var(--olive-950);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-user-text small {
+  color: var(--olive-700);
+  font-weight: 600;
+}
+
+/* Day headings in the "next 7 days" list. */
+.table tr.day-group > th {
+  background: var(--olive-50);
+  color: var(--olive-900);
+  font-weight: 700;
+}
+
+@media (max-width: 575.98px) {
+  .admin-topbar {
+    flex-wrap: wrap;
+  }
+
+  .admin-user {
+    order: 3;
+    width: 100%;
+    padding-top: .5rem;
+    border-top: 1px solid #e7e9dc;
+  }
+}
+
+/* Protocol menu: each protocol can be added to the chosen points or replace them. */
+.protocol-menu {
+  min-width: min(25rem, 92vw);
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.protocol-menu .dropdown-header {
+  white-space: normal;
+}
+
+.protocol-row {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .35rem .75rem;
+}
+
+.protocol-row:hover {
+  background: var(--olive-50);
+}
+
+.protocol-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.protocol-row .btn {
+  white-space: nowrap;
+}
+
+.protocol-row .btn.done {
+  background: var(--olive-700);
+  border-color: var(--olive-700);
+  color: #fff;
+}
+
+/* Branding page (site owner) */
+.brand-logo-preview { width: 6rem; height: 6rem; display: inline-flex; align-items: center; justify-content: center; }
+.brand-logo-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.theme-preset { display: inline-flex; align-items: center; gap: .35rem; border: 1px solid #e3e6d8; }
+.theme-swatch { width: 1rem; height: 1rem; border-radius: 50%; display: inline-block; border: 1px solid rgba(0, 0, 0, .1); }
+.theme-preview { border-radius: .75rem; overflow: hidden; border: 1px solid #e3e6d8; background: #fff; }
+.theme-preview-bar { background: var(--p-theme); color: #fff; padding: .6rem .9rem; display: flex; justify-content: space-between; align-items: center; }
+.theme-preview-chip { background: var(--p-accent); color: #1f1f1f; border-radius: 999px; padding: .15rem .7rem; font-size: .85rem; }
+.theme-preview-body { padding: .75rem .9rem; display: flex; gap: 1rem; align-items: center; }
+.theme-preview-btn { background: var(--p-theme); color: #fff; border-radius: .5rem; padding: .3rem .9rem; }
+.theme-preview-link { color: var(--p-theme); text-decoration: underline; }

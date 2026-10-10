@@ -9,15 +9,15 @@
 
 <form method="get" class="row g-3 mb-4">
     <div class="col-md-6">
-        <label class="form-label" for="ServiceId">@L["Service"]</label>
-        <select class="form-select" id="ServiceId" name="ServiceId" asp-items="Model.ServiceOptions" onchange="this.form.submit()">
-            <option value="">@L["Choose a service"]</option>
+        <label class="form-label" for="DoctorId">@L["Doctor"]</label>
+        <select class="form-select" id="DoctorId" name="DoctorId" asp-items="Model.DoctorOptions" data-autosubmit>
+            <option value="">@L["Choose a doctor"]</option>
         </select>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="DoctorId">@L["Doctor"]</label>
-        <select class="form-select" id="DoctorId" name="DoctorId" asp-items="Model.DoctorOptions" onchange="this.form.submit()">
-            <option value="">@L["Choose a doctor"]</option>
+        <label class="form-label" for="ServiceId">@L["Service"]</label>
+        <select class="form-select" id="ServiceId" name="ServiceId" asp-items="Model.ServiceOptions" data-autosubmit>
+            <option value="">@L["Choose a service"]</option>
         </select>
     </div>
     @if (Model.SelectedDate is not null)
@@ -55,13 +55,14 @@
             @if (Model.IsStaff)
             {
                 <div class="mb-3">
-                    <label class="form-label" for="patientEmail">@L["Patient email (leave empty to book for yourself)"]</label>
-                    <input class="form-control" id="patientEmail" name="patientEmail" type="email" dir="ltr" />
+                    <label class="form-label" for="patientEmail">@L["Patient mobile or email (leave empty to book for yourself)"]</label>
+                    <input class="form-control" id="patientEmail" name="patientEmail" type="text" dir="ltr" autocomplete="off" />
                 </div>
             }
             <div class="mb-3">
-                <label class="form-label" for="note">@L["Note for the doctor (optional)"]</label>
+                <label class="form-label" for="note">@L["Message for the doctor (optional)"]</label>
                 <textarea class="form-control" id="note" name="note" rows="2" maxlength="500"></textarea>
+                <div class="form-text">@L["Your doctor will see this message in their inbox."]</div>
             </div>
             <div class="slot-grid">
                 @foreach (var slot in Model.Slots)

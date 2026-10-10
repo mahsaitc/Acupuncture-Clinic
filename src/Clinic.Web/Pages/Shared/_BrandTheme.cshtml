@@ -1,0 +1,6 @@
+@model Clinic.Web.Branding.Brand
+@* The owner's colours replace the olive tokens of site.css; nothing is written for the default theme. *@
+@if (Model.ThemeCss is string css)
+{
+    <style>@Html.Raw(css)</style>
+}

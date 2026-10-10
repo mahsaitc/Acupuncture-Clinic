@@ -1,0 +1,149 @@
+@page
+@model Clinic.Web.Pages.Admin.Doctors.PatientsModel
+@{
+    ViewData["Title"] = Model.DoctorName;
+    var english = CulturePath.IsEnglish;
+}
+
+<div class="page-head">
+    <div>
+        <a class="small" asp-page="./Index"><i class="bi @(english ? "bi-arrow-left" : "bi-arrow-right") me-1"></i>@L["Doctors"]</a>
+        <h1 class="h3 mt-1">@Model.DoctorName</h1>
+        <div class="text-muted">@L["{0} patients", Fmt.Number(Model.Rows.Count)] · @L["Medical Council number"]: <span dir="ltr">@Fmt.Number(Model.Doctor.MedicalCouncilNumber)</span></div>
+    </div>
+</div>
+
+@if (Model.ShowFile)
+{
+    var d = Model.Doctor;
+    var u = Model.DoctorUser;
+    <section class="card card-soft mb-4" id="file">
+        <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+                <h2 class="h5 mb-0"><i class="bi bi-person-vcard me-2 text-success"></i>@L["Doctor's sign-up file"]</h2>
+                @if (Model.FileLocked)
+                {
+                    <span class="badge bg-dark align-self-center"><i class="bi bi-shield-lock me-1"></i>@L["Site owner"]</span>
+                }
+                else
+                {
+                    <a class="btn btn-sm btn-success" asp-page="./Edit" asp-route-id="@d.Id"><i class="bi bi-pencil me-1"></i>@L["Edit doctor's file"]</a>
+                }
+            </div>
+            <dl class="profile-dl mb-3">
+                <div><dt>@L["National code"]</dt><dd dir="ltr">@(d.NationalCode is { } nc ? Fmt.Number(nc) : "-")</dd></div>
+                <div><dt>@L["Medical Council number"]</dt><dd dir="ltr">@Fmt.Number(d.MedicalCouncilNumber)</dd></div>
+                <div><dt>@L["Specialty"]</dt><dd>@((english ? d.SpecialtyEn : d.SpecialtyFa) ?? "-")</dd></div>
+                <div><dt>@L["Mobile number"]</dt><dd dir="ltr">@(u.PhoneNumber is { } ph ? Fmt.Number(ph) : "-")</dd></div>
+                <div><dt>@L["Email"]</dt><dd dir="ltr" class="text-break">@u.Email</dd></div>
+                <div><dt>@L["Sign-up date"]</dt><dd>@Fmt.Date(d.RequestedUtc ?? u.CreatedUtc)</dd></div>
+                <div><dt>@L["Status"]</dt><dd>@(d.IsApproved ? L["Approved"] : L["Waiting for approval"])@(u.IsActive ? "" : " · " + L["Inactive"])</dd></div>
+            </dl>
+            <h3 class="h6">@L["Documents"]</h3>
+            @if (d.Documents.Count == 0)
+            {
+                <p class="text-muted small mb-0">@L["No documents were uploaded."]</p>
+            }
+            <div class="doc-grid">
+                @foreach (var doc in d.Documents.OrderBy(x => x.Kind).ThenBy(x => x.UploadedUtc))
+                {
+                    <a class="doc-tile" href="@Url.Page("/Admin/DoctorRequests", "Document", new { id = doc.Id })" target="_blank" rel="noopener">
+                        @if (doc.IsImage)
+                        {
+                            <img src="@Url.Page("/Admin/DoctorRequests", "Document", new { id = doc.Id })" alt="" loading="lazy" />
+                        }
+                        else
+                        {
+                            <span class="doc-icon"><i class="bi bi-file-earmark-pdf"></i></span>
+                        }
+                        <span class="doc-name">@L[Clinic.Web.Pages.Admin.DoctorRequestsModel.KindName(doc.Kind)]</span>
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<section class="card card-soft mb-4" id="upcoming">
+    <div class="card-body">
+        <h2 class="h5 mb-3"><i class="bi bi-calendar-week me-2 text-success"></i>@L["Upcoming appointments"] <span class="badge rounded-pill text-bg-light border">@Fmt.Number(Model.Upcoming.Count)</span></h2>
+        @if (Model.Upcoming.Count == 0)
+        {
+            <p class="text-muted mb-0">@L["This doctor has no upcoming appointments."]</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                    <thead><tr><th>@L["Date"]</th><th>@L["Time"]</th><th>@L["Patient"]</th><th>@L["Service"]</th><th>@L["Status"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var a in Model.Upcoming)
+                        {
+                            <tr>
+                                <td class="text-nowrap">@Fmt.Date(a.StartUtc)</td>
+                                <td class="text-nowrap">@Fmt.Time(a.StartUtc)</td>
+                                <td>
+                                    @if (Model.Openable.Contains(a.PatientUserId))
+                                    {
+                                        <a asp-page="/Admin/Patients/Details" asp-route-id="@a.PatientUserId">@Model.UpcomingPatients.GetValueOrDefault(a.PatientUserId, "-")</a>
+                                    }
+                                    else
+                                    {
+                                        @Model.UpcomingPatients.GetValueOrDefault(a.PatientUserId, "-")
+                                    }
+                                </td>
+                                <td>@a.Service?.Name(english)</td>
+                                <td><partial name="_StatusBadge" model="a.Status" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</section>
+
+<h2 class="h5 mb-3"><i class="bi bi-people me-2 text-success"></i>@L["Patients"]</h2>
+@if (Model.Rows.Count == 0)
+{
+    <p class="text-muted">@L["This doctor has no patients yet."]</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover bg-white align-middle">
+            <thead>
+                <tr>
+                    <th>@L["Name"]</th>
+                    <th>@L["Mobile number"]</th>
+                    <th>@L["Treatment sessions"]</th>
+                    <th>@L["Last visit"]</th>
+                    <th>@L["Next appointment"]</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.Rows)
+                {
+                    <tr>
+                        <td><a class="fw-semibold" asp-page="/Admin/Patients/Details" asp-route-id="@r.Id">@r.FullName</a></td>
+                        <td dir="ltr" class="text-nowrap">@(r.Phone is { } ph ? Fmt.Number(ph) : "-")</td>
+                        <td>@Fmt.Number(r.Sessions)</td>
+                        <td class="text-nowrap">@(r.LastUtc is DateTime last ? Fmt.Date(last) : "-")</td>
+                        <td class="text-nowrap">@(r.NextUtc is DateTime next ? Fmt.DateTime(next) : "-")</td>
+                        <td class="text-nowrap text-end">
+                            @if (Model.CanOpenRecords)
+                            {
+                                <a class="btn btn-sm btn-outline-success" asp-page="/Admin/Records/Index" asp-route-patientId="@r.Id"><i class="bi bi-folder2-open me-1"></i>@L["Medical record"]</a>
+                            }
+                            @if (Model.CanSeeSummary)
+                            {
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="/Admin/Patients/Summary" asp-route-id="@r.Id"><i class="bi bi-journal-medical me-1"></i>@L["Case summary"]</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

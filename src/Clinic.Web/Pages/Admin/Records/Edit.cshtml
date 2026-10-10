@@ -1,0 +1,244 @@
+@page
+@using Clinic.Domain.Entities
+@using Clinic.Web.Clinical
+@model Clinic.Web.Pages.Admin.Records.EditModel
+@{
+    var title = Model.IsNew ? L["Create medical record"].Value : L["Edit medical record"].Value;
+    ViewData["Title"] = title;
+    var header = new Clinic.Web.Pages.Admin.Records.RecordHeader(Model.Patient, title, "record");
+    var i = Model.Input;
+    var english = CulturePath.IsEnglish;
+    var female = Model.Profile?.Gender != Gender.Male;
+}
+
+<partial name="_RecordHeader" model="header" />
+
+<form method="post" asp-route-patientId="@Model.Patient.Id" class="record-form intake-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <section class="intake-section">
+        <h2><span class="intake-no">@Fmt.Number(1)</span>@L["Personal and contact details"]</h2>
+        <p class="small text-muted mb-2">@L["Entered at the front desk. The receptionist can change these from the patient's page."]</p>
+        <partial name="/Pages/Admin/Patients/_ProfileSummary.cshtml" model="new Clinic.Web.Pages.Admin.Patients.ProfileSummary(Model.Patient, Model.Profile)" />
+    </section>
+
+    <section class="intake-section">
+        <h2><span class="intake-no">@Fmt.Number(2)</span>@L["Reason for the visit and treatment goals"]</h2>
+        <div class="row g-3">
+            <div class="col-md-8">
+                <label asp-for="Input.ChiefComplaint" class="form-label"></label>
+                <textarea asp-for="Input.ChiefComplaint" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Input.ProblemDuration" class="form-label"></label>
+                <input asp-for="Input.ProblemDuration" class="form-control" placeholder="@L["e.g. 2 years"]" />
+            </div>
+            <div class="col-12">
+                <div class="form-label">@L["Goals of the visit"]</div>
+                <partial name="_CheckGroup" model='CheckGroup.Flags("Input.Goals", CheckGroup.Combine(i.Goals))' />
+                <input asp-for="Input.GoalsNotes" class="form-control mt-2" placeholder="@L["Other goals"]" aria-label="@L["Other goals"]" />
+            </div>
+        </div>
+    </section>
+
+    <section class="intake-section">
+        <h2><span class="intake-no">@Fmt.Number(3)</span>@L["Medical history, medications and allergies"]</h2>
+        <div class="form-label">@L["Conditions"]</div>
+        <partial name="_CheckGroup" model='CheckGroup.Flags("Input.Conditions", CheckGroup.Combine(i.Conditions))' />
+        <input asp-for="Input.OtherConditions" class="form-control mt-2" placeholder="@L["Other conditions"]" aria-label="@L["Other conditions"]" />
+        <div class="row g-3 mt-1">
+            <div class="col-md-6">
+                <label asp-for="Input.Medications" class="form-label"></label>
+                <textarea asp-for="Input.Medications" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Input.Surgeries" class="form-label"></label>
+                <textarea asp-for="Input.Surgeries" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="col-md-6">
+                <div class="form-label text-danger">@L["Drug allergy"]</div>
+                <partial name="_CheckGroup" model='CheckGroup.HasAllergy("Input.HasDrugAllergy", i.HasDrugAllergy)' />
+                <input asp-for="Input.DrugAllergies" class="form-control mt-2" placeholder="@L["Drug or substance"]" aria-label="@L["Drug or substance"]" />
+            </div>
+            <div class="col-md-6">
+                <div class="form-label text-danger">@L["Non-drug allergy"]</div>
+                <partial name="_CheckGroup" model='CheckGroup.HasAllergy("Input.HasOtherAllergy", i.HasOtherAllergy)' />
+                <input asp-for="Input.OtherAllergies" class="form-control mt-2" placeholder="@L["Substance"]" aria-label="@L["Substance"]" />
+            </div>
+        </div>
+    </section>
+
+    <section class="intake-section">
+        <h2><span class="intake-no">@Fmt.Number(4)</span>@L["General state of the body"]</h2>
+        <div class="row g-3">
+            <div class="col-md-6 col-xl-4">
+                <div class="form-label">@L["Sleep"]</div>
+                <partial name="_CheckGroup" model='CheckGroup.One("Input.Sleep", i.Sleep)' />
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="form-label">@L["Appetite"]</div>
+                <partial name="_CheckGroup" model='CheckGroup.One("Input.Appetite", i.Appetite)' />
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="form-label">@L["Energy level"]</div>
+                <partial name="_CheckGroup" model='CheckGroup.One("Input.Energy", i.Energy)' />
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="form-label">@L["Craving for sweet, salty or sour"]</div>
+                <partial name="_CheckGroup" model='CheckGroup.Flags("Input.Cravings", CheckGroup.Combine(i.Cravings))' />
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="form-label">@L["Digestion"]</div>
+                <partial name="_CheckGroup" model='CheckGroup.Flags("Input.Digestion", CheckGroup.Combine(i.Digestion))' />
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="form-label">@L["Mood"]</div>
+                <partial name="_CheckGroup" model='CheckGroup.Flags("Input.Mood", CheckGroup.Combine(i.Mood))' />
+            </div>
+            @if (female)
+            {
+                <div class="col-md-8">
+                    <div class="form-label">@L["Menstrual cycle (women)"]</div>
+                    <partial name="_CheckGroup" model='CheckGroup.Flags("Input.Menstrual", CheckGroup.Combine(i.Menstrual))' />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Input.LastMenstrualPeriod" class="form-label"></label>
+                    <input asp-for="Input.LastMenstrualPeriod" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
+                    <span asp-validation-for="Input.LastMenstrualPeriod" class="text-danger small"></span>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section class="intake-section">
+        <h2><span class="intake-no">@Fmt.Number(5)</span>@L["Measurements and body indices"]</h2>
+        <div class="row g-3" id="measurements" data-age="@Model.Age" data-gender="@Model.Profile?.Gender">
+            @foreach (var (name, value) in new (string, double?)[]
+            {
+                ("WeightKg", i.WeightKg), ("WeightAfterKg", i.WeightAfterKg), ("HeightCm", i.HeightCm),
+                ("WaistCm", i.WaistCm), ("HipCm", i.HipCm), ("ThighCm", i.ThighCm), ("ArmCm", i.ArmCm),
+            })
+            {
+                <div class="col-6 col-md-3">
+                    <label for="Input_@name" class="form-label">@Html.DisplayName("Input." + name)</label>
+                    <input id="Input_@name" name="Input.@name" type="text" inputmode="decimal" value="@NumberBinder.Format(value)" class="form-control" dir="ltr" />
+                    @Html.ValidationMessage("Input." + name, null, new { @class = "text-danger small" })
+                </div>
+            }
+            <div class="col-6 col-md-3">
+                <div class="form-label">@L["BMI"] · @L["BMR"]</div>
+                <div class="index-box"><strong id="bmi">-</strong> · <strong id="bmr">-</strong> <span class="small text-muted">@L["kcal/day"]</span></div>
+                @if (Model.Age is null || Model.Profile?.Gender is null)
+                {
+                    <div class="form-text">@L["BMR needs the birth date and gender from the personal details."]</div>
+                }
+            </div>
+            <div class="col-12">
+                <label asp-for="Input.ObservedChanges" class="form-label"></label>
+                <textarea asp-for="Input.ObservedChanges" class="form-control" rows="2"></textarea>
+            </div>
+        </div>
+    </section>
+
+    <section class="intake-section">
+        <h2><span class="intake-no">@Fmt.Number(6)</span>@L["Acupuncture diagnosis (TCM)"]</h2>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="form-label">@L["Pulse"]</div>
+                <partial name="_CheckGroup" model='CheckGroup.Flags("Input.Pulse", CheckGroup.Combine(i.Pulse))' />
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Input.TongueColor" class="form-label"></label>
+                <input asp-for="Input.TongueColor" class="form-control" />
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Input.TongueCoating" class="form-label"></label>
+                <input asp-for="Input.TongueCoating" class="form-control" />
+            </div>
+            <div class="col-12">
+                <label asp-for="Input.TcmPattern" class="form-label"></label>
+                <textarea asp-for="Input.TcmPattern" class="form-control" rows="2" placeholder="Qi / Yin-Yang / Damp / Heat / Liver Qi Stagnation ..."></textarea>
+            </div>
+            <div class="col-md-8">
+                <label asp-for="Input.Diagnosis" class="form-label"></label>
+                <textarea asp-for="Input.Diagnosis" class="form-control" rows="2"></textarea>
+                <div class="form-text"><i class="bi bi-lock me-1"></i>@L["Stored encrypted."]</div>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Input.Icd10" class="form-label"></label>
+                <input asp-for="Input.Icd10" class="form-control" dir="ltr" list="icd10-list" autocomplete="off" data-fill-empty="#Input_Diagnosis" />
+                <div class="form-text">@L["Type a word of the diagnosis (for example obesity or migraine) or the code, and pick from the list."]</div>
+                <datalist id="icd10-list">
+                    @foreach (var c in Clinic.Application.Clinical.Icd10Catalog.All)
+                    {
+                        <option value="@c.Code" data-name="@(english ? c.En : c.Fa)">@c.Code - @c.Fa - @c.En</option>
+                    }
+                </datalist>
+            </div>
+        </div>
+    </section>
+
+    <section class="intake-section">
+        <h2><span class="intake-no">@Fmt.Number(7)</span>@L["Treatment plan"]</h2>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="Input.ShortTermGoals" class="form-label"></label>
+                <textarea asp-for="Input.ShortTermGoals" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Input.LongTermGoals" class="form-label"></label>
+                <textarea asp-for="Input.LongTermGoals" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="col-md-6">
+                <div class="form-label">@L["Treatment areas"]</div>
+                <partial name="_CheckGroup" model='CheckGroup.Flags("Input.Areas", CheckGroup.Combine(i.Areas))' />
+                <input asp-for="Input.OtherAreas" class="form-control mt-2" placeholder="@L["Other areas"]" aria-label="@L["Other areas"]" />
+            </div>
+            <div class="col-md-6">
+                <div class="form-label">@L["Treatment method"]</div>
+                <partial name="_CheckGroup" model='CheckGroup.Flags("Input.Methods", CheckGroup.Combine(i.Methods))' />
+            </div>
+            <div class="col-6 col-md-3">
+                <label asp-for="Input.PlannedSessions" class="form-label"></label>
+                <input asp-for="Input.PlannedSessions" type="text" inputmode="numeric" value="@i.PlannedSessions" class="form-control" dir="ltr" />
+                <span asp-validation-for="Input.PlannedSessions" class="text-danger small"></span>
+            </div>
+            <div class="col-6 col-md-3">
+                <label asp-for="Input.SessionInterval" class="form-label"></label>
+                <input asp-for="Input.SessionInterval" class="form-control" placeholder="@L["e.g. weekly"]" />
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Input.AfterCareAdvice" class="form-label"></label>
+                <textarea asp-for="Input.AfterCareAdvice" class="form-control" rows="2"></textarea>
+            </div>
+        </div>
+    </section>
+
+    <section class="intake-section">
+        <h2><span class="intake-no">@Fmt.Number(8)</span>@L["Treatment sessions"]</h2>
+        <p class="mb-0 small text-muted">@L["Each session (date, weight, signs and the points used) is recorded on its own page from the New session tab."]</p>
+    </section>
+
+    <section class="intake-section">
+        <h2><span class="intake-no">@Fmt.Number(9)</span>@L["Patient consent"]</h2>
+        <p class="consent-text">@L["I, {0}, fully informed about acupuncture and embedding treatment and aware that temporary bruising or pain may occur, consent to the treatment.", Model.Patient.FullName]</p>
+        <div class="form-check">
+            <input asp-for="Input.ConsentSigned" class="form-check-input" />
+            <label asp-for="Input.ConsentSigned" class="form-check-label"></label>
+        </div>
+    </section>
+
+    <section class="intake-section">
+        <h2><span class="intake-no">@Fmt.Number(10)</span>@L["Doctor's notes"]</h2>
+        <textarea asp-for="Input.DoctorNotes" class="form-control" rows="5" aria-label="@L["Doctor's notes"]"></textarea>
+    </section>
+
+    <div class="sticky-actions">
+        <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-check-lg me-1"></i>@L["Save"]</button>
+        <a class="btn btn-light btn-lg" asp-page="./Index" asp-route-patientId="@Model.Patient.Id">@L["Cancel"]</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script src="~/js/record.js" asp-append-version="true"></script>
+}

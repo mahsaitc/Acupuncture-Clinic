@@ -1,10 +1,13 @@
 @page
 @model IndexModel
+@using Clinic.Web.Branding
 @{
     ViewData["Title"] = L["Home"];
     ViewData["FullWidth"] = true;
     var english = CulturePath.IsEnglish;
     var site = Model.Content;
+    var brand = Brand.From(site, english, L);
+    ViewData["JsonLd"] = new object[] { Clinic.Web.Seo.StructuredData.Clinic(HttpContext, site, brand, english, Model.Services.Select(s => s.Name(english)), Model.Doctors) };
     const string BlogPostPage = "/Blog/Post";
     string[] icons = ["bi-flower1", "bi-heart-pulse", "bi-clipboard2-pulse", "bi-droplet", "bi-activity", "bi-leaf"];
 }
@@ -22,7 +25,7 @@
     }
     <div class="container">
         <div class="hero-content">
-            <span class="hero-eyebrow"><i class="bi bi-stars" aria-hidden="true"></i>@L["Acupuncture and integrative medicine clinic"]</span>
+            <span class="hero-eyebrow"><i class="bi bi-stars" aria-hidden="true"></i>@brand.Eyebrow</span>
             <h1>@site.HeroTitle(english)</h1>
             <p class="lead mb-4">@site.HeroSubtitle(english)</p>
             <div class="d-flex flex-wrap gap-3">
@@ -87,6 +90,11 @@
     </div>
 </section>
 
+@if (Model.Results is { Show: true, Highlights.Count: > 0 } why)
+{
+    <partial name="_HomeHighlights" model="why" />
+}
+
 <section class="section steps">
     <div class="container">
         <div class="section-title">
@@ -112,6 +120,16 @@
         </div>
     </div>
 </section>
+
+@if (Model.Results is { Show: true } results && (results.Tiles.Count > 0 || results.Charts.Count > 0))
+{
+    <partial name="_HomeResults" model="results" />
+}
+
+@if (Model.Results is { Show: true, Testimonials.Count: > 0 } said)
+{
+    <partial name="_HomeTestimonials" model="said" />
+}
 
 @if (Model.LatestPosts.Count > 0)
 {

@@ -16,24 +16,36 @@
 
 <div class="row g-4">
     <div class="col-lg-4">
-        <div class="card card-soft">
-            <div class="card-body">
-                <h2 class="h6 text-muted mb-3">@L["Contact"]</h2>
-                <dl class="mb-0">
-                    <dt>@L["Mobile number"]</dt>
-                    <dd dir="ltr" class="text-start"><a href="tel:@p.PhoneNumber">@p.PhoneNumber</a></dd>
-                    <dt>@L["Email"]</dt>
-                    <dd dir="ltr" class="text-start"><a href="mailto:@p.Email">@p.Email</a></dd>
-                    <dt>@L["Registered on"]</dt>
-                    <dd>@Fmt.Date(p.CreatedUtc)</dd>
-                    <dt>@L["Status"]</dt>
-                    <dd>@(p.IsActive ? L["Active"] : L["Deactivated"])</dd>
-                </dl>
+        <partial name="_ProfileSummary" model="new Clinic.Web.Pages.Admin.Patients.ProfileSummary(Model.Patient, Model.Profile)" />
+        <div class="small text-muted mb-3">@L["Registered on"] @Fmt.Date(p.CreatedUtc) · @(p.IsActive ? L["Active"] : L["Deactivated"])</div>
+        @if (User.IsInRole(Roles.Doctor))
+        {
+            <div class="card card-soft record-cta">
+                <div class="card-body">
+                    <h2 class="h6 text-muted mb-3">@L["Medical record"]</h2>
+                    @if (Model.Clinical is { } c)
+                    {
+                        <div class="d-flex gap-3 small mb-3">
+                            <span><strong>@Fmt.Number(c.Sessions)</strong> @L["sessions"]</span>
+                            <span><strong>@Fmt.Number(c.Files)</strong> @L["files"]</span>
+                            @if (c.LastSessionUtc is DateTime last) { <span>@L["Last session"]: @Fmt.Date(last)</span> }
+                        </div>
+                    }
+                    <div class="d-grid gap-2">
+                        <a class="btn btn-success" asp-page="/Admin/Records/Index" asp-route-patientId="@p.Id"><i class="bi bi-clipboard2-pulse me-1"></i>@L["Open medical record"]</a>
+                        <a class="btn btn-outline-success" asp-page="/Admin/Records/Session" asp-route-patientId="@p.Id"><i class="bi bi-plus-lg me-1"></i>@L["New session"]</a>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="alert alert-light border mt-3 small mb-0">
-            <i class="bi bi-info-circle me-1"></i>@L["The medical record, acupuncture points and images come in the next phase."]
-        </div>
+        }
+        @if (Model.CanSeeSummary)
+        {
+            <a class="btn btn-outline-success w-100 mt-3" asp-page="./Summary" asp-route-id="@p.Id"><i class="bi bi-journal-medical me-1"></i>@L["Case summary"]</a>
+        }
+        @if (User.IsInRole(Roles.Admin))
+        {
+            <a class="small d-inline-block mt-3" asp-page="/Admin/Audit" asp-route-patientId="@p.Id"><i class="bi bi-shield-check me-1"></i>@L["Access log for this patient"]</a>
+        }
     </div>
     <div class="col-lg-8">
         <div class="card card-soft mb-4">
@@ -50,14 +62,61 @@
                         {
                             <li class="d-flex justify-content-between align-items-center border-bottom pb-2">
                                 <div>
-                                    <div>@a.Service?.Name(english)</div>
+                                    <div>@a.Service?.Name(english) <span class="text-muted">·</span> <i class="bi bi-person-badge text-success"></i> @Model.DoctorNames.GetValueOrDefault(a.DoctorProfileId)</div>
                                     <div class="small text-muted">@Fmt.DateTime(a.StartUtc)</div>
-                                    @if (a.PatientNote is not null) { <div class="small fst-italic">@a.PatientNote</div> }
+                                    @if (Model.ShowNotes && a.PatientNote is not null) { <div class="small fst-italic">@a.PatientNote</div> }
                                 </div>
                                 <partial name="_StatusBadge" model="a.Status" />
                             </li>
                         }
                     </ul>
+                }
+            </div>
+        </div>
+        <div class="card card-soft mb-4" id="visits">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                    <h2 class="h5 mb-0">@L["Visits"] <span class="text-muted small">(@Fmt.Number(Model.Visits.Count))</span></h2>
+                    <a class="btn btn-sm btn-outline-secondary" asp-page="/Admin/Reports/Index" asp-route-Period="Range" asp-route-Patient="@p.Id"
+                       asp-route-From="@DisplayFormat.DateInput(Model.VisitsFrom)" asp-route-To="@DisplayFormat.DateInput(Model.VisitsTo)"><i class="bi bi-printer me-1"></i>@L["Print"]</a>
+                </div>
+                <form method="get" action="#visits" class="row g-2 align-items-end mb-3">
+                    <input type="hidden" name="id" value="@p.Id" />
+                    <div class="col-sm-5">
+                        <label class="form-label small" for="From">@L["From"]</label>
+                        <input class="form-control form-control-sm" id="From" name="From" value="@Model.From" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
+                    </div>
+                    <div class="col-sm-5">
+                        <label class="form-label small" for="To">@L["To"]</label>
+                        <input class="form-control form-control-sm" id="To" name="To" value="@Model.To" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
+                    </div>
+                    <div class="col-sm-2 d-grid">
+                        <button class="btn btn-sm btn-success"><i class="bi bi-search"></i></button>
+                    </div>
+                </form>
+                @if (Model.Visits.Count == 0)
+                {
+                    <p class="text-muted mb-0">@L["No visits in this period."]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead><tr><th>@L["Date"]</th><th>@L["Time"]</th><th>@L["Doctor"]</th><th>@L["Service"]</th><th>@L["Treatment"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var v in Model.Visits)
+                                {
+                                    <tr>
+                                        <td class="text-nowrap">@Fmt.Day(v.Day)</td>
+                                        <td>@Fmt.Time(v.Utc)</td>
+                                        <td class="text-nowrap">@(v.DoctorProfileId is int d ? Model.DoctorNames.GetValueOrDefault(d, "-") : "-")</td>
+                                        <td>@(v.Service(english) ?? "-")</td>
+                                        <td>@(v.Treatment is { } t ? L[t.ToString()] : "-")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 }
             </div>
         </div>

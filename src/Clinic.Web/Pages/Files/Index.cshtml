@@ -1,0 +1,77 @@
+@page
+@using Clinic.Domain.Entities
+@model Clinic.Web.Pages.Files.IndexModel
+@{
+    ViewData["Title"] = L["My files"];
+}
+
+<div class="mb-4">
+    <h1 class="h3 mb-1">@L["My files"]</h1>
+    <p class="text-muted mb-0">@L["Your test results and images, kept private between you and your doctor."]</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <form method="post" enctype="multipart/form-data" class="card card-soft">
+            <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-cloud-arrow-up me-2 text-success"></i>@L["Send a result to the doctor"]</h2>
+                <div asp-validation-summary="All" class="text-danger small mb-2"></div>
+                <div class="mb-3">
+                    <input class="form-control" type="file" name="file" accept="@Clinic.Web.Clinical.PrivateFileStore.Accept" data-max-bytes="@Clinic.Web.Clinical.PrivateFileStore.MaxBytes" data-max-bytes-msg="@L["The file is larger than 200 KB. Please choose a smaller file or reduce its size first."]" required />
+                    <div class="form-text">@L["JPG, PNG, WebP, PDF or DICOM, at most 200 KB."]</div>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Upload.Category" class="form-label"></label>
+                    <select asp-for="Upload.Category" class="form-select">
+                        @foreach (var c in Clinic.Web.Pages.Files.IndexModel.PatientCategories)
+                        {
+                            <option value="@c">@L[c.ToString()]</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Upload.Title" class="form-label"></label>
+                    <input asp-for="Upload.Title" class="form-control" placeholder="@L["e.g. Blood test"]" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Upload.TakenOn" class="form-label"></label>
+                    <input asp-for="Upload.TakenOn" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Upload.Note" class="form-label"></label>
+                    <textarea asp-for="Upload.Note" class="form-control" rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success w-100"><i class="bi bi-upload me-1"></i>@L["Upload"]</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-8">
+        @if (Model.Files.Count == 0)
+        {
+            <div class="card card-soft"><div class="card-body text-muted">@L["No files yet."]</div></div>
+        }
+        else
+        {
+            <div class="file-grid">
+                @foreach (var f in Model.Files)
+                {
+                    <a class="file-card text-reset text-decoration-none" asp-page-handler="Open" asp-route-id="@f.Id" target="_blank">
+                        <div class="file-preview">
+                            <i class="bi @(f.IsImage ? "bi-file-earmark-image" : f.ContentType == "application/pdf" ? "bi-file-earmark-pdf" : "bi-file-earmark-medical")"></i>
+                        </div>
+                        <div class="file-body">
+                            <div class="d-flex justify-content-between gap-2">
+                                <strong class="text-truncate">@f.Title</strong>
+                                <span class="badge text-bg-light border">@L[f.Category.ToString()]</span>
+                            </div>
+                            <div class="small text-muted">
+                                @(f.TakenOn is DateOnly d ? Fmt.Day(d) : Fmt.Date(f.UploadedUtc))
+                                · @(f.UploadedByUserId == f.PatientUserId ? L["Sent by you"] : L["From the clinic"])
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>

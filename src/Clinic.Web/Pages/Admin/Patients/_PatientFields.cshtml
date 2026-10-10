@@ -1,0 +1,178 @@
+@using Clinic.Domain.Entities
+@model Clinic.Web.Pages.Admin.Patients.PatientInput
+@inject Clinic.Web.Clinical.StaffScope Scope
+@{
+    var doctors = await Scope.DoctorsAsync();
+}
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div class="row g-4">
+    <div class="col-xl-6">
+        <section class="card card-soft mb-4">
+            <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-person-vcard me-2 text-success"></i>@L["Personal details"]</h2>
+                <div class="row g-3">
+                    <div class="col-sm-8">
+                        <label asp-for="FullName" class="form-label"></label>
+                        <input asp-for="FullName" class="form-control" autocomplete="off" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label asp-for="Gender" class="form-label"></label>
+                        <select asp-for="Gender" class="form-select">
+                            <option value="">-</option>
+                            @foreach (var g in Enum.GetValues<Gender>()) { <option value="@g">@L[g.ToString()]</option> }
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="NationalCode" class="form-label"></label>
+                        <input asp-for="NationalCode" class="form-control" dir="ltr" inputmode="numeric" maxlength="10" autocomplete="off" />
+                        <span asp-validation-for="NationalCode" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="BirthDate" class="form-label"></label>
+                        <input asp-for="BirthDate" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
+                        <span asp-validation-for="BirthDate" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="FatherName" class="form-label"></label>
+                        <input asp-for="FatherName" class="form-control" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="MaritalStatus" class="form-label"></label>
+                        <select asp-for="MaritalStatus" class="form-select">
+                            <option value="">-</option>
+                            @foreach (var m in Enum.GetValues<MaritalStatus>()) { <option value="@m">@L[m.ToString()]</option> }
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="Children" class="form-label"></label>
+                        <input asp-for="Children" type="text" inputmode="numeric" value="@Model.Children" class="form-control" dir="ltr" />
+                        <span asp-validation-for="Children" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="Occupation" class="form-label"></label>
+                        <select asp-for="Occupation" class="form-select">
+                            <option value="">-</option>
+                            @foreach (var o in Clinic.Web.Pages.Admin.Patients.PatientInput.Occupations) { <option value="@o">@L[o]</option> }
+                            @if (Model.Occupation is { } oldJob && !Clinic.Web.Pages.Admin.Patients.PatientInput.Occupations.Contains(oldJob)) { <option value="@oldJob">@oldJob</option> }
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="Education" class="form-label"></label>
+                        <select asp-for="Education" class="form-select">
+                            <option value="">-</option>
+                            @foreach (var o in Clinic.Web.Pages.Admin.Patients.PatientInput.EducationLevels) { <option value="@o">@L[o]</option> }
+                            @if (Model.Education is { } oldEdu && !Clinic.Web.Pages.Admin.Patients.PatientInput.EducationLevels.Contains(oldEdu)) { <option value="@oldEdu">@oldEdu</option> }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="card card-soft mb-4">
+            <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-people me-2 text-success"></i>@L["Referral and insurance"]</h2>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label asp-for="FirstVisitDate" class="form-label"></label>
+                        <input asp-for="FirstVisitDate" class="form-control" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
+                        <span asp-validation-for="FirstVisitDate" class="text-danger small"></span>
+                    </div>
+                    @if (doctors.Count > 0)
+                    {
+                        <div class="col-sm-6">
+                            <label asp-for="DoctorId" class="form-label"></label>
+                            <select asp-for="DoctorId" class="form-select">
+                                <option value="">-</option>
+                                @foreach (var d in doctors) { <option value="@d.Id">@d.Name</option> }
+                            </select>
+                        </div>
+                    }
+                    <div class="col-sm-6">
+                        <label asp-for="Referral" class="form-label"></label>
+                        <select asp-for="Referral" class="form-select">
+                            <option value="">-</option>
+                            @foreach (var r in Enum.GetValues<ReferralChannel>()) { <option value="@r">@L[r.ToString()]</option> }
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="ReferralSource" class="form-label"></label>
+                        <input asp-for="ReferralSource" class="form-control" placeholder="@L["e.g. the friend's or doctor's name"]" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="Insurance" class="form-label"></label>
+                        <select asp-for="Insurance" class="form-select">
+                            <option value="">-</option>
+                            @foreach (var i in Clinic.Web.Pages.Admin.Patients.PatientInput.InsuranceOrder) { <option value="@i">@L[Clinic.Web.Pages.Admin.Patients.PatientInput.InsuranceName(i)]</option> }
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="HasSupplementaryInsurance" class="form-label"></label>
+                        <select asp-for="HasSupplementaryInsurance" class="form-select">
+                            <option value="">-</option>
+                            <option value="true">@L["Has it"]</option>
+                            <option value="false">@L["Does not have it"]</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Notes" class="form-label"></label>
+                        <textarea asp-for="Notes" class="form-control" rows="2" placeholder="@L["e.g. prefers afternoon appointments"]"></textarea>
+                        <div class="form-text">@L["Do not write medical information here; it belongs in the medical record."]</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="col-xl-6">
+        <section class="card card-soft mb-4">
+            <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-telephone me-2 text-success"></i>@L["Contact"]</h2>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label asp-for="Mobile" class="form-label"></label>
+                        <input asp-for="Mobile" class="form-control" dir="ltr" inputmode="tel" maxlength="11" autocomplete="off" placeholder="09121234567" />
+                        <span asp-validation-for="Mobile" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="LandlinePhone" class="form-label"></label>
+                        <input asp-for="LandlinePhone" class="form-control" dir="ltr" inputmode="tel" maxlength="11" />
+                        <span asp-validation-for="LandlinePhone" class="text-danger small"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" dir="ltr" autocomplete="off" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label asp-for="City" class="form-label"></label>
+                        <input asp-for="City" class="form-control" />
+                    </div>
+                    <div class="col-sm-8">
+                        <label asp-for="PostalCode" class="form-label"></label>
+                        <input asp-for="PostalCode" class="form-control" dir="ltr" inputmode="numeric" maxlength="10" />
+                        <span asp-validation-for="PostalCode" class="text-danger small"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Address" class="form-label"></label>
+                        <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="card card-soft mb-4">
+            <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-telephone-plus me-2 text-success"></i>@L["Emergency contact"]</h2>
+                <div class="row g-3">
+                    <div class="col-sm-7">
+                        <label asp-for="EmergencyContactName" class="form-label"></label>
+                        <input asp-for="EmergencyContactName" class="form-control" placeholder="@L["Name and relation"]" />
+                    </div>
+                    <div class="col-sm-5">
+                        <label asp-for="EmergencyContactPhone" class="form-label"></label>
+                        <input asp-for="EmergencyContactPhone" class="form-control" dir="ltr" inputmode="tel" maxlength="11" />
+                        <span asp-validation-for="EmergencyContactPhone" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

@@ -9,8 +9,9 @@
         <h1 class="h3">@L["Patients"]</h1>
         <div class="text-muted">@L["{0} patients", Fmt.Number(Model.Total)]</div>
     </div>
-    <form method="get" class="d-flex gap-2">
-        <input class="form-control" name="Q" value="@Model.Q" placeholder="@L["Search name, email or mobile"]" />
+    <form method="get" class="d-flex gap-2 flex-wrap">
+        <a class="btn btn-success text-nowrap" asp-page="./Create"><i class="bi bi-person-plus me-1"></i>@L["New patient"]</a>
+        <input class="form-control" name="Q" value="@Model.Q" placeholder="@L["Search name, mobile or national code"]" />
         <button class="btn btn-success"><i class="bi bi-search"></i></button>
     </form>
 </div>
@@ -20,7 +21,12 @@
         <thead>
             <tr>
                 <th>@L["Name"]</th>
+                <th>@L["National code"]</th>
                 <th>@L["Mobile number"]</th>
+                @if (Model.ShowDoctor)
+                {
+                    <th>@L["Treating doctor"]</th>
+                }
                 <th>@L["Completed visits"]</th>
                 <th>@L["Next appointment"]</th>
                 <th>@L["Registered on"]</th>
@@ -31,7 +37,25 @@
             {
                 <tr class="@(r.IsActive ? "" : "table-secondary")">
                     <td><a class="fw-semibold" asp-page="./Details" asp-route-id="@r.Id">@r.FullName</a><div class="small text-muted" dir="ltr">@r.Email</div></td>
+                    <td dir="ltr" class="text-nowrap">@(Model.NationalCodes.GetValueOrDefault(r.Id) is { Length: > 0 } code ? Fmt.Number(code) : "-")</td>
                     <td dir="ltr" class="text-nowrap">@r.Phone</td>
+                    @if (Model.ShowDoctor)
+                    {
+                        <td class="text-nowrap">
+                            @if (r.DoctorId is int d && Model.DoctorNames.TryGetValue(d, out var doctorName))
+                            {
+                                @doctorName
+                                @if (r.DoctorFromBooking)
+                                {
+                                    <div class="small text-muted">@L["From the latest appointment"]</div>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                    }
                     <td>@Fmt.Number(r.Visits)</td>
                     <td class="text-nowrap">@(r.NextUtc is DateTime next ? Fmt.DateTime(next) : "-")</td>
                     <td class="text-nowrap small">@Fmt.Date(r.CreatedUtc)</td>

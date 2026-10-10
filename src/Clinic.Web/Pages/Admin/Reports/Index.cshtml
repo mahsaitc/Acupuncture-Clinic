@@ -1,0 +1,156 @@
+@page
+@using Clinic.Web.Localization
+@model Clinic.Web.Pages.Admin.Reports.IndexModel
+@inject Clinic.Web.Media.SiteContentProvider SiteContent
+@{
+    var brand = await SiteContent.BrandAsync();
+    ViewData["Title"] = L["Visit reports"];
+    var english = CulturePath.IsEnglish;
+    var range = Model.RangeFrom == Model.RangeTo ? Fmt.Day(Model.RangeFrom) : $"{Fmt.Day(Model.RangeFrom)} - {Fmt.Day(Model.RangeTo)}";
+    var periodLabels = new Dictionary<string, string>
+    {
+        ["Day"] = L["Daily"], ["Week"] = L["Weekly"], ["Month"] = L["Monthly"], ["Year"] = L["Yearly"], ["Range"] = L["Date range"],
+    };
+}
+
+<div class="print-letterhead d-none d-print-flex">
+    <img src="@brand.LogoPath" alt="" width="52" height="60" />
+    <div>
+        <div class="fw-bold">@brand.Name</div>
+        <div>@L["Visit reports"]: @range</div>
+    </div>
+    <div class="ms-auto small">@L["Print date"]: @Fmt.Date(DateTime.UtcNow)</div>
+</div>
+
+<div class="page-head">
+    <div>
+        <h1 class="h3">@L["Visit reports"]</h1>
+        <div class="text-muted">@L["Daily, weekly, monthly or yearly visits, or one patient's visits by national code."]</div>
+    </div>
+    <button type="button" class="btn btn-outline-secondary d-print-none" data-print><i class="bi bi-printer me-1"></i>@L["Print"]</button>
+</div>
+
+<form method="get" class="card card-soft mb-4 d-print-none">
+    @if (!string.IsNullOrEmpty(Model.PatientFilter) && string.IsNullOrWhiteSpace(Model.NationalCode))
+    {
+        <input type="hidden" name="Patient" value="@Model.PatientFilter" />
+    }
+    <div class="card-body">
+        <div class="btn-group flex-wrap mb-3" role="group" aria-label="@L["Period"]">
+            @foreach (var p in Clinic.Web.Pages.Admin.Reports.IndexModel.PeriodNames)
+            {
+                <input type="radio" class="btn-check period-pick" name="Period" id="period-@p" value="@p" checked="@(Model.Period == p)" />
+                <label class="btn btn-outline-success" for="period-@p">@periodLabels[p]</label>
+            }
+        </div>
+        <div class="row g-3 align-items-end">
+            <div class="col-sm-6 col-lg-3" data-period-anchor>
+                <label class="form-label" for="Date">@L["Date"]</label>
+                <input class="form-control" id="Date" name="Date" value="@Model.Date" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
+            </div>
+            <div class="col-sm-6 col-lg-3" data-period-range>
+                <label class="form-label" for="From">@L["From"]</label>
+                <input class="form-control" id="From" name="From" value="@Model.From" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
+            </div>
+            <div class="col-sm-6 col-lg-3" data-period-range>
+                <label class="form-label" for="To">@L["To"]</label>
+                <input class="form-control" id="To" name="To" value="@Model.To" dir="ltr" placeholder="@DisplayFormat.DateInputHint" data-date autocomplete="off" />
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <label class="form-label" for="NationalCode">@L["Patient's national code (optional)"]</label>
+                <input class="form-control" id="NationalCode" name="NationalCode" value="@Model.NationalCode" dir="ltr" inputmode="numeric" maxlength="10" autocomplete="off" />
+            </div>
+            @if (Model.CanPickDoctor)
+            {
+                <div class="col-sm-6 col-lg-3">
+                    <label class="form-label" for="DoctorId">@L["Doctor"]</label>
+                    <select class="form-select" id="DoctorId" name="DoctorId">
+                        <option value="">@L["All doctors"]</option>
+                        @foreach (var d in Model.Doctors) { <option value="@d.Id" selected="@(Model.DoctorId == d.Id)">@d.Name</option> }
+                    </select>
+                </div>
+            }
+            <div class="col-sm-6 col-lg-3">
+                <button type="submit" class="btn btn-success w-100"><i class="bi bi-search me-1"></i>@L["Show report"]</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+@if (Model.Error is { } error)
+{
+    <div class="alert alert-warning">@error</div>
+}
+else
+{
+    <div class="mb-3">
+        <h2 class="h5 mb-1">
+            @if (Model.PatientName is { } name)
+            {
+                @L["Visits of {0}", name]<span class="text-muted fw-normal"> · @range</span>
+            }
+            else
+            {
+                @periodLabels[Model.Period]<span class="text-muted fw-normal"> · @range</span>
+            }
+        </h2>
+    </div>
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4"><div class="kpi"><div class="stat-icon"><i class="bi bi-calendar-check"></i></div><div><div class="kpi-value">@Fmt.Number(Model.Rows.Count)</div><div class="kpi-label">@L["Visits"]</div></div></div></div>
+        <div class="col-sm-4"><div class="kpi"><div class="stat-icon"><i class="bi bi-people"></i></div><div><div class="kpi-value">@Fmt.Number(Model.PatientCount)</div><div class="kpi-label">@L["Patients"]</div></div></div></div>
+        <div class="col-sm-4"><div class="kpi"><div class="stat-icon"><i class="bi bi-person-badge"></i></div><div class="small">@foreach (var d in Model.ByDoctor) { <div>@d.Doctor: <strong>@Fmt.Number(d.Count)</strong></div> }</div></div></div>
+    </div>
+
+    @if (Model.Rows.Count == 0)
+    {
+        <p class="text-muted">@L["No visits in this period."]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-sm table-hover bg-white align-middle report-table">
+                <thead>
+                    <tr>
+                        <th>#</th><th>@L["Date"]</th><th>@L["Time"]</th>
+                        @if (Model.PatientName is null) { <th>@L["Patient"]</th><th>@L["National code"]</th><th>@L["Mobile number"]</th> }
+                        <th>@L["Doctor"]</th><th>@L["Service"]</th><th>@L["Treatment"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.Rows.Count; i++)
+                    {
+                        var r = Model.Rows[i];
+                        <tr>
+                            <td>@Fmt.Number(i + 1)</td>
+                            <td class="text-nowrap">@Fmt.Day(r.Visit.Day)</td>
+                            <td>@Fmt.Time(r.Visit.Utc)</td>
+                            @if (Model.PatientName is null)
+                            {
+                                <td>@if (Model.Openable.Contains(r.Visit.PatientUserId)) { <a asp-page="/Admin/Patients/Details" asp-route-id="@r.Visit.PatientUserId">@r.Patient</a> } else { @r.Patient }</td>
+                                <td dir="ltr">@(r.NationalCode is { } nc ? Fmt.Number(nc) : "-")</td>
+                                <td dir="ltr" class="text-nowrap">@(r.Phone is { } ph ? Fmt.Number(ph) : "-")</td>
+                            }
+                            <td>@r.Doctor</td>
+                            <td>@(r.Visit.Service(english) ?? "-")</td>
+                            <td>@(r.Visit.Treatment is { } t ? L[t.ToString()] : "-")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+@section Scripts {
+    <script>
+        (() => {
+            const sync = () => {
+                const range = document.querySelector('.period-pick:checked')?.value === 'Range';
+                document.querySelectorAll('[data-period-range]').forEach(e => e.hidden = !range);
+                document.querySelectorAll('[data-period-anchor]').forEach(e => e.hidden = range);
+            };
+            document.querySelectorAll('.period-pick').forEach(r => r.addEventListener('change', sync));
+            sync();
+        })();
+    </script>
+}

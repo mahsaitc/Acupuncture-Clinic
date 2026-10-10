@@ -1,0 +1,21 @@
+@page
+@model Clinic.Web.Pages.Admin.Patients.EditModel
+@{
+    ViewData["Title"] = L["Edit patient details"];
+    var english = CulturePath.IsEnglish;
+}
+
+<div class="page-head">
+    <div>
+        <a class="small" asp-page="./Details" asp-route-id="@Model.Patient.Id"><i class="bi @(english ? "bi-arrow-left" : "bi-arrow-right") me-1"></i>@Model.Patient.FullName</a>
+        <h1 class="h3 mt-1">@L["Edit patient details"]</h1>
+    </div>
+</div>
+
+<form method="post" asp-route-id="@Model.Patient.Id">
+    <partial name="_PatientFields" for="Input" />
+    <div class="sticky-actions">
+        <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-check-lg me-1"></i>@L["Save"]</button>
+        <a class="btn btn-light btn-lg" asp-page="./Details" asp-route-id="@Model.Patient.Id">@L["Cancel"]</a>
+    </div>
+</form>

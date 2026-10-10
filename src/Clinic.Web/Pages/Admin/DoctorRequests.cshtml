@@ -1,0 +1,71 @@
+@page
+@using Clinic.Domain.Entities
+@model Clinic.Web.Pages.Admin.DoctorRequestsModel
+@{
+    ViewData["Title"] = L["Doctor requests"];
+    string Size(long bytes) => bytes >= 1024 * 1024 ? L["{0} MB", Fmt.Number((bytes / 1048576.0).ToString("0.0"))] : L["{0} KB", Fmt.Number(Math.Max(1, (bytes + 1023) / 1024).ToString())];
+}
+
+<div class="page-head">
+    <h1 class="h3">@L["Doctor requests"]</h1>
+    <a class="btn btn-outline-success" asp-page="./UserCreate"><i class="bi bi-person-plus me-1"></i>@L["New user"]</a>
+</div>
+<p class="text-muted">@L["Check each doctor's documents. After you approve, the doctor can sign in and their dashboard is active."]</p>
+
+@if (Model.Pending.Count == 0)
+{
+    <p class="text-muted">@L["No doctor is waiting for approval."]</p>
+}
+
+<div class="d-grid gap-4">
+    @foreach (var r in Model.Pending)
+    {
+        <section class="card card-soft" id="d@(r.Doctor.Id)">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+                    <div>
+                        <h2 class="h5 mb-1">@r.User.FullName @if (!r.User.IsActive) { <span class="badge bg-secondary align-middle">@L["Rejected earlier"]</span> }</h2>
+                        <div class="small text-muted">@L["Requested on {0}", Fmt.Date(r.Doctor.RequestedUtc ?? r.User.CreatedUtc)]</div>
+                    </div>
+                    <div class="d-flex gap-2 align-items-start">
+                        <form method="post" asp-page-handler="Approve" asp-route-id="@r.User.Id">
+                            <button type="submit" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>@L["Approve doctor"]</button>
+                        </form>
+                        <form method="post" asp-page-handler="Reject" asp-route-id="@r.User.Id" data-confirm="@L["Reject this request and delete the account with its documents? The doctor will have to sign up again."]">
+                            <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i>@L["Reject and delete"]</button>
+                        </form>
+                    </div>
+                </div>
+                <dl class="profile-dl mb-3">
+                    <div><dt>@L["National code"]</dt><dd dir="ltr">@(r.Doctor.NationalCode is { } nc ? Fmt.Number(nc) : "-")</dd></div>
+                    <div><dt>@L["Medical Council number"]</dt><dd dir="ltr">@Fmt.Number(r.Doctor.MedicalCouncilNumber)</dd></div>
+                    @if (r.Doctor.SpecialtyFa is { } sp) { <div><dt>@L["Specialty"]</dt><dd>@sp</dd></div> }
+                    <div><dt>@L["Mobile number"]</dt><dd dir="ltr"><a href="tel:@r.User.PhoneNumber">@r.User.PhoneNumber</a></dd></div>
+                    <div><dt>@L["Email"]</dt><dd dir="ltr" class="text-break">@r.User.Email</dd></div>
+                </dl>
+                <h3 class="h6">@L["Documents"]</h3>
+                @if (r.Doctor.Documents.Count == 0)
+                {
+                    <p class="text-danger small mb-0">@L["No documents were uploaded."]</p>
+                }
+                <div class="doc-grid">
+                    @foreach (var d in r.Doctor.Documents.OrderBy(d => d.Kind))
+                    {
+                        <a class="doc-tile" asp-page-handler="Document" asp-route-id="@d.Id" target="_blank" rel="noopener">
+                            @if (d.IsImage)
+                            {
+                                <img src="@Url.Page("./DoctorRequests", "Document", new { id = d.Id })" alt="" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span class="doc-icon"><i class="bi bi-file-earmark-pdf"></i></span>
+                            }
+                            <span class="doc-name">@L[Clinic.Web.Pages.Admin.DoctorRequestsModel.KindName(d.Kind)]</span>
+                            <span class="small text-muted">@Size(d.SizeBytes)</span>
+                        </a>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+</div>
