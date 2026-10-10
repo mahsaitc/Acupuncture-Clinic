@@ -24,7 +24,7 @@ public class AppointmentsModel(ClinicDbContext db, IBookingService booking, Clin
     [BindProperty(SupportsGet = true)]
     public string? Date { get; set; }
 
-    /// <summary>day, week or month.</summary>
+    /// <summary>day, week, month or upcoming (the next seven days).</summary>
     [BindProperty(SupportsGet = true)]
     public string? View { get; set; }
 
@@ -42,7 +42,7 @@ public class AppointmentsModel(ClinicDbContext db, IBookingService booking, Clin
     public List<Row> Rows { get; private set; } = [];
     public ILookup<DateOnly, Row> ByDay { get; private set; } = Enumerable.Empty<Row>().ToLookup(r => default(DateOnly));
 
-    public enum CalendarView { Day, Week, Month }
+    public enum CalendarView { Day, Week, Month, Upcoming }
 
     public record Row(int Id, DateTime StartUtc, string Patient, string? Phone, string Doctor, ClinicService? Service, AppointmentStatus Status, string? Note);
 
@@ -68,6 +68,10 @@ public class AppointmentsModel(ClinicDbContext db, IBookingService booking, Clin
                 From = WeekStart(MonthStart);
                 To = WeekStart(MonthEnd).AddDays(7);
                 break;
+            case CalendarView.Upcoming:
+                From = Day;
+                To = Day.AddDays(7);
+                break;
             default:
                 From = Day;
                 To = Day.AddDays(1);
@@ -90,11 +94,14 @@ public class AppointmentsModel(ClinicDbContext db, IBookingService booking, Clin
                 join doc in db.Doctors on a.DoctorProfileId equals doc.Id
                 join du in db.Users on doc.UserId equals du.Id
                 where a.StartUtc >= fromUtc && a.StartUtc < toUtc
+                where Mode != CalendarView.Upcoming || a.Status != AppointmentStatus.Cancelled
                 orderby a.StartUtc
                 select new Row(a.Id, a.StartUtc, p.FullName, p.PhoneNumber, du.FullName, a.Service, a.Status, a.PatientNote))
             .ToListAsync();
         ByDay = Rows.ToLookup(r => DateOnly.FromDateTime(clinicTime.ToLocal(r.StartUtc)));
     }
+
+    public DateTime LocalTime(DateTime utc) => clinicTime.ToLocal(utc);
 
     /// <summary>Weeks start on Saturday, as in Iran.</summary>
     public static DateOnly WeekStart(DateOnly day) => day.AddDays(-(((int)day.DayOfWeek + 1) % 7));
@@ -116,7 +123,7 @@ public class AppointmentsModel(ClinicDbContext db, IBookingService booking, Clin
     /// <summary>The same day in the previous or next day, week or month.</summary>
     public DateOnly Step(int direction) => Mode switch
     {
-        CalendarView.Week => Day.AddDays(7 * direction),
+        CalendarView.Week or CalendarView.Upcoming => Day.AddDays(7 * direction),
         CalendarView.Month => direction > 0 ? MonthEnd.AddDays(1) : MonthStart.AddDays(-1),
         _ => Day.AddDays(direction),
     };

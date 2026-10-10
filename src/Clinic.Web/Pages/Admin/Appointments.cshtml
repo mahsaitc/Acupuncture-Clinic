@@ -16,6 +16,7 @@
     {
         Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Week => $"{Fmt.Day(Model.From)} - {Fmt.Day(Model.To.AddDays(-1))}",
         Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Month => Fmt.MonthAndYear(Model.Day),
+        Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Upcoming => $"{Fmt.Day(Model.From)} - {Fmt.Day(Model.To.AddDays(-1))}",
         _ => Fmt.Day(Model.Day),
     };
 }
@@ -35,7 +36,7 @@
     <div class="btn-group" role="group" aria-label="@L["View"]">
         @foreach (var v in Enum.GetValues<Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView>())
         {
-            <a class="btn @(v == mode ? "btn-success" : "btn-outline-success")" asp-route-View="@ModeKey(v)" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Iso(Model.Day)">@(v switch { Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Week => L["Weekly"], Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Month => L["Monthly"], _ => L["Daily"] })</a>
+            <a class="btn @(v == mode ? "btn-success" : "btn-outline-success")" asp-route-View="@ModeKey(v)" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Iso(Model.Day)">@(v switch { Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Week => L["Weekly"], Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Month => L["Monthly"], Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Upcoming => L["Next 7 days"], _ => L["Daily"] })</a>
         }
     </div>
     <div class="btn-group" dir="ltr">
@@ -105,9 +106,10 @@ else if (mode == Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Month)
 }
 else
 {
+var upcoming = mode == Clinic.Web.Pages.Admin.AppointmentsModel.CalendarView.Upcoming;
 if (Model.Rows.Count == 0)
 {
-    <p class="text-muted">@L["No appointments on this day."]</p>
+    <p class="text-muted">@(upcoming ? L["No appointments in these days."] : L["No appointments on this day."])</p>
 }
 else
 {
@@ -124,8 +126,15 @@ else
                 </tr>
             </thead>
             <tbody>
+                @{ DateOnly? lastDay = null; }
                 @foreach (var r in Model.Rows)
                 {
+                    var rowDay = DateOnly.FromDateTime(Model.LocalTime(r.StartUtc));
+                    if (upcoming && rowDay != lastDay)
+                    {
+                        lastDay = rowDay;
+                        <tr class="day-group"><th colspan="6">@Fmt.Day(rowDay) <span class="badge rounded-pill bg-success ms-1">@Fmt.Number(Model.ByDay[rowDay].Count())</span></th></tr>
+                    }
                     <tr>
                         <td class="text-nowrap">@Fmt.Time(r.StartUtc)</td>
                         <td>
@@ -141,11 +150,11 @@ else
                             {
                                 @foreach (var s in Clinic.Web.Pages.Admin.AppointmentsModel.SettableStatuses)
                                 {
-                                    <form method="post" asp-page-handler="Status" asp-route-id="@r.Id" asp-route-status="@s" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Model.Date" asp-route-View="day" class="d-inline">
+                                    <form method="post" asp-page-handler="Status" asp-route-id="@r.Id" asp-route-status="@s" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Model.Date" asp-route-View="@current" class="d-inline">
                                         <button type="submit" class="btn btn-sm btn-outline-secondary" disabled="@(r.Status == s)">@L[s.ToString()]</button>
                                     </form>
                                 }
-                                <form method="post" asp-page-handler="Cancel" asp-route-id="@r.Id" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Model.Date" asp-route-View="day" class="d-inline">
+                                <form method="post" asp-page-handler="Cancel" asp-route-id="@r.Id" asp-route-DoctorId="@Model.DoctorId" asp-route-Date="@Model.Date" asp-route-View="@current" class="d-inline">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">@L["Cancel"]</button>
                                 </form>
                             }

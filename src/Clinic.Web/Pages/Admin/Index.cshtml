@@ -22,10 +22,10 @@
         </a>
     </div>
     <div class="col-sm-6 col-xl-4">
-        <div class="kpi">
+        <a class="kpi" asp-page="./Appointments" asp-route-View="upcoming">
             <div class="stat-icon"><i class="bi bi-calendar-week"></i></div>
             <div><div class="kpi-value">@Fmt.Number(Model.WeekCount)</div><div class="kpi-label">@L["Appointments in the next 7 days"]</div></div>
-        </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-4">
         <a class="kpi" asp-page="./Patients/Index">

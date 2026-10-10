@@ -9,6 +9,11 @@
     var unread = await (await Scope.MessagesAsync(Db.ContactMessages)).CountAsync(m => m.ReadUtc == null && !m.IsArchived);
     var pendingDoctors = isAdmin ? await Db.Doctors.CountAsync(d => !d.IsApproved && Db.Users.Any(u => u.Id == d.UserId && u.IsActive)) : 0;
 
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var userName = userId is null ? null : await Db.Users.Where(u => u.Id == userId).Select(u => u.FullName).FirstOrDefaultAsync();
+    userName = string.IsNullOrWhiteSpace(userName) ? User.Identity?.Name : userName;
+    var roleNames = string.Join(english ? ", " : "، ", new[] { Roles.Admin, Roles.Doctor, Roles.Receptionist }.Where(User.IsInRole).Select(r => L[r].Value));
+
     string Active(string page) => path == page || path.StartsWith(page + "/") ? "active" : "";
 }
 <!DOCTYPE html>
@@ -32,6 +37,7 @@
     }
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/refresh.css" media="screen" asp-append-version="true" />
 </head>
 <body class="admin-body">
     <div class="admin-shell">
@@ -90,6 +96,13 @@
         <div class="admin-main">
             <header class="admin-topbar">
                 <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar" aria-controls="adminSidebar" aria-label="@L["Menu"]"><i class="bi bi-list"></i></button>
+                <div class="admin-user">
+                    <span class="admin-user-avatar" aria-hidden="true"><i class="bi bi-person"></i></span>
+                    <span class="admin-user-text">
+                        <strong>@userName</strong>
+                        @if (roleNames.Length > 0) { <small>@roleNames</small> }
+                    </span>
+                </div>
                 <div class="ms-auto d-flex align-items-center gap-2">
                     <a class="btn btn-sm btn-light" asp-page="/Index" target="_blank"><i class="bi bi-box-arrow-up-right"></i><span class="d-none d-sm-inline ms-1">@L["View site"]</span></a>
                     <a class="btn btn-sm btn-light" href="@CulturePath.SwitchUrl(Context.Request)">@(english ? "فارسی" : "English")</a>
