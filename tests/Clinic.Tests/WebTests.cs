@@ -21,6 +21,9 @@ public sealed class ClinicWebFactory : WebApplicationFactory<Program>
         builder.UseSetting("DataProtection:KeysPath", Path.Combine(_dataDir, "keys"));
         builder.UseSetting("PrivateFiles:Root", PrivateFilesRoot);
         builder.UseSetting("Media:Root", Path.Combine(_dataDir, "media"));
+        // Tests post forms quickly and from one address; SecurityTests check these protections on their own site.
+        builder.UseSetting("Security:RateLimiting", "false");
+        builder.UseSetting("Security:BotCheck", "false");
     }
 
     protected override void Dispose(bool disposing)

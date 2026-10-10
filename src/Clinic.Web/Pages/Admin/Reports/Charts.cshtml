@@ -30,13 +30,13 @@
             }
         </div>
         <input type="hidden" name="Grain" value="@Model.Grain" />
-        <select class="form-select w-auto" name="Count" onchange="this.form.submit()" aria-label="@L["How many periods"]">
+        <select class="form-select w-auto" name="Count" data-autosubmit aria-label="@L["How many periods"]">
             @foreach (var n in Model.Grain == PeriodKind.Year ? new[] { 2, 3, 5, 10 } : new[] { 4, 6, 12, 24 })
             {
                 <option value="@n" selected="@(Model.Count == n)">@L["Last {0}", Fmt.Number(n)]</option>
             }
         </select>
-        <button type="button" class="btn btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer me-1"></i>@L["Print"]</button>
+        <button type="button" class="btn btn-outline-secondary" data-print><i class="bi bi-printer me-1"></i>@L["Print"]</button>
     </form>
 </div>
 

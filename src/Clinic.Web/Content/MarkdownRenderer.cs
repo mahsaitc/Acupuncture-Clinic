@@ -20,6 +20,17 @@ public class MarkdownRenderer
         _sanitizer.AllowedSchemes.Add("https");
         _sanitizer.AllowedSchemes.Add("http");
         _sanitizer.AllowedSchemes.Add("mailto");
+        // Images in posts load only when scrolled to, so long articles open fast.
+        _sanitizer.AllowedAttributes.Add("loading");
+        _sanitizer.AllowedAttributes.Add("decoding");
+        _sanitizer.PostProcessNode += (_, e) =>
+        {
+            if (e.Node is AngleSharp.Dom.IElement { LocalName: "img" } image)
+            {
+                image.SetAttribute("loading", "lazy");
+                image.SetAttribute("decoding", "async");
+            }
+        };
     }
 
     public IHtmlContent Render(string? markdown) =>

@@ -29,7 +29,7 @@ else
                     <partial name="_StatusBadge" model="a.Status" />
                     <form method="post" asp-page-handler="Cancel" asp-route-id="@a.Id">
                         <button type="submit" class="btn btn-sm btn-outline-danger"
-                                onclick="return confirm('@L["Cancel this appointment?"]')">@L["Cancel"]</button>
+                                data-confirm="@L["Cancel this appointment?"]">@L["Cancel"]</button>
                     </form>
                 </div>
             </li>

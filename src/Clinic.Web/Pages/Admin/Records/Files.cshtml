@@ -97,7 +97,7 @@
                                     </button>
                                 </form>
                                 <a class="btn btn-sm btn-light" asp-page="./File" asp-route-id="@f.Id" asp-route-download="true" title="@L["Download"]"><i class="bi bi-download"></i></a>
-                                <form method="post" asp-page-handler="Delete" asp-route-patientId="@Model.Patient.Id" asp-route-id="@f.Id" asp-route-category="@Model.Category" class="ms-auto" onsubmit="return confirm('@L["Delete this file?"]')">
+                                <form method="post" asp-page-handler="Delete" asp-route-patientId="@Model.Patient.Id" asp-route-id="@f.Id" asp-route-category="@Model.Category" class="ms-auto" data-confirm="@L["Delete this file?"]">
                                     <button class="btn btn-sm btn-link text-danger" title="@L["Delete"]"><i class="bi bi-trash"></i></button>
                                 </form>
                             </div>

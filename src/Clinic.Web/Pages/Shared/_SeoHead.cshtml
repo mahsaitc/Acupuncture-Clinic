@@ -1,0 +1,62 @@
+@using Clinic.Web.Seo
+@inject Clinic.Web.Media.SiteContentProvider SiteContent
+@*
+    Search engine and link preview tags of the public layout. Pages may set in ViewData:
+    Description, OgImage (a site path or URL), OgType ("article"), NoEnglish (true when the page has no English version),
+    NoIndex (true), JsonLd (objects from Seo/StructuredData).
+*@
+@{
+    var english = CulturePath.IsEnglish;
+    var site = await SiteContent.GetAsync();
+    var brand = await SiteContent.BrandAsync();
+    var path = Context.Request.Path.Value is { Length: > 0 } p ? p : "/";
+    var query = int.TryParse(Context.Request.Query["p"], out var pageNumber) && pageNumber > 1 ? $"?p={pageNumber}" : "";
+    var faUrl = SiteUrl.Persian(Context, path) + query;
+    var enUrl = SiteUrl.English(Context, path) + query;
+    var canonical = english ? enUrl : faUrl;
+    var noIndex = ViewData["NoIndex"] as bool? == true || Clinic.Web.Security.SecurityHeaders.IsPrivatePath(Context.Request.Path);
+    var hasEnglish = ViewData["NoEnglish"] as bool? != true;
+    var title = ViewData["Title"]?.ToString() is { Length: > 0 } t ? $"{t} - {brand.Name}" : brand.Name;
+    var description = ViewData["Description"]?.ToString() is { Length: > 0 } d ? d : (english ? site.HeroSubtitleEn : site.HeroSubtitleFa);
+    var image = SiteUrl.Absolute(Context, ViewData["OgImage"] as string ?? site.HeroPosterPath ?? brand.LogoPath);
+}
+@if (!string.IsNullOrWhiteSpace(description))
+{
+    <meta name="description" content="@description" />
+}
+@if (noIndex)
+{
+    <meta name="robots" content="noindex, nofollow" />
+}
+else
+{
+    <link rel="canonical" href="@canonical" />
+    @if (hasEnglish)
+    {
+        <link rel="alternate" hreflang="fa" href="@faUrl" />
+        <link rel="alternate" hreflang="en" href="@enUrl" />
+        <link rel="alternate" hreflang="x-default" href="@faUrl" />
+    }
+}
+<meta property="og:site_name" content="@brand.Name" />
+<meta property="og:type" content="@(ViewData["OgType"] as string ?? "website")" />
+<meta property="og:title" content="@title" />
+@if (!string.IsNullOrWhiteSpace(description))
+{
+    <meta property="og:description" content="@description" />
+}
+<meta property="og:url" content="@canonical" />
+<meta property="og:image" content="@image" />
+<meta property="og:locale" content="@(english ? "en_US" : "fa_IR")" />
+@if (hasEnglish)
+{
+    <meta property="og:locale:alternate" content="@(english ? "fa_IR" : "en_US")" />
+}
+<meta name="twitter:card" content="@(ViewData["OgImage"] is string ? "summary_large_image" : "summary")" />
+@if (ViewData["JsonLd"] is IEnumerable<object> items)
+{
+    foreach (var item in items)
+    {
+        <script type="application/ld+json">@Html.Raw(StructuredData.Serialize(item))</script>
+    }
+}

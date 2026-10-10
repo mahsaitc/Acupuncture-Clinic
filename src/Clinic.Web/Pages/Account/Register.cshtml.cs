@@ -10,6 +10,7 @@ using Microsoft.Extensions.Localization;
 namespace Clinic.Web.Pages.Account;
 
 /// <summary>Patient self-registration.</summary>
+[Clinic.Web.Security.BotCheckAttribute]
 public class RegisterModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IStringLocalizer<SharedResource> l) : PageModel
 {
     [BindProperty]

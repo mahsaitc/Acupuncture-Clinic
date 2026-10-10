@@ -9,7 +9,7 @@
     @if (Model.Doctors.Count > 0)
     {
         <form method="get">
-            <select class="form-select" name="DoctorId" onchange="this.form.submit()" aria-label="@L["Doctor"]">
+            <select class="form-select" name="DoctorId" data-autosubmit aria-label="@L["Doctor"]">
                 @foreach (var d in Model.Doctors) { <option value="@d.Id" selected="@(Model.DoctorId == d.Id)">@d.Name</option> }
             </select>
         </form>

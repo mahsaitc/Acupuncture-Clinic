@@ -2793,4 +2793,22 @@
   <data name="Label above the home page title (English)" xml:space="preserve">
     <value>برچسب بالای عنوان صفحه اصلی (انگلیسی)</value>
   </data>
+  <data name="The form was sent too quickly or could not be verified. Please wait a few seconds and send it again." xml:space="preserve">
+    <value>فرم خیلی سریع ارسال شد یا قابل تأیید نبود. لطفاً چند ثانیه صبر کنید و دوباره ارسال کنید.</value>
+  </data>
+  <data name="Health tips, clinic news and patient education from the doctor." xml:space="preserve">
+    <value>نکته‌های سلامت، اخبار کلینیک و آموزش بیماران از زبان پزشک.</value>
+  </data>
+  <data name="Articles on acupuncture, catgut embedding for weight management and integrative medicine, with references." xml:space="preserve">
+    <value>مقاله‌های طب سوزنی، کاشت نخ برای مدیریت وزن و طب مکمل، همراه با منابع علمی.</value>
+  </data>
+  <data name="Contact the clinic, ask the doctor a question or find us on the map." xml:space="preserve">
+    <value>با کلینیک تماس بگیرید، از پزشک سؤال کنید یا نشانی ما را روی نقشه ببینید.</value>
+  </data>
+  <data name="Address: {0}." xml:space="preserve">
+    <value>نشانی: {0}.</value>
+  </data>
+  <data name="Phone: {0}" xml:space="preserve">
+    <value>تلفن: {0}</value>
+  </data>
 </root>

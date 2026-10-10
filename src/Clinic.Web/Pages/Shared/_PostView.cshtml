@@ -18,7 +18,7 @@
     </div>
     @if (post.CoverImagePath is not null)
     {
-        <img class="post-cover mb-4" src="@post.CoverImagePath" alt="" />
+        <img class="post-cover mb-4" src="@post.CoverImagePath" alt="@post.Title(english)" />
     }
     @if (post.Summary(english) is string summary)
     {

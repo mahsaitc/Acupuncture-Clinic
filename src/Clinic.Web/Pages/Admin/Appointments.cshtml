@@ -27,7 +27,7 @@
         <form method="get">
             <input type="hidden" name="View" value="@current" />
             <input type="hidden" name="Date" value="@Iso(Model.Day)" />
-            <select class="form-select" name="DoctorId" onchange="this.form.submit()" aria-label="@L["Doctor"]">
+            <select class="form-select" name="DoctorId" data-autosubmit aria-label="@L["Doctor"]">
                 <option value="">@L["All doctors"]</option>
                 @foreach (var d in Model.Doctors) { <option value="@d.Id" selected="@(Model.DoctorId == d.Id)">@d.Name</option> }
             </select>

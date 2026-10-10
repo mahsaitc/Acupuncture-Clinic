@@ -14,7 +14,7 @@
     </div>
     <div class="d-flex gap-2">
         <a class="btn btn-outline-secondary" asp-page="/Index" asp-fragment="results" target="_blank"><i class="bi bi-eye me-1"></i>@L["View on the site"]</a>
-        <form method="post" asp-page-handler="Sample" onsubmit="return confirm('@L["Replace the current figures with the sample figures?"]')">
+        <form method="post" asp-page-handler="Sample" data-confirm="@L["Replace the current figures with the sample figures?"]">
             <button type="submit" class="btn btn-outline-warning">@L["Restore sample figures"]</button>
         </form>
     </div>

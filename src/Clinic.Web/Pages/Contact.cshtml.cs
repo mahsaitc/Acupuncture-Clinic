@@ -10,6 +10,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Clinic.Web.Pages;
 
+[Clinic.Web.Security.BotCheckAttribute]
 public class ContactModel(
     ClinicDbContext db,
     SiteContentProvider siteContent,

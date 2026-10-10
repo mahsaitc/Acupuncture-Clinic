@@ -7,6 +7,7 @@
     var english = CulturePath.IsEnglish;
     var site = Model.Content;
     var brand = Brand.From(site, english, L);
+    ViewData["JsonLd"] = new object[] { Clinic.Web.Seo.StructuredData.Clinic(HttpContext, site, brand, english, Model.Services.Select(s => s.Name(english)), Model.Doctors) };
     const string BlogPostPage = "/Blog/Post";
     string[] icons = ["bi-flower1", "bi-heart-pulse", "bi-clipboard2-pulse", "bi-droplet", "bi-activity", "bi-leaf"];
 }

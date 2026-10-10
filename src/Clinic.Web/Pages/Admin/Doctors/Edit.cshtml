@@ -91,7 +91,7 @@
                                 <span class="doc-name">@L[Clinic.Web.Pages.Admin.DoctorRequestsModel.KindName(d.Kind)]</span>
                                 <span class="small text-muted">@Size(d.SizeBytes) · @Fmt.Date(d.UploadedUtc)</span>
                             </a>
-                            <form method="post" asp-page-handler="DeleteDocument" asp-route-id="@Model.Doctor.Id" asp-route-documentId="@d.Id" onsubmit="return confirm('@L["Delete this document?"]')">
+                            <form method="post" asp-page-handler="DeleteDocument" asp-route-id="@Model.Doctor.Id" asp-route-documentId="@d.Id" data-confirm="@L["Delete this document?"]">
                                 <button type="submit" class="btn btn-link btn-sm text-danger p-0">@L["Delete"]</button>
                             </form>
                         </div>

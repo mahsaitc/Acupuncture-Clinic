@@ -1,7 +1,12 @@
 @page "/Blog/{slug}"
+@inject Clinic.Web.Media.SiteContentProvider SiteContent
 @model Clinic.Web.Pages.Blog.PostModel
 @{
     ViewData["Title"] = Model.Post.Title(CulturePath.IsEnglish);
     ViewData["Description"] = Model.Post.Summary(CulturePath.IsEnglish);
+    ViewData["OgType"] = "article";
+    ViewData["OgImage"] = Model.Post.CoverImagePath;
+    ViewData["NoEnglish"] = !Model.Post.HasEnglish;
+    ViewData["JsonLd"] = Clinic.Web.Seo.StructuredData.Post(HttpContext, Model.Post, await SiteContent.BrandAsync(), CulturePath.IsEnglish, Model.AuthorName, L["Blog"]);
 }
 <partial name="_PostView" model="Model" />

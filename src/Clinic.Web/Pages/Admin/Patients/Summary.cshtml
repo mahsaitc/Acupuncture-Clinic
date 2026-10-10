@@ -26,7 +26,7 @@
         <div class="text-muted small">@(Model.IsOwnOnly ? L["Only your own sessions with this patient are shown."] : L["Every doctor's sessions with this patient. Only the clinic admin sees all doctors."])</div>
     </div>
     <div class="d-flex flex-wrap gap-2 d-print-none">
-        <button type="button" class="btn btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer me-1"></i>@L["Print"]</button>
+        <button type="button" class="btn btn-outline-secondary" data-print><i class="bi bi-printer me-1"></i>@L["Print"]</button>
         @if (!Model.IsOwnOnly && User.IsInRole(Clinic.Domain.Roles.Doctor))
         {
             <a class="btn btn-success" asp-page="/Admin/Records/Print" asp-route-patientId="@p.Id" target="_blank"><i class="bi bi-file-earmark-medical me-1"></i>@L["Full print of the file"]</a>
