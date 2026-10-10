@@ -1200,3 +1200,7 @@ label.required::after {
 .results {
   background: #fff;
 }
+
+/* Two-step login setup: the QR code on a white card so phones scan it in any theme. */
+.qr-code { display: inline-block; padding: .5rem; background: #fff; border: 1px solid var(--bs-border-color); border-radius: .5rem; }
+.qr-code svg { display: block; width: 200px; height: 200px; }

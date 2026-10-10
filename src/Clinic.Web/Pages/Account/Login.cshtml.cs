@@ -61,6 +61,10 @@ public class LoginModel(SignInManager<ApplicationUser> signInManager, Clinic.Inf
         {
             return LocalRedirect(Url.IsLocalUrl(returnUrl) ? returnUrl : Url.Content("~/"));
         }
+        if (result.RequiresTwoFactor)
+        {
+            return RedirectToPage("./LoginWith2fa", new { returnUrl, rememberMe = Input.RememberMe });
+        }
 
         ModelState.AddModelError(string.Empty, result.IsLockedOut
             ? l["Too many failed attempts. Try again in 15 minutes."]

@@ -19,7 +19,8 @@ public static class SecurityHeaders
     {
         if (context.Items[NonceKey] is not string nonce)
         {
-            nonce = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
+            // Hex, so the value needs no HTML encoding in the attribute.
+            nonce = Convert.ToHexString(RandomNumberGenerator.GetBytes(16));
             context.Items[NonceKey] = nonce;
         }
         return nonce;

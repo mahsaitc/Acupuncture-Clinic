@@ -40,8 +40,13 @@ public class RegisterModel(UserManager<ApplicationUser> userManager, SignInManag
     internal static async Task<ApplicationUser?> CreateUserAsync(
         UserManager<ApplicationUser> userManager, RegisterInput input,
         Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary modelState, string? role, IStringLocalizer<SharedResource> l,
-        string? nationalCodeHash = null)
+        string? nationalCodeHash = null, bool staff = false)
     {
+        if (!Clinic.Web.Security.PasswordPolicy.Validate(modelState, string.Empty, input.Password, staff, input.Email,
+                Clinic.Application.Common.JalaliDate.ToLatinDigits(input.PhoneNumber).Trim(), l))
+        {
+            return null;
+        }
         if (await userManager.FindByEmailAsync(input.Email) is not null)
         {
             modelState.AddModelError(string.Empty, userManager.ErrorDescriber.DuplicateEmail(input.Email).Description);

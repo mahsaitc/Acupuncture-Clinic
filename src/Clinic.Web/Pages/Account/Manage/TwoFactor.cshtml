@@ -1,0 +1,55 @@
+@page
+@model Clinic.Web.Pages.Account.Manage.TwoFactorModel
+@{
+    ViewData["Title"] = L["Set up two-step login"];
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h1 class="h3 mb-3">@L["Set up two-step login"]</h1>
+
+        @if (Model.RecoveryCodes is string[] codes)
+        {
+            <div class="alert alert-success"><i class="bi bi-check-circle me-1" aria-hidden="true"></i>@L["Two-step login is on. From now on, after your password the site asks for the code from the app."]</div>
+            <partial name="_RecoveryCodes" model="codes" />
+            <a class="btn btn-success" asp-page="@(Clinic.Web.Security.TwoFactor.IsStaff(User) ? "/Admin/Index" : "/Index")">@L["Continue"]</a>
+            <a class="btn btn-outline-secondary" asp-page="./Index">@L["Account security"]</a>
+        }
+        else
+        {
+            @if (Model.Required)
+            {
+                <div class="alert alert-info">@L["Staff accounts can open medical records, so two-step login is required before the management panel opens. It takes about two minutes."]</div>
+            }
+            <div class="card">
+                <div class="card-body p-4">
+                    <ol class="mb-4">
+                        <li class="mb-2">@L["Install an authenticator app on your phone, such as Google Authenticator or Microsoft Authenticator."]</li>
+                        <li class="mb-2">
+                            @L["In the app, add an account and scan this QR code:"]
+                            <div class="qr-code my-3" aria-label="@L["QR code"]">@Html.Raw(Model.QrSvg)</div>
+                            <div class="small text-muted">@L["If you cannot scan it, enter this key in the app instead:"]</div>
+                            <code class="d-inline-block fs-6 mt-1 p-2 bg-light border rounded" dir="ltr">@Model.Key</code>
+                        </li>
+                        <li>@L["Enter the 6-digit code the app shows:"]</li>
+                    </ol>
+                    <form method="post" asp-route-required="@Model.Required" class="row g-2 align-items-start">
+                        <div asp-validation-summary="ModelOnly" class="text-danger col-12"></div>
+                        <div class="col-sm-6">
+                            <label asp-for="Code" class="form-label"></label>
+                            <input asp-for="Code" class="form-control form-control-lg text-center" inputmode="numeric" autocomplete="one-time-code" maxlength="6" dir="ltr" />
+                            <span asp-validation-for="Code" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success">@L["Turn on two-step login"]</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

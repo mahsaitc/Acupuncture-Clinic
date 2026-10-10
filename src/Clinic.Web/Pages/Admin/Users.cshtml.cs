@@ -98,6 +98,54 @@ public class UsersModel(ClinicDbContext db, UserManager<ApplicationUser> userMan
         return RedirectToPage(new { Q });
     }
 
+    /// <summary>Gives a user a new password, e.g. a patient registered at the front desk without email, or someone locked out.</summary>
+    public async Task<IActionResult> OnPostSetPasswordAsync(string id, string? newPassword)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null || id == CurrentUserId || await OwnerGuard.IsProtectedAsync(userManager, user, User))
+        {
+            return RedirectToPage(new { Q });
+        }
+
+        var password = newPassword ?? "";
+        var errors = Clinic.Web.Security.PasswordPolicy.Check(password, await Clinic.Web.Security.PasswordPolicy.IsStaffAsync(userManager, user), user.Email, user.PhoneNumber, l);
+        IdentityResult? result = null;
+        if (errors.Count == 0)
+        {
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            result = await userManager.ResetPasswordAsync(user, token, password);
+            errors.AddRange(result.Errors.Select(e => e.Description));
+        }
+        if (errors.Count > 0)
+        {
+            TempData["Error"] = string.Join(" ", errors);
+            return RedirectToPage(new { Q });
+        }
+
+        await userManager.SetLockoutEndDateAsync(user, null);
+        await userManager.ResetAccessFailedCountAsync(user);
+        TempData["Message"] = l["The new password of {0} was saved. Give it to them in person and ask them to change it.", user.FullName].Value;
+        return RedirectToPage(new { Q });
+    }
+
+    /// <summary>Turns off two-step login for someone who lost their phone and their recovery codes; they set it up again at the next login.</summary>
+    public async Task<IActionResult> OnPostResetTwoFactorAsync(string id)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null || id == CurrentUserId || await OwnerGuard.IsProtectedAsync(userManager, user, User))
+        {
+            return RedirectToPage(new { Q });
+        }
+
+        await userManager.SetTwoFactorEnabledAsync(user, false);
+        await userManager.ResetAuthenticatorKeyAsync(user);
+        await userManager.UpdateSecurityStampAsync(user);
+        TempData["Message"] = l["Two-step login of {0} was turned off. They set it up again with their new phone.", user.FullName].Value;
+        return RedirectToPage(new { Q });
+    }
+
+    public string? CurrentUser => CurrentUserId;
+
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     /// <summary>An admin cannot remove their own admin role and lock themselves out.</summary>

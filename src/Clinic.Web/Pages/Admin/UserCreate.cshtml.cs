@@ -76,7 +76,8 @@ public class UserCreateModel(ClinicDbContext db, UserManager<ApplicationUser> us
             return Page();
         }
 
-        var user = await RegisterModel.CreateUserAsync(userManager, Input, ModelState, SelectedRoles[0], l, nationalCodes.Hash(NationalCode));
+        var user = await RegisterModel.CreateUserAsync(userManager, Input, ModelState, SelectedRoles[0], l, nationalCodes.Hash(NationalCode),
+            staff: SelectedRoles.Any(Clinic.Web.Security.PasswordPolicy.StaffRoles.Contains));
         if (user is null)
         {
             return Page();

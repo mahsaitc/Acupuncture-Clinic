@@ -1,0 +1,48 @@
+@page
+@model Clinic.Web.Pages.Account.LoginWith2faModel
+@{
+    ViewData["Title"] = L["Two-step login"];
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5 auth-panel">
+        <h1 class="h3 mb-2">@L["Two-step login"]</h1>
+        <p class="text-muted mb-4">
+            @(Model.Recovery
+                ? L["Enter one of the recovery codes you saved when you set up two-step login."]
+                : L["Open the authenticator app on your phone and enter the 6-digit code it shows."])
+        </p>
+        <form method="post" asp-route-returnUrl="@Model.ReturnUrl" asp-route-rememberMe="@Model.RememberMe" asp-route-recovery="@Model.Recovery">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div class="mb-3">
+                <label asp-for="Code" class="form-label">@(Model.Recovery ? L["Recovery code"] : L["Code from the app"])</label>
+                <input asp-for="Code" class="form-control form-control-lg text-center" autocomplete="one-time-code" dir="ltr" autofocus
+                       inputmode="@(Model.Recovery ? "text" : "numeric")" />
+                <span asp-validation-for="Code" class="text-danger small"></span>
+            </div>
+            @if (!Model.Recovery)
+            {
+                <div class="form-check mb-3">
+                    <input asp-for="RememberMachine" class="form-check-input" />
+                    <label asp-for="RememberMachine" class="form-check-label"></label>
+                </div>
+            }
+            <button type="submit" class="btn btn-success w-100">@L["Log in"]</button>
+        </form>
+        <p class="mt-3 small">
+            @if (Model.Recovery)
+            {
+                <a asp-route-returnUrl="@Model.ReturnUrl" asp-route-rememberMe="@Model.RememberMe">@L["Use the code from the app"]</a>
+            }
+            else
+            {
+                <span>@L["Lost your phone?"]</span>
+                <a asp-route-returnUrl="@Model.ReturnUrl" asp-route-rememberMe="@Model.RememberMe" asp-route-recovery="true">@L["Use a recovery code"]</a>
+            }
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -2811,4 +2811,190 @@
   <data name="Phone: {0}" xml:space="preserve">
     <value>تلفن: {0}</value>
   </data>
+  <data name="Account security" xml:space="preserve">
+    <value>امنیت حساب</value>
+  </data>
+  <data name="Ask for a new link" xml:space="preserve">
+    <value>درخواست لینک جدید</value>
+  </data>
+  <data name="Back to log in" xml:space="preserve">
+    <value>بازگشت به ورود</value>
+  </data>
+  <data name="Change password" xml:space="preserve">
+    <value>تغییر رمز عبور</value>
+  </data>
+  <data name="Choose a new password" xml:space="preserve">
+    <value>انتخاب رمز عبور جدید</value>
+  </data>
+  <data name="Choose a new password - {0}" xml:space="preserve">
+    <value>انتخاب رمز عبور جدید - {0}</value>
+  </data>
+  <data name="Code from the app" xml:space="preserve">
+    <value>کد برنامه</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>ادامه</value>
+  </data>
+  <data name="Current password" xml:space="preserve">
+    <value>رمز عبور فعلی</value>
+  </data>
+  <data name="Don't ask again on this computer for 30 days" xml:space="preserve">
+    <value>تا ۳۰ روز در این رایانه دوباره نپرس</value>
+  </data>
+  <data name="Enter one of the recovery codes you saved when you set up two-step login." xml:space="preserve">
+    <value>یکی از کدهای بازیابی را که هنگام فعال‌سازی ورود دومرحله‌ای ذخیره کردید وارد کنید.</value>
+  </data>
+  <data name="Enter the 6-digit code from the app." xml:space="preserve">
+    <value>کد ۶ رقمی برنامه را وارد کنید.</value>
+  </data>
+  <data name="Enter the 6-digit code the app shows:" xml:space="preserve">
+    <value>کد ۶ رقمی‌ای را که برنامه نشان می‌دهد وارد کنید:</value>
+  </data>
+  <data name="Enter the email of your account and we will send you a link to choose a new password." xml:space="preserve">
+    <value>ایمیل حساب خود را وارد کنید تا لینک انتخاب رمز جدید برایتان فرستاده شود.</value>
+  </data>
+  <data name="Forgot your password?" xml:space="preserve">
+    <value>رمز عبور را فراموش کرده‌اید؟</value>
+  </data>
+  <data name="Hello {0}," xml:space="preserve">
+    <value>{0} عزیز، سلام</value>
+  </data>
+  <data name="If an account uses this email, we have sent it a link to choose a new password. Check your inbox and spam folder. If nothing arrives, call the clinic." xml:space="preserve">
+    <value>اگر حسابی با این ایمیل وجود داشته باشد، لینک انتخاب رمز جدید برای آن فرستاده شد. صندوق ورودی و پوشهٔ هرزنامه را ببینید. اگر چیزی نرسید، با کلینیک تماس بگیرید.</value>
+  </data>
+  <data name="If you cannot scan it, enter this key in the app instead:" xml:space="preserve">
+    <value>اگر نتوانستید آن را اسکن کنید، این کلید را در برنامه وارد کنید:</value>
+  </data>
+  <data name="If you did not ask for this, ignore this email; your password stays the same." xml:space="preserve">
+    <value>اگر شما این درخواست را نداده‌اید، این ایمیل را نادیده بگیرید؛ رمز شما تغییری نمی‌کند.</value>
+  </data>
+  <data name="If you lose your phone, each of these codes lets you log in once instead of the app code. Write them down or print this page and keep them somewhere safe. They are shown only now." xml:space="preserve">
+    <value>اگر گوشی خود را گم کنید، هر یک از این کدها یک بار به‌جای کد برنامه کار می‌کند. آن‌ها را یادداشت یا چاپ کنید و در جای امنی نگه دارید. این کدها فقط همین حالا نمایش داده می‌شوند.</value>
+  </data>
+  <data name="In the app, add an account and scan this QR code:" xml:space="preserve">
+    <value>در برنامه، حساب جدید اضافه کنید و این کد QR را اسکن کنید:</value>
+  </data>
+  <data name="Install an authenticator app on your phone, such as Google Authenticator or Microsoft Authenticator." xml:space="preserve">
+    <value>یک برنامهٔ احراز هویت مانند Google Authenticator یا Microsoft Authenticator روی گوشی خود نصب کنید.</value>
+  </data>
+  <data name="Lost your phone?" xml:space="preserve">
+    <value>گوشی خود را گم کرده‌اید؟</value>
+  </data>
+  <data name="Make new recovery codes? The old ones stop working." xml:space="preserve">
+    <value>کدهای بازیابی جدید ساخته شود؟ کدهای قبلی دیگر کار نمی‌کنند.</value>
+  </data>
+  <data name="New password" xml:space="preserve">
+    <value>رمز عبور جدید</value>
+  </data>
+  <data name="New recovery codes" xml:space="preserve">
+    <value>کدهای بازیابی جدید</value>
+  </data>
+  <data name="Open the authenticator app on your phone and enter the 6-digit code it shows." xml:space="preserve">
+    <value>برنامهٔ احراز هویت را روی گوشی باز کنید و کد ۶ رقمی آن را وارد کنید.</value>
+  </data>
+  <data name="Protect your account with a 6-digit code from an authenticator app on your phone, in addition to your password." xml:space="preserve">
+    <value>علاوه بر رمز عبور، حساب خود را با کد ۶ رقمی برنامهٔ احراز هویت روی گوشی محافظت کنید.</value>
+  </data>
+  <data name="QR code" xml:space="preserve">
+    <value>کد QR</value>
+  </data>
+  <data name="Recovery code" xml:space="preserve">
+    <value>کد بازیابی</value>
+  </data>
+  <data name="Recovery codes left: {0}" xml:space="preserve">
+    <value>کدهای بازیابی باقی‌مانده: {0}</value>
+  </data>
+  <data name="Registered at the clinic without an email? Call the clinic to have your password reset." xml:space="preserve">
+    <value>در کلینیک بدون ایمیل ثبت‌نام شده‌اید؟ برای تعیین رمز جدید با کلینیک تماس بگیرید.</value>
+  </data>
+  <data name="Save the new password" xml:space="preserve">
+    <value>ذخیرهٔ رمز جدید</value>
+  </data>
+  <data name="Save your recovery codes" xml:space="preserve">
+    <value>کدهای بازیابی را ذخیره کنید</value>
+  </data>
+  <data name="Send the link" xml:space="preserve">
+    <value>ارسال لینک</value>
+  </data>
+  <data name="Set a new password" xml:space="preserve">
+    <value>تعیین رمز جدید</value>
+  </data>
+  <data name="Set up on a new phone" xml:space="preserve">
+    <value>افزودن به گوشی دیگر</value>
+  </data>
+  <data name="Set up two-step login" xml:space="preserve">
+    <value>فعال‌سازی ورود دومرحله‌ای</value>
+  </data>
+  <data name="Staff accounts can open medical records, so two-step login is required before the management panel opens. It takes about two minutes." xml:space="preserve">
+    <value>حساب کارکنان به پرونده‌های پزشکی دسترسی دارد؛ بنابراین پیش از باز شدن پنل مدیریت، ورود دومرحله‌ای لازم است. حدود دو دقیقه طول می‌کشد.</value>
+  </data>
+  <data name="Staff passwords must be at least {0} characters." xml:space="preserve">
+    <value>رمز عبور کارکنان باید دست‌کم {0} کاراکتر باشد.</value>
+  </data>
+  <data name="The code is not correct." xml:space="preserve">
+    <value>کد درست نیست.</value>
+  </data>
+  <data name="The code is not correct. Check that the phone's time is right and try the newest code." xml:space="preserve">
+    <value>کد درست نیست. ساعت گوشی را بررسی کنید و جدیدترین کد را امتحان کنید.</value>
+  </data>
+  <data name="The new password of {0} was saved. Give it to them in person and ask them to change it." xml:space="preserve">
+    <value>رمز جدید {0} ذخیره شد. آن را حضوری به ایشان بدهید و بخواهید آن را تغییر دهند.</value>
+  </data>
+  <data name="The password must not contain your email or mobile number." xml:space="preserve">
+    <value>رمز عبور نباید شامل ایمیل یا شماره موبایل شما باشد.</value>
+  </data>
+  <data name="This link has expired or was already used. Ask for a new one." xml:space="preserve">
+    <value>این لینک منقضی شده یا قبلاً استفاده شده است. لینک جدید بخواهید.</value>
+  </data>
+  <data name="This password is too common and easy to guess. Choose another one." xml:space="preserve">
+    <value>این رمز عبور رایج و قابل حدس است. رمز دیگری انتخاب کنید.</value>
+  </data>
+  <data name="To choose a new password for your account at {0}, open this link within two hours:" xml:space="preserve">
+    <value>برای انتخاب رمز جدید حساب خود در {0}، این لینک را ظرف دو ساعت باز کنید:</value>
+  </data>
+  <data name="Turn off" xml:space="preserve">
+    <value>غیرفعال کردن</value>
+  </data>
+  <data name="Turn off two-step login" xml:space="preserve">
+    <value>غیرفعال کردن ورود دومرحله‌ای</value>
+  </data>
+  <data name="Turn off two-step login of {0}? Do this only if they lost their phone." xml:space="preserve">
+    <value>ورود دومرحله‌ای {0} غیرفعال شود؟ فقط وقتی این کار را بکنید که گوشی خود را گم کرده باشد.</value>
+  </data>
+  <data name="Turn off two-step login?" xml:space="preserve">
+    <value>ورود دومرحله‌ای غیرفعال شود؟</value>
+  </data>
+  <data name="Turn on two-step login" xml:space="preserve">
+    <value>فعال کردن ورود دومرحله‌ای</value>
+  </data>
+  <data name="Two-step login" xml:space="preserve">
+    <value>ورود دومرحله‌ای</value>
+  </data>
+  <data name="Two-step login is on" xml:space="preserve">
+    <value>ورود دومرحله‌ای فعال است</value>
+  </data>
+  <data name="Two-step login is on. After your password, the site asks for the code from your authenticator app." xml:space="preserve">
+    <value>ورود دومرحله‌ای فعال است. پس از رمز عبور، سایت کد برنامهٔ احراز هویت را می‌پرسد.</value>
+  </data>
+  <data name="Two-step login is on. From now on, after your password the site asks for the code from the app." xml:space="preserve">
+    <value>ورود دومرحله‌ای فعال شد. از این پس پس از رمز عبور، سایت کد برنامه را می‌پرسد.</value>
+  </data>
+  <data name="Two-step login of {0} was turned off. They set it up again with their new phone." xml:space="preserve">
+    <value>ورود دومرحله‌ای {0} غیرفعال شد. ایشان در ورود بعدی آن را با گوشی جدید دوباره فعال می‌کنند.</value>
+  </data>
+  <data name="Two-step login was turned off." xml:space="preserve">
+    <value>ورود دومرحله‌ای غیرفعال شد.</value>
+  </data>
+  <data name="Use a recovery code" xml:space="preserve">
+    <value>استفاده از کد بازیابی</value>
+  </data>
+  <data name="Use the code from the app" xml:space="preserve">
+    <value>استفاده از کد برنامه</value>
+  </data>
+  <data name="Your password was changed." xml:space="preserve">
+    <value>رمز عبور شما تغییر کرد.</value>
+  </data>
+  <data name="Your password was changed. You can log in now." xml:space="preserve">
+    <value>رمز عبور شما تغییر کرد. اکنون می‌توانید وارد شوید.</value>
+  </data>
 </root>

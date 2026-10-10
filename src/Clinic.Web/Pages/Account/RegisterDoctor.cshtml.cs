@@ -108,7 +108,7 @@ public class RegisterDoctorModel(
             documents.Add(new DoctorDocument { Kind = kind, StoredName = saved.StoredName!, ContentType = saved.ContentType!, SizeBytes = saved.Size, UploadedUtc = now });
         }
 
-        var user = await RegisterModel.CreateUserAsync(userManager, Input, ModelState, role: null, l, nationalCodes.Hash(NationalCode));
+        var user = await RegisterModel.CreateUserAsync(userManager, Input, ModelState, role: null, l, nationalCodes.Hash(NationalCode), staff: true);
         if (user is null)
         {
             documents.ForEach(d => store.Delete(d.StoredName));

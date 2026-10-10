@@ -30,6 +30,9 @@ builder.Services.AddSingleton<Clinic.Web.Content.MarkdownRenderer>();
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<Clinic.Web.Content.ContactThrottle>();
 builder.Services.AddSingleton<Clinic.Web.Security.BotCheck>();
+builder.Services.AddSingleton<Clinic.Web.Security.EmailSender>();
+// Password reset links work for two hours.
+builder.Services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromHours(2));
 builder.Services.AddClinicRequestLimits();
 // Behind nginx or another proxy on the same server, trust its X-Forwarded-For/Proto so HTTPS and visitor IPs are right.
 var behindProxy = builder.Configuration.GetValue("ReverseProxy:Enabled", false);
@@ -50,6 +53,8 @@ builder.Services.AddRazorPages(options =>
     {
         // The whole management panel needs a staff role; pages narrow it further with [Authorize(Policy = ...)].
         options.Conventions.AuthorizeFolder("/Admin", Policies.Staff);
+        // Staff set up two-step login before the panel opens (Security:RequireStaffTwoFactor).
+        options.Conventions.AddFolderApplicationModelConvention("/Admin", m => m.Filters.Add(new RequireTwoFactorFilter()));
         // Medical records are for doctors only, never receptionists.
         options.Conventions.AuthorizeFolder("/Admin/Records", Policies.Doctor);
         // A doctor who is not the admin opens only their own patients.

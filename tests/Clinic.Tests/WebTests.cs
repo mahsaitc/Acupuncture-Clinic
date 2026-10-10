@@ -24,6 +24,7 @@ public sealed class ClinicWebFactory : WebApplicationFactory<Program>
         // Tests post forms quickly and from one address; SecurityTests check these protections on their own site.
         builder.UseSetting("Security:RateLimiting", "false");
         builder.UseSetting("Security:BotCheck", "false");
+        builder.UseSetting("Security:RequireStaffTwoFactor", "false");
     }
 
     protected override void Dispose(bool disposing)
