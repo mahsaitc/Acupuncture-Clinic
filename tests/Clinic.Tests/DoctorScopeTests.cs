@@ -167,6 +167,40 @@ public partial class ClinicalTests
     }
 
     [Fact]
+    public async Task Rejecting_a_doctor_request_deletes_the_account_so_they_can_sign_up_again()
+    {
+        var email = $"reject-{Guid.NewGuid():N}@test";
+        var code = NewNationalCode();
+        Assert.Equal(HttpStatusCode.Redirect, (await DoctorSignUpAsync(factory.CreateClient(new() { AllowAutoRedirect = false }), email, code)).StatusCode);
+        string userId;
+        List<string> files;
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+            userId = (await scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>().FindByEmailAsync(email))!.Id;
+            files = await db.DoctorDocuments.Where(d => db.Doctors.Any(p => p.Id == d.DoctorProfileId && p.UserId == userId)).Select(d => d.StoredName).ToListAsync();
+        }
+        Assert.NotEmpty(files);
+        Assert.All(files, f => Assert.True(File.Exists(Path.Combine(factory.PrivateFilesRoot, f))));
+
+        var admin = await LoginAsync(await CreateUserAsync(Roles.Admin));
+        var reject = await PostFormAsync(admin, $"/Admin/DoctorRequests?handler=Reject&id={userId}", []);
+        Assert.Equal(HttpStatusCode.Redirect, reject.StatusCode);
+
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+            Assert.Null(await scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>().FindByIdAsync(userId));
+            Assert.False(await db.Doctors.AnyAsync(d => d.UserId == userId));
+        }
+        Assert.All(files, f => Assert.False(File.Exists(Path.Combine(factory.PrivateFilesRoot, f))));
+        Assert.DoesNotContain(email, await admin.GetStringAsync("/Admin/DoctorRequests"));
+
+        // The same person signs up again with the same email and national code.
+        Assert.Equal(HttpStatusCode.Redirect, (await DoctorSignUpAsync(factory.CreateClient(new() { AllowAutoRedirect = false }), email, code)).StatusCode);
+    }
+
+    [Fact]
     public async Task National_code_is_unique_across_every_role()
     {
         var code = NewNationalCode();

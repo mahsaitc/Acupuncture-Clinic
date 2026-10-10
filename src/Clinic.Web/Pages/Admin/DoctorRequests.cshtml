@@ -24,15 +24,15 @@
             <div class="card-body">
                 <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
                     <div>
-                        <h2 class="h5 mb-1">@r.User.FullName</h2>
+                        <h2 class="h5 mb-1">@r.User.FullName @if (!r.User.IsActive) { <span class="badge bg-secondary align-middle">@L["Rejected earlier"]</span> }</h2>
                         <div class="small text-muted">@L["Requested on {0}", Fmt.Date(r.Doctor.RequestedUtc ?? r.User.CreatedUtc)]</div>
                     </div>
                     <div class="d-flex gap-2 align-items-start">
                         <form method="post" asp-page-handler="Approve" asp-route-id="@r.User.Id">
                             <button type="submit" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>@L["Approve doctor"]</button>
                         </form>
-                        <form method="post" asp-page-handler="Reject" asp-route-id="@r.User.Id" data-confirm="@L["Reject this request and deactivate the account?"]">
-                            <button type="submit" class="btn btn-outline-danger">@L["Reject"]</button>
+                        <form method="post" asp-page-handler="Reject" asp-route-id="@r.User.Id" data-confirm="@L["Reject this request and delete the account with its documents? The doctor will have to sign up again."]">
+                            <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i>@L["Reject and delete"]</button>
                         </form>
                     </div>
                 </div>

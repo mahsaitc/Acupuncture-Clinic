@@ -39,7 +39,8 @@ public class DoctorRequestsModel(
             .OrderBy(d => d.RequestedUtc)
             .ToListAsync();
         var ids = doctors.Select(d => d.UserId).ToList();
-        var users = await db.Users.AsNoTracking().Where(u => ids.Contains(u.Id) && u.IsActive).ToDictionaryAsync(u => u.Id);
+        // Deactivated ones are requests rejected before rejecting deleted the account; they stay listed so they can be deleted.
+        var users = await db.Users.AsNoTracking().Where(u => ids.Contains(u.Id)).ToDictionaryAsync(u => u.Id);
         Pending = doctors.Where(d => users.ContainsKey(d.UserId)).Select(d => new Request(users[d.UserId], d)).ToList();
     }
 
@@ -76,17 +77,56 @@ public class DoctorRequestsModel(
         return RedirectToPage("./Schedule", new { DoctorId = profile.Id });
     }
 
-    /// <summary>Turns the request down: the account is deactivated and kept, with its documents, for the record.</summary>
+    /// <summary>
+    /// Turns the request down: the account, its doctor profile and its documents are deleted, so the person signs up again
+    /// with complete documents (their email, national code and Medical Council number become free). An account that already
+    /// has a role or any clinic history is never deleted; it is only deactivated.
+    /// </summary>
     public async Task<IActionResult> OnPostRejectAsync(string id)
     {
         var user = await userManager.FindByIdAsync(id);
-        if (user is not null && await db.Doctors.AnyAsync(d => d.UserId == id && !d.IsApproved))
+        var profile = await db.Doctors.Include(d => d.Documents).FirstOrDefaultAsync(d => d.UserId == id && !d.IsApproved);
+        if (user is null || profile is null)
+        {
+            return RedirectToPage();
+        }
+
+        if (await HasHistoryAsync(user, profile))
         {
             user.IsActive = false;
             await userManager.UpdateAsync(user);
             await userManager.UpdateSecurityStampAsync(user);
-            TempData["Message"] = l["The request was rejected and the account was deactivated."].Value;
+            TempData["Message"] = l["The account has clinic history, so it was deactivated instead of deleted."].Value;
+            return RedirectToPage();
         }
+
+        var files = profile.Documents.Select(d => d.StoredName).ToList();
+        db.DoctorDocuments.RemoveRange(profile.Documents);
+        db.Doctors.Remove(profile);
+        await db.SaveChangesAsync();
+        var deleted = await userManager.DeleteAsync(user);
+        if (!deleted.Succeeded)
+        {
+            TempData["Error"] = string.Join(" ", deleted.Errors.Select(e => e.Description));
+            return RedirectToPage();
+        }
+        foreach (var file in files)
+        {
+            store.Delete(file);
+        }
+
+        TempData["Message"] = l["The request was rejected and the account and its documents were deleted. The doctor can sign up again."].Value;
         return RedirectToPage();
     }
+
+    /// <summary>Anything that must not disappear with the account: roles, appointments, treatment, posts, messages.</summary>
+    private async Task<bool> HasHistoryAsync(ApplicationUser user, DoctorProfile profile) =>
+        (await userManager.GetRolesAsync(user)).Count > 0
+        || await db.Appointments.AnyAsync(a => a.DoctorProfileId == profile.Id || a.PatientUserId == user.Id)
+        || await db.TreatmentSessions.AnyAsync(t => t.DoctorUserId == user.Id || t.PatientUserId == user.Id)
+        || await db.PatientProfiles.AnyAsync(p => p.UserId == user.Id || p.DoctorProfileId == profile.Id)
+        || await db.Posts.AnyAsync(p => p.AuthorUserId == user.Id)
+        || await db.ContactMessages.AnyAsync(m => m.UserId == user.Id || m.DoctorProfileId == profile.Id)
+        || await db.MessageReplies.AnyAsync(r => r.AuthorUserId == user.Id)
+        || await db.MedicalFiles.AnyAsync(f => f.UploadedByUserId == user.Id || f.PatientUserId == user.Id);
 }

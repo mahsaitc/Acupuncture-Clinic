@@ -2997,4 +2997,19 @@
   <data name="Your password was changed. You can log in now." xml:space="preserve">
     <value>رمز عبور شما تغییر کرد. اکنون می‌توانید وارد شوید.</value>
   </data>
+  <data name="Reject this request and delete the account with its documents? The doctor will have to sign up again." xml:space="preserve">
+    <value>این درخواست رد و حساب همراه با مدارکش حذف شود؟ پزشک باید دوباره ثبت‌نام کند.</value>
+  </data>
+  <data name="Reject and delete" xml:space="preserve">
+    <value>رد و حذف</value>
+  </data>
+  <data name="Rejected earlier" xml:space="preserve">
+    <value>قبلاً رد شده</value>
+  </data>
+  <data name="The account has clinic history, so it was deactivated instead of deleted." xml:space="preserve">
+    <value>این حساب سابقه‌ای در کلینیک دارد، به همین دلیل به‌جای حذف، غیرفعال شد.</value>
+  </data>
+  <data name="The request was rejected and the account and its documents were deleted. The doctor can sign up again." xml:space="preserve">
+    <value>درخواست رد شد و حساب و مدارک آن حذف شد. پزشک می‌تواند دوباره ثبت‌نام کند.</value>
+  </data>
 </root>
