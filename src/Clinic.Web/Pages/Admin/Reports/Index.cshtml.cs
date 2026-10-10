@@ -46,6 +46,7 @@ public class IndexModel(ClinicDbContext db, VisitLog log, StaffScope scope, Nati
     public bool CanPickDoctor => !scope.IsOwnOnly;
     public List<(int Id, string Name)> Doctors { get; private set; } = [];
     public List<Row> Rows { get; private set; } = [];
+    public HashSet<string> Openable { get; private set; } = [];
     public int PatientCount => Rows.Select(r => r.Visit.PatientUserId).Distinct().Count();
     public List<(string Doctor, int Count)> ByDoctor => Rows.GroupBy(r => r.Doctor).Select(g => (g.Key, g.Count())).OrderByDescending(g => g.Item2).ToList();
 
@@ -103,6 +104,7 @@ public class IndexModel(ClinicDbContext db, VisitLog log, StaffScope scope, Nati
 
         var visits = await log.BetweenAsync(RangeFrom, RangeTo, patientId, CanPickDoctor ? DoctorId : null);
         var patientIds = visits.Select(v => v.PatientUserId).Distinct().ToList();
+        Openable = await scope.OpenablePatientIdsAsync(patientIds);
         var people = await db.Users.AsNoTracking().Where(u => patientIds.Contains(u.Id))
             .Select(u => new { u.Id, u.FullName, u.PhoneNumber }).ToDictionaryAsync(u => u.Id);
         var codes = (await db.PatientProfiles.AsNoTracking().Where(p => patientIds.Contains(p.UserId)).Select(p => new { p.UserId, p.NationalCode }).ToListAsync())

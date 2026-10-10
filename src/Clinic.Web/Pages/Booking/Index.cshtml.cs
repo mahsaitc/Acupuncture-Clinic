@@ -57,10 +57,21 @@ public class IndexModel(
         var patientId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         if (IsStaff && !string.IsNullOrWhiteSpace(patientEmail))
         {
-            var patient = await userManager.FindByEmailAsync(patientEmail.Trim());
-            if (patient is null)
+            // Staff book for a patient by email or by mobile (patients registered at the front desk often have no email).
+            var key = patientEmail.Trim();
+            ApplicationUser? patient;
+            if (key.Contains('@'))
             {
-                ModelState.AddModelError(string.Empty, l["No patient with this email was found."]);
+                patient = await userManager.FindByEmailAsync(key);
+            }
+            else
+            {
+                var mobile = Clinic.Web.Pages.Admin.Patients.PatientRegistration.NormalizeMobile(key);
+                patient = await db.Users.FirstOrDefaultAsync(u => u.PhoneNumber == mobile);
+            }
+            if (patient is null || !await userManager.IsInRoleAsync(patient, Roles.Patient))
+            {
+                ModelState.AddModelError(string.Empty, l["No patient with this mobile or email was found."]);
                 return Page();
             }
             patientId = patient.Id;

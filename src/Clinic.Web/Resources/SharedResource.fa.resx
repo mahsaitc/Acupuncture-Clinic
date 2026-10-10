@@ -2655,4 +2655,10 @@
   <data name="No appointments in these days." xml:space="preserve">
     <value>در این روزها نوبتی ثبت نشده است.</value>
   </data>
+  <data name="Patient mobile or email (leave empty to book for yourself)" xml:space="preserve">
+    <value>موبایل یا ایمیل بیمار (برای نوبت گرفتن برای خودتان خالی بگذارید)</value>
+  </data>
+  <data name="No patient with this mobile or email was found." xml:space="preserve">
+    <value>بیماری با این موبایل یا ایمیل پیدا نشد.</value>
+  </data>
 </root>
