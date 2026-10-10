@@ -2667,4 +2667,10 @@
   <data name="Add the protocol's points to the current ones, or replace them." xml:space="preserve">
     <value>نقاط پروتکل را به نقاط فعلی اضافه کنید یا جایگزین آن‌ها کنید.</value>
   </data>
+  <data name="Add the previous session's points to the current ones, or replace them." xml:space="preserve">
+    <value>نقاط جلسه قبل را به نقاط فعلی اضافه کنید یا جایگزین آن‌ها کنید.</value>
+  </data>
+  <data name="Points of {0}" xml:space="preserve">
+    <value>نقاط جلسه {0}</value>
+  </data>
 </root>
