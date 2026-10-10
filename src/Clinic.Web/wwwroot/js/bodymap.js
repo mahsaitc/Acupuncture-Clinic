@@ -267,12 +267,26 @@
         setTimeout(() => button.classList.remove('done'), 900);
     }));
 
-    document.getElementById('copy-previous')?.addEventListener('click', () => {
-        if (points.length && !confirm(text.replace)) return;
-        points = previous.map(p => ({ ...p }));
+    // The previous session's points can likewise be added to the current ones (repeats merge) or replace them.
+    document.querySelectorAll('[data-copy-previous]').forEach(button => button.addEventListener('click', () => {
+        const replace = button.dataset.copyPrevious === 'replace';
+        const first = replace ? 0 : points.length;
+        if (replace) points = [];
+        previous.forEach(p => {
+            const lib = p.code && byCode.get(p.code.toUpperCase());
+            if (lib) {
+                const at = addStandard(lib, p.side);
+                if (at >= first && p.note) points[at].note = p.note;
+            } else if (!points.some(q => !q.code && q.label === p.label && q.view === p.view && q.x === p.x && q.y === p.y)) {
+                points.push({ ...p });
+            }
+        });
         selected = -1;
         save(); render();
-    });
+        if (points.length > first) reveal(first);
+        button.classList.add('done');
+        setTimeout(() => button.classList.remove('done'), 900);
+    }));
 
     document.getElementById('points-clear').addEventListener('click', () => {
         if (points.length && confirm(text.clear)) {
