@@ -105,6 +105,18 @@ public class StaffScope(ClinicDbContext db, UserManager<ApplicationUser> users, 
         return user is not null && await users.IsInRoleAsync(user, Roles.Patient) ? user : null;
     }
 
+    /// <summary>
+    /// The ids among <paramref name="ids"/> whose patient page the user may open. Appointments booked by staff for
+    /// themselves belong to staff accounts, which have no patient page, so lists show those names without a link.
+    /// </summary>
+    public async Task<HashSet<string>> OpenablePatientIdsAsync(IEnumerable<string> ids)
+    {
+        var list = ids.Distinct().ToList();
+        var patientRoleId = await db.Roles.Where(r => r.Name == Roles.Patient).Select(r => r.Id).FirstOrDefaultAsync();
+        var patients = await PatientsAsync(db.Users.Where(u => list.Contains(u.Id) && db.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == patientRoleId)));
+        return (await patients.Select(u => u.Id).ToListAsync()).ToHashSet();
+    }
+
     /// <summary>Approved doctors with their names, for pickers.</summary>
     public async Task<List<(int Id, string Name)>> DoctorsAsync() =>
         (await db.Doctors.AsNoTracking().Where(d => d.IsApproved)

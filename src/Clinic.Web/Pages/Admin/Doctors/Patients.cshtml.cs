@@ -23,6 +23,7 @@ public class PatientsModel(ClinicDbContext db, StaffScope scope, TimeProvider ti
     public bool ShowFile => scope.IsAdmin;
     public List<Appointment> Upcoming { get; private set; } = [];
     public Dictionary<string, string> UpcomingPatients { get; private set; } = [];
+    public HashSet<string> Openable { get; private set; } = [];
     public bool CanOpenRecords => scope.IsAdmin && User.IsInRole(Roles.Doctor);
     public bool CanSeeSummary => scope.IsAdmin;
     public List<Row> Rows { get; private set; } = [];
@@ -54,6 +55,7 @@ public class PatientsModel(ClinicDbContext db, StaffScope scope, TimeProvider ti
             .ToListAsync();
         var upcomingIds = Upcoming.Select(a => a.PatientUserId).Distinct().ToList();
         UpcomingPatients = await db.Users.Where(u => upcomingIds.Contains(u.Id)).ToDictionaryAsync(u => u.Id, u => u.FullName);
+        Openable = await scope.OpenablePatientIdsAsync(upcomingIds);
 
         var list = await scope.PatientsOf(patients, doctor.Id, doctor.UserId)
             .OrderBy(u => u.FullName)

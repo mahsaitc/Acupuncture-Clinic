@@ -75,7 +75,16 @@
                             <tr>
                                 <td class="text-nowrap">@Fmt.Date(a.StartUtc)</td>
                                 <td class="text-nowrap">@Fmt.Time(a.StartUtc)</td>
-                                <td><a asp-page="/Admin/Patients/Details" asp-route-id="@a.PatientUserId">@Model.UpcomingPatients.GetValueOrDefault(a.PatientUserId, "-")</a></td>
+                                <td>
+                                    @if (Model.Openable.Contains(a.PatientUserId))
+                                    {
+                                        <a asp-page="/Admin/Patients/Details" asp-route-id="@a.PatientUserId">@Model.UpcomingPatients.GetValueOrDefault(a.PatientUserId, "-")</a>
+                                    }
+                                    else
+                                    {
+                                        @Model.UpcomingPatients.GetValueOrDefault(a.PatientUserId, "-")
+                                    }
+                                </td>
                                 <td>@a.Service?.Name(english)</td>
                                 <td><partial name="_StatusBadge" model="a.Status" /></td>
                             </tr>

@@ -124,7 +124,7 @@ else
                             <td>@Fmt.Time(r.Visit.Utc)</td>
                             @if (Model.PatientName is null)
                             {
-                                <td><a asp-page="/Admin/Patients/Details" asp-route-id="@r.Visit.PatientUserId">@r.Patient</a></td>
+                                <td>@if (Model.Openable.Contains(r.Visit.PatientUserId)) { <a asp-page="/Admin/Patients/Details" asp-route-id="@r.Visit.PatientUserId">@r.Patient</a> } else { @r.Patient }</td>
                                 <td dir="ltr">@(r.NationalCode is { } nc ? Fmt.Number(nc) : "-")</td>
                                 <td dir="ltr" class="text-nowrap">@(r.Phone is { } ph ? Fmt.Number(ph) : "-")</td>
                             }
