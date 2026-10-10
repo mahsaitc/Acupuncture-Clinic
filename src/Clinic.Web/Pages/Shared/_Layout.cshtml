@@ -34,7 +34,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light site-nav sticky-top">
+        <nav class="navbar navbar-expand-xl navbar-light site-nav sticky-top">
             <div class="container">
                 <a class="navbar-brand" asp-page="/Index"><img src="~/img/logo.png" alt="" class="brand-logo" width="44" height="51" /><span class="brand-text"><span>@L["Acupuncture Clinic"]</span><small>@L["Dr. Mahsa Hassani"]</small></span></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
@@ -55,7 +55,7 @@
                             <li class="nav-item"><a class="nav-link" asp-page="/Messages/Index">@L["My messages"]</a></li>
                         }
                     </ul>
-                    <ul class="navbar-nav align-items-lg-center gap-lg-2">
+                    <ul class="navbar-nav align-items-xl-center gap-xl-2">
                         <li class="nav-item">
                             <a class="nav-link" href="@CulturePath.SwitchUrl(Context.Request)" hreflang="@(english ? "fa" : "en")">@(english ? "فارسی" : "English")</a>
                         </li>

@@ -275,7 +275,7 @@ textarea.form-control {
   color: var(--olive-900);
 }
 
-@media (max-width: 991.98px) {
+@media (max-width: 1199.98px) {
   .site-nav .navbar-collapse {
     margin-top: .75rem;
     padding: .75rem;
@@ -768,5 +768,55 @@ html[lang="en"] .admin-brand {
   .page-head form.d-flex > .form-control {
     flex: 1 1 100%;
     min-width: 0;
+  }
+}
+
+/* ---------- Top menu of the public site ----------
+   With an account the menu carries up to ten items; each stays on one line and the bar uses the wider screen. */
+.site-nav .nav-link,
+.site-nav .btn {
+  white-space: nowrap;
+}
+
+@media (min-width: 1200px) {
+  .site-nav > .container {
+    max-width: min(1520px, calc(100% - 2rem));
+  }
+
+  .site-nav .navbar-nav .nav-link {
+    padding: .45rem .7rem !important;
+  }
+
+  .site-nav .navbar-nav .btn {
+    padding: .4rem .85rem;
+  }
+}
+
+/* English labels are longer than the Persian ones. */
+html[lang="en"] .site-nav .navbar-nav .nav-link,
+html[lang="en"] .site-nav .navbar-nav .btn {
+  font-size: .93rem;
+}
+
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+  .site-nav .navbar-nav .nav-link {
+    padding: .4rem .5rem !important;
+    font-size: .88rem;
+  }
+
+  .site-nav .navbar-nav .btn {
+    font-size: .88rem;
+    padding: .35rem .65rem;
+  }
+
+  .site-nav .brand-text small {
+    display: none;
+  }
+}
+
+/* Just above the collapse point the longer English menu needs the brand name's space; the logo stays. */
+@media (min-width: 1200px) and (max-width: 1339.98px) {
+  html[lang="en"] .site-nav .brand-text {
+    display: none;
   }
 }
