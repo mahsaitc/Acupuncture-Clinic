@@ -20,10 +20,12 @@
     <title>@L["Intake form"] - @u.FullName</title>
     <link rel="stylesheet" href="~/lib/vazirmatn/vazirmatn.css" />
     <link rel="stylesheet" href="~/css/print.css" asp-append-version="true" />
+    <meta name="robots" content="noindex" />
+    <script src="~/js/behaviors.js" asp-append-version="true" defer></script>
 </head>
 <body>
     <div class="toolbar no-print">
-        <button type="button" onclick="window.print()">@L["Print or save as PDF"]</button>
+        <button type="button" data-print>@L["Print or save as PDF"]</button>
         <a href="@Url.Page("./Index", new { patientId = u.Id })">@L["Back to the record"]</a>
     </div>
 

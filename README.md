@@ -105,6 +105,26 @@ photos by landmarks (`tools/charts/photo.py`) and the app serves the PNGs. The e
 The model is CC BY-SA 4.0 (Z-Anatomy, from BodyParts3D): credit it in the app.
 
 
+## Search engines and security
+
+- `/sitemap.xml` and `/robots.txt` are built from the published pages and posts. Every public page has a description,
+  canonical and fa/en `hreflang` links, Open Graph tags (link previews in Telegram/WhatsApp) and Schema.org data
+  (`MedicalClinic` on the home page, `BlogPosting`/`MedicalScholarlyArticle` on posts). Code: `src/Clinic.Web/Seo/`.
+- Every response carries a Content Security Policy (`Security/SecurityHeaders.cs`): scripts only from this site or with the
+  per-request nonce, which `NonceTagHelper` adds to every `<script>` in the views. Do not write `onclick=`/`onchange=`
+  attributes (a test fails); use `data-confirm`, `data-autosubmit` and `data-print` (`wwwroot/js/behaviors.js`).
+- Posts to login, sign-up, doctor sign-up, contact and booking are limited per IP address (`Security/RequestLimits.cs`).
+  Sign-up and contact forms carry an invisible bot check (`_BotCheck` partial and `[BotCheckAttribute]`).
+
+Settings for the real server (appsettings.Production.json or environment variables):
+
+| Setting | Use |
+|---|---|
+| `Site:BaseUrl` | The public address, e.g. `https://example.ir`, for the sitemap, canonical links and previews. |
+| `AllowedHosts` | The site's domain(s), e.g. `example.ir;www.example.ir`, instead of `*`. |
+| `ReverseProxy:Enabled` | `true` when nginx or another proxy on the same server forwards to the app (not needed under IIS). |
+| `Security:RateLimiting`, `Security:BotCheck` | Leave `true`; tests switch them off. `Security:BotCheckMinSeconds` defaults to 3. |
+
 ## Tests
 
 ```bash

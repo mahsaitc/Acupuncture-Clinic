@@ -11,7 +11,7 @@
         {
             <form method="get" class="d-flex">
                 <input type="hidden" name="Archived" value="@Model.Archived" />
-                <select class="form-select" name="DoctorId" onchange="this.form.submit()" aria-label="@L["Recipient"]">
+                <select class="form-select" name="DoctorId" data-autosubmit aria-label="@L["Recipient"]">
                     <option value="">@L["All messages"]</option>
                     <option value="0" selected="@(Model.DoctorId == 0)">@L["The clinic (general)"]</option>
                     @foreach (var d in Model.Doctors) { <option value="@d.Id" selected="@(Model.DoctorId == d.Id)">@d.Name</option> }
@@ -73,7 +73,7 @@
                                             <button type="submit" class="btn btn-sm btn-success">@L["Save"]</button>
                                         </form>
                                     </details>
-                                    <form method="post" asp-page-handler="DeleteReply" asp-route-replyId="@r.Id" asp-route-Archived="@Model.Archived" asp-route-DoctorId="@Model.DoctorId" class="d-inline" onsubmit="return confirm('@L["Delete this reply?"]')">
+                                    <form method="post" asp-page-handler="DeleteReply" asp-route-replyId="@r.Id" asp-route-Archived="@Model.Archived" asp-route-DoctorId="@Model.DoctorId" class="d-inline" data-confirm="@L["Delete this reply?"]">
                                         <button type="submit" class="btn btn-link btn-sm text-danger p-0">@L["Delete"]</button>
                                     </form>
                                 }
@@ -103,7 +103,7 @@
                     </form>
                     @if (Model.CanDelete)
                     {
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@m.Id" asp-route-Archived="@Model.Archived" asp-route-DoctorId="@Model.DoctorId" onsubmit="return confirm('@L["Delete this message and its replies?"]')">
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@m.Id" asp-route-Archived="@Model.Archived" asp-route-DoctorId="@Model.DoctorId" data-confirm="@L["Delete this message and its replies?"]">
                             <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>@L["Delete"]</button>
                         </form>
                     }

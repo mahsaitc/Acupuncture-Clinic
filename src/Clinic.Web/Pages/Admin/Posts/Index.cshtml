@@ -80,7 +80,7 @@ else
                                 <button type="submit" class="btn btn-sm btn-outline-success">@(r.IsPublished ? L["Unpublish"] : L["Publish"])</button>
                             </form>
                             <form method="post" asp-page-handler="Delete" asp-route-id="@r.Id" asp-route-Kind="@Model.Kind" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('@L["Delete this post permanently?"]')"><i class="bi bi-trash"></i></button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger" data-confirm="@L["Delete this post permanently?"]"><i class="bi bi-trash"></i></button>
                             </form>
                             }
                         </td>

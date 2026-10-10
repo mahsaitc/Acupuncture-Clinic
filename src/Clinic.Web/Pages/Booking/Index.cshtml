@@ -10,13 +10,13 @@
 <form method="get" class="row g-3 mb-4">
     <div class="col-md-6">
         <label class="form-label" for="DoctorId">@L["Doctor"]</label>
-        <select class="form-select" id="DoctorId" name="DoctorId" asp-items="Model.DoctorOptions" onchange="this.form.submit()">
+        <select class="form-select" id="DoctorId" name="DoctorId" asp-items="Model.DoctorOptions" data-autosubmit>
             <option value="">@L["Choose a doctor"]</option>
         </select>
     </div>
     <div class="col-md-6">
         <label class="form-label" for="ServiceId">@L["Service"]</label>
-        <select class="form-select" id="ServiceId" name="ServiceId" asp-items="Model.ServiceOptions" onchange="this.form.submit()">
+        <select class="form-select" id="ServiceId" name="ServiceId" asp-items="Model.ServiceOptions" data-autosubmit>
             <option value="">@L["Choose a service"]</option>
         </select>
     </div>

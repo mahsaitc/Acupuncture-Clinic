@@ -7,11 +7,17 @@ using Clinic.Infrastructure.Data;
 using Clinic.Web;
 using Clinic.Web.Localization;
 using Clinic.Web.Media;
+using Clinic.Web.Security;
+using Clinic.Web.Seo;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Do not tell visitors which web server runs the site.
+builder.WebHost.ConfigureKestrel(o => o.AddServerHeader = false);
 
 builder.Services.AddClinicInfrastructure(builder.Configuration, builder.Environment.ContentRootPath);
 // Emit Persian text as-is instead of &#x...; entities.
@@ -23,6 +29,11 @@ builder.Services.AddScoped<SiteContentProvider>();
 builder.Services.AddSingleton<Clinic.Web.Content.MarkdownRenderer>();
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<Clinic.Web.Content.ContactThrottle>();
+builder.Services.AddSingleton<Clinic.Web.Security.BotCheck>();
+builder.Services.AddClinicRequestLimits();
+// Behind nginx or another proxy on the same server, trust its X-Forwarded-For/Proto so HTTPS and visitor IPs are right.
+var behindProxy = builder.Configuration.GetValue("ReverseProxy:Enabled", false);
+builder.Services.Configure<ForwardedHeadersOptions>(o => o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
 // Allow the hero video upload through the form reader; the page itself enforces the real limit.
 builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(o => o.MultipartBodyLengthLimit = MediaStore.MaxVideoBytes + MediaStore.MaxImageBytes + 1024 * 1024);
 builder.Services.AddScoped<IdentityErrorDescriber, LocalizedIdentityErrorDescriber>();
@@ -99,6 +110,11 @@ if (app.Configuration.GetValue("Database:MigrateOnStartup", true))
     }
 }
 
+if (behindProxy)
+{
+    app.UseForwardedHeaders();
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -107,7 +123,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCulturePathPrefix();
+app.UseSecurityHeaders(upgradeInsecureRequests: !app.Environment.IsDevelopment());
 app.UseRequestLocalization();
+app.UseRateLimiter();
 
 // Uploaded public media (hero video and poster). Medical files are never stored here.
 var media = app.Services.GetRequiredService<MediaStore>();
@@ -125,6 +143,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+app.MapClinicSeo();
 app.MapRazorPages()
    .WithStaticAssets();
 

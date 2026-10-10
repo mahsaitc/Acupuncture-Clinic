@@ -14,6 +14,7 @@ namespace Clinic.Web.Pages.Account;
 /// Doctor sign-up, separate from patients. The doctor uploads their medical licence and national ID card; the account
 /// has no role and cannot sign in until the admin checks the documents and approves it.
 /// </summary>
+[Clinic.Web.Security.BotCheckAttribute]
 public class RegisterDoctorModel(
     UserManager<ApplicationUser> userManager,
     ClinicDbContext db,

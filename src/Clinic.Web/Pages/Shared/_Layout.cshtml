@@ -22,11 +22,7 @@
         <link rel="icon" href="~/img/favicon-32.png" type="image/png" />
         <link rel="apple-touch-icon" href="~/img/apple-touch-icon.png" />
     }
-    @if (ViewData["Description"] is string description)
-    {
-        <meta name="description" content="@description" />
-    }
-    <link rel="alternate" hreflang="@(english ? "fa" : "en")" href="@CulturePath.SwitchUrl(Context.Request)" />
+    <partial name="_SeoHead" />
     <link rel="stylesheet" href="~/lib/vazirmatn/vazirmatn.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <meta name="theme-color" content="@brand.MetaColor" />
@@ -150,6 +146,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/nav.js" asp-append-version="true"></script>
+    <script src="~/js/behaviors.js" asp-append-version="true"></script>
     <partial name="_FormScripts" />
     @await RenderSectionAsync("Scripts", required: false)
 </body>

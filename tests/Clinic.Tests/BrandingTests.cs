@@ -29,6 +29,8 @@ public sealed class OwnerWebFactory : WebApplicationFactory<Program>
         builder.UseSetting("Owner:Email", OwnerEmail);
         builder.UseSetting("Owner:Password", OwnerPassword);
         builder.UseSetting("Owner:Name", "مالک تست");
+        builder.UseSetting("Security:RateLimiting", "false");
+        builder.UseSetting("Security:BotCheck", "false");
     }
 
     protected override void Dispose(bool disposing)

@@ -13,6 +13,7 @@
         <p class="text-muted small mb-4">@L["Are you a patient?"] <a asp-page="./Register">@L["Patient sign up"]</a></p>
         <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <partial name="_BotCheck" />
             <partial name="_RegisterFields" for="Input" />
             <div class="row g-3 mb-3">
                 <div class="col-sm-6">

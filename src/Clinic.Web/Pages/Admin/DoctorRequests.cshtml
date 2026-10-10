@@ -31,7 +31,7 @@
                         <form method="post" asp-page-handler="Approve" asp-route-id="@r.User.Id">
                             <button type="submit" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>@L["Approve doctor"]</button>
                         </form>
-                        <form method="post" asp-page-handler="Reject" asp-route-id="@r.User.Id" onsubmit="return confirm('@L["Reject this request and deactivate the account?"]')">
+                        <form method="post" asp-page-handler="Reject" asp-route-id="@r.User.Id" data-confirm="@L["Reject this request and deactivate the account?"]">
                             <button type="submit" class="btn btn-outline-danger">@L["Reject"]</button>
                         </form>
                     </div>
