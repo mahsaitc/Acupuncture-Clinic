@@ -2649,4 +2649,10 @@
   <data name="Patient not found." xml:space="preserve">
     <value>بیمار پیدا نشد.</value>
   </data>
+  <data name="Next 7 days" xml:space="preserve">
+    <value>۷ روز آینده</value>
+  </data>
+  <data name="No appointments in these days." xml:space="preserve">
+    <value>در این روزها نوبتی ثبت نشده است.</value>
+  </data>
 </root>
