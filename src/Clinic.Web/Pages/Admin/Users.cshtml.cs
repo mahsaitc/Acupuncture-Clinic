@@ -3,6 +3,7 @@ using Clinic.Domain;
 using Clinic.Domain.Entities;
 using Clinic.Infrastructure.Data;
 using Clinic.Infrastructure.Identity;
+using Clinic.Web.Branding;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +47,7 @@ public class UsersModel(ClinicDbContext db, UserManager<ApplicationUser> userMan
     public async Task<IActionResult> OnPostToggleRoleAsync(string id, string role)
     {
         var user = await userManager.FindByIdAsync(id);
-        if (user is null || !Roles.All.Contains(role) || IsSelfAdminChange(id, role))
+        if (user is null || !Roles.All.Contains(role) || IsSelfAdminChange(id, role) || await OwnerGuard.IsProtectedAsync(userManager, user, User))
         {
             return RedirectToPage(new { Q });
         }
@@ -85,7 +86,7 @@ public class UsersModel(ClinicDbContext db, UserManager<ApplicationUser> userMan
     public async Task<IActionResult> OnPostToggleActiveAsync(string id)
     {
         var user = await userManager.FindByIdAsync(id);
-        if (user is null || id == CurrentUserId)
+        if (user is null || id == CurrentUserId || await OwnerGuard.IsProtectedAsync(userManager, user, User))
         {
             return RedirectToPage(new { Q });
         }

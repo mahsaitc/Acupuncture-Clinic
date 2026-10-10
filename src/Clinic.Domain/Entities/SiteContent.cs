@@ -39,6 +39,29 @@ public class SiteContent
     /// <summary>The home page's treatment results (<see cref="ClinicResults"/>) as JSON; null shows the sample figures.</summary>
     public string? ResultsJson { get; set; }
 
+    // Branding, edited only by the site owner. Null keeps the built-in name, logo and olive colours.
+
+    /// <summary>The clinic's full name: browser tab, footer, letterheads of the printouts.</summary>
+    public string? ClinicNameFa { get; set; }
+    public string? ClinicNameEn { get; set; }
+
+    /// <summary>The two lines beside the logo in the menu, e.g. "Acupuncture Clinic" over "Dr. ...".</summary>
+    public string? BrandTitleFa { get; set; }
+    public string? BrandTitleEn { get; set; }
+    public string? BrandSubtitleFa { get; set; }
+    public string? BrandSubtitleEn { get; set; }
+
+    /// <summary>The small label above the home page title.</summary>
+    public string? HeroEyebrowFa { get; set; }
+    public string? HeroEyebrowEn { get; set; }
+
+    /// <summary>Web path of the uploaded logo, e.g. /media/brand/abc.png.</summary>
+    public string? LogoPath { get; set; }
+
+    /// <summary>Main theme colour as #rrggbb (replaces olive) and the accent colour (replaces sand).</summary>
+    public string? ThemeColor { get; set; }
+    public string? AccentColor { get; set; }
+
     public DateTime UpdatedUtc { get; set; } = DateTime.UtcNow;
 
     public string HeroTitle(bool english) => english ? HeroTitleEn : HeroTitleFa;

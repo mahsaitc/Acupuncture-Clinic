@@ -1,7 +1,9 @@
 @page
 @using Clinic.Web.Localization
 @model Clinic.Web.Pages.Admin.Reports.IndexModel
+@inject Clinic.Web.Media.SiteContentProvider SiteContent
 @{
+    var brand = await SiteContent.BrandAsync();
     ViewData["Title"] = L["Visit reports"];
     var english = CulturePath.IsEnglish;
     var range = Model.RangeFrom == Model.RangeTo ? Fmt.Day(Model.RangeFrom) : $"{Fmt.Day(Model.RangeFrom)} - {Fmt.Day(Model.RangeTo)}";
@@ -12,9 +14,9 @@
 }
 
 <div class="print-letterhead d-none d-print-flex">
-    <img src="~/img/logo.png" alt="" width="52" height="60" />
+    <img src="@brand.LogoPath" alt="" width="52" height="60" />
     <div>
-        <div class="fw-bold">@L["Dr. Mahsa Hassani Acupuncture Clinic"]</div>
+        <div class="fw-bold">@brand.Name</div>
         <div>@L["Visit reports"]: @range</div>
     </div>
     <div class="ms-auto small">@L["Print date"]: @Fmt.Date(DateTime.UtcNow)</div>

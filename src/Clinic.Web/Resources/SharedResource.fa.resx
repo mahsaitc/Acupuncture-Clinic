@@ -2673,4 +2673,124 @@
   <data name="Points of {0}" xml:space="preserve">
     <value>نقاط جلسه {0}</value>
   </data>
+  <data name="Site owner" xml:space="preserve">
+    <value>مالک سایت</value>
+  </data>
+  <data name="Owner" xml:space="preserve">
+    <value>مالک سایت</value>
+  </data>
+  <data name="Logo, name and colours" xml:space="preserve">
+    <value>لوگو، نام و رنگ‌ها</value>
+  </data>
+  <data name="Protected" xml:space="preserve">
+    <value>محافظت‌شده</value>
+  </data>
+  <data name="Only the site owner sees this page" xml:space="preserve">
+    <value>این صفحه را فقط مالک سایت می‌بیند</value>
+  </data>
+  <data name="Set the clinic's identity for this installation of the site. Empty name fields use the built-in name." xml:space="preserve">
+    <value>هویت کلینیک را برای این نسخه از سایت تعیین کنید. اگر فیلد نامی خالی بماند، نام پیش‌فرض نمایش داده می‌شود.</value>
+  </data>
+  <data name="Logo" xml:space="preserve">
+    <value>لوگو</value>
+  </data>
+  <data name="Current logo" xml:space="preserve">
+    <value>لوگوی فعلی</value>
+  </data>
+  <data name="New logo" xml:space="preserve">
+    <value>لوگوی جدید</value>
+  </data>
+  <data name="PNG with a transparent background works best (square or upright). JPG, PNG or WebP, at most 5 MB. It is also used as the browser tab icon and on the printouts." xml:space="preserve">
+    <value>بهترین حالت PNG با پس‌زمینه شفاف است (مربعی یا ایستاده). JPG، PNG یا WebP، حداکثر ۵ مگابایت. همین لوگو آیکون زبانه مرورگر و سربرگ چاپ‌ها هم می‌شود.</value>
+  </data>
+  <data name="Go back to the original logo" xml:space="preserve">
+    <value>برگشت به لوگوی اصلی</value>
+  </data>
+  <data name="Names and titles" xml:space="preserve">
+    <value>نام‌ها و عنوان‌ها</value>
+  </data>
+  <data name="Clinic name (Persian)" xml:space="preserve">
+    <value>نام کلینیک (فارسی)</value>
+  </data>
+  <data name="Clinic name (English)" xml:space="preserve">
+    <value>نام کلینیک (انگلیسی)</value>
+  </data>
+  <data name="Menu title (Persian)" xml:space="preserve">
+    <value>عنوان کنار لوگو (فارسی)</value>
+  </data>
+  <data name="Menu title (English)" xml:space="preserve">
+    <value>عنوان کنار لوگو (انگلیسی)</value>
+  </data>
+  <data name="Line under the menu title (Persian)" xml:space="preserve">
+    <value>خط زیر عنوان (فارسی)</value>
+  </data>
+  <data name="Line under the menu title (English)" xml:space="preserve">
+    <value>خط زیر عنوان (انگلیسی)</value>
+  </data>
+  <data name="Home page title (Persian)" xml:space="preserve">
+    <value>عنوان صفحه اصلی (فارسی)</value>
+  </data>
+  <data name="Home page title (English)" xml:space="preserve">
+    <value>عنوان صفحه اصلی (انگلیسی)</value>
+  </data>
+  <data name="Theme colour" xml:space="preserve">
+    <value>رنگ اصلی قالب</value>
+  </data>
+  <data name="Accent colour" xml:space="preserve">
+    <value>رنگ مکمل</value>
+  </data>
+  <data name="Shown in the browser tab, the footer and the letterhead of every printout." xml:space="preserve">
+    <value>در زبانه مرورگر، پایین صفحه و سربرگ همه چاپ‌ها نمایش داده می‌شود.</value>
+  </data>
+  <data name="The two lines beside the logo in the top menu and the panel." xml:space="preserve">
+    <value>دو خط کنار لوگو در منوی بالای سایت و پنل مدیریت.</value>
+  </data>
+  <data name="Theme colours" xml:space="preserve">
+    <value>رنگ‌های قالب</value>
+  </data>
+  <data name="Ready-made colours" xml:space="preserve">
+    <value>رنگ‌های آماده</value>
+  </data>
+  <data name="Olive" xml:space="preserve">
+    <value>زیتونی</value>
+  </data>
+  <data name="Teal" xml:space="preserve">
+    <value>سبزآبی</value>
+  </data>
+  <data name="Blue" xml:space="preserve">
+    <value>آبی</value>
+  </data>
+  <data name="Plum" xml:space="preserve">
+    <value>آلویی</value>
+  </data>
+  <data name="Terracotta" xml:space="preserve">
+    <value>آجری</value>
+  </data>
+  <data name="Slate" xml:space="preserve">
+    <value>خاکستری‌آبی</value>
+  </data>
+  <data name="The whole site and the panel take these colours; the original olive stays the default." xml:space="preserve">
+    <value>کل سایت و پنل مدیریت این رنگ‌ها را می‌گیرند؛ رنگ زیتونی اصلی پیش‌فرض می‌ماند.</value>
+  </data>
+  <data name="Restore the original olive colours" xml:space="preserve">
+    <value>برگشت به رنگ زیتونی اصلی</value>
+  </data>
+  <data name="Pick a colour." xml:space="preserve">
+    <value>یک رنگ انتخاب کنید.</value>
+  </data>
+  <data name="The logo must be a JPG, PNG or WebP file of at most 5 MB." xml:space="preserve">
+    <value>لوگو باید فایل JPG، PNG یا WebP و حداکثر ۵ مگابایت باشد.</value>
+  </data>
+  <data name="The clinic's name, logo and colours were saved." xml:space="preserve">
+    <value>نام، لوگو و رنگ‌های کلینیک ذخیره شد.</value>
+  </data>
+  <data name="The original olive colours are back." xml:space="preserve">
+    <value>رنگ‌های زیتونی اصلی برگشت.</value>
+  </data>
+  <data name="Label above the home page title (Persian)" xml:space="preserve">
+    <value>برچسب بالای عنوان صفحه اصلی (فارسی)</value>
+  </data>
+  <data name="Label above the home page title (English)" xml:space="preserve">
+    <value>برچسب بالای عنوان صفحه اصلی (انگلیسی)</value>
+  </data>
 </root>

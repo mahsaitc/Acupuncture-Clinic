@@ -1,0 +1,150 @@
+@page
+@model Clinic.Web.Pages.Admin.BrandingModel
+@{
+    ViewData["Title"] = L["Logo, name and colours"];
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+    <h1 class="h3 mb-0">@L["Logo, name and colours"]</h1>
+    <span class="badge bg-dark"><i class="bi bi-shield-lock me-1"></i>@L["Only the site owner sees this page"]</span>
+</div>
+<p class="text-muted mb-4">@L["Set the clinic's identity for this installation of the site. Empty name fields use the built-in name."]</p>
+
+<form method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    <div class="card card-soft mb-4">
+        <div class="card-body">
+            <h2 class="h5 mb-3"><i class="bi bi-image me-2 text-success"></i>@L["Logo"]</h2>
+            <div class="d-flex flex-wrap align-items-center gap-4">
+                <span class="brand-logo-chip brand-logo-preview"><img src="@Model.LogoPath" alt="@L["Current logo"]" id="logoPreview" /></span>
+                <div class="flex-grow-1" style="min-width: 16rem">
+                    <label class="form-label" for="logo">@L["New logo"]</label>
+                    <input class="form-control" type="file" id="logo" name="logo" accept="image/png,image/webp,image/jpeg" />
+                    <div class="form-text">@L["PNG with a transparent background works best (square or upright). JPG, PNG or WebP, at most 5 MB. It is also used as the browser tab icon and on the printouts."]</div>
+                    @if (Model.CustomLogo)
+                    {
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="removeLogo" name="removeLogo" value="true" />
+                            <label class="form-check-label" for="removeLogo">@L["Go back to the original logo"]</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-soft mb-4">
+        <div class="card-body">
+            <h2 class="h5 mb-3"><i class="bi bi-type me-2 text-success"></i>@L["Names and titles"]</h2>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Input.ClinicNameFa" class="form-label"></label>
+                    <input asp-for="Input.ClinicNameFa" class="form-control" dir="rtl" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.ClinicNameEn" class="form-label"></label>
+                    <input asp-for="Input.ClinicNameEn" class="form-control" dir="ltr" />
+                </div>
+                <div class="col-12 form-text mt-1">@L["Shown in the browser tab, the footer and the letterhead of every printout."]</div>
+                <div class="col-md-6">
+                    <label asp-for="Input.BrandTitleFa" class="form-label"></label>
+                    <input asp-for="Input.BrandTitleFa" class="form-control" dir="rtl" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.BrandTitleEn" class="form-label"></label>
+                    <input asp-for="Input.BrandTitleEn" class="form-control" dir="ltr" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.BrandSubtitleFa" class="form-label"></label>
+                    <input asp-for="Input.BrandSubtitleFa" class="form-control" dir="rtl" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.BrandSubtitleEn" class="form-label"></label>
+                    <input asp-for="Input.BrandSubtitleEn" class="form-control" dir="ltr" />
+                </div>
+                <div class="col-12 form-text mt-1">@L["The two lines beside the logo in the top menu and the panel."]</div>
+                <div class="col-md-6">
+                    <label asp-for="Input.HeroEyebrowFa" class="form-label"></label>
+                    <input asp-for="Input.HeroEyebrowFa" class="form-control" dir="rtl" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.HeroEyebrowEn" class="form-label"></label>
+                    <input asp-for="Input.HeroEyebrowEn" class="form-control" dir="ltr" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.HeroTitleFa" class="form-label"></label>
+                    <input asp-for="Input.HeroTitleFa" class="form-control" dir="rtl" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.HeroTitleEn" class="form-label"></label>
+                    <input asp-for="Input.HeroTitleEn" class="form-control" dir="ltr" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-soft mb-4">
+        <div class="card-body">
+            <h2 class="h5 mb-3"><i class="bi bi-palette me-2 text-success"></i>@L["Theme colours"]</h2>
+            <div class="d-flex flex-wrap gap-2 mb-3" role="group" aria-label="@L["Ready-made colours"]">
+                @foreach (var p in BrandingModel.Presets)
+                {
+                    <button type="button" class="btn btn-sm btn-light theme-preset" data-theme="@p.Theme" data-accent="@p.Accent">
+                        <span class="theme-swatch" style="background:@p.Theme"></span><span class="theme-swatch" style="background:@p.Accent"></span>@L[p.Name]
+                    </button>
+                }
+            </div>
+            <div class="row g-3 align-items-end">
+                <div class="col-sm-6 col-lg-3">
+                    <label asp-for="Input.ThemeColor" class="form-label"></label>
+                    <input asp-for="Input.ThemeColor" type="color" class="form-control form-control-color w-100" />
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <label asp-for="Input.AccentColor" class="form-label"></label>
+                    <input asp-for="Input.AccentColor" type="color" class="form-control form-control-color w-100" />
+                </div>
+                <div class="col-lg-6">
+                    <div class="theme-preview" id="themePreview" aria-hidden="true">
+                        <div class="theme-preview-bar"><span>@L["Menu"]</span><span class="theme-preview-chip">@L["Book an appointment"]</span></div>
+                        <div class="theme-preview-body"><span class="theme-preview-btn">@L["Save"]</span><span class="theme-preview-link">@L["Contact us"]</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-text mt-2">@L["The whole site and the panel take these colours; the original olive stays the default."]</div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+        <button type="submit" class="btn btn-success"><i class="bi bi-check2 me-1"></i>@L["Save"]</button>
+        <button type="submit" class="btn btn-outline-secondary" asp-page-handler="ResetColors" formnovalidate>@L["Restore the original olive colours"]</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        (() => {
+            const theme = document.getElementById('Input_ThemeColor');
+            const accent = document.getElementById('Input_AccentColor');
+            const preview = document.getElementById('themePreview');
+            const paint = () => {
+                preview.style.setProperty('--p-theme', theme.value);
+                preview.style.setProperty('--p-accent', accent.value);
+            };
+            document.querySelectorAll('.theme-preset').forEach(b => b.addEventListener('click', () => {
+                theme.value = b.dataset.theme;
+                accent.value = b.dataset.accent;
+                paint();
+            }));
+            theme.addEventListener('input', paint);
+            accent.addEventListener('input', paint);
+            paint();
+
+            const file = document.getElementById('logo');
+            const img = document.getElementById('logoPreview');
+            file.addEventListener('change', () => {
+                if (file.files[0]) img.src = URL.createObjectURL(file.files[0]);
+            });
+        })();
+    </script>
+}

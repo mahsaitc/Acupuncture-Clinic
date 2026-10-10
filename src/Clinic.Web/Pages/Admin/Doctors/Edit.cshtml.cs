@@ -3,11 +3,13 @@ using Clinic.Application.Common;
 using Clinic.Domain.Entities;
 using Clinic.Infrastructure.Data;
 using Clinic.Infrastructure.Identity;
+using Clinic.Web.Branding;
 using Clinic.Web.Clinical;
 using Clinic.Web.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -72,6 +74,20 @@ public class EditModel(
         [StringLength(2000)]
         [Display(Name = "About the doctor (English)")]
         public string? BioEn { get; set; }
+    }
+
+    /// <summary>The site owner's file (email, name, documents) is closed to everyone but the owner.</summary>
+    public override async Task OnPageHandlerExecutionAsync(PageHandlerExecutingContext context, PageHandlerExecutionDelegate next)
+    {
+        if (context.HandlerArguments.TryGetValue("id", out var value) && value is int id
+            && await db.Doctors.AsNoTracking().Where(d => d.Id == id).Select(d => d.UserId).FirstOrDefaultAsync() is { } userId
+            && await userManager.FindByIdAsync(userId) is { } user
+            && await OwnerGuard.IsProtectedAsync(userManager, user, User))
+        {
+            context.Result = Forbid();
+            return;
+        }
+        await next();
     }
 
     public async Task<IActionResult> OnGetAsync(int id)

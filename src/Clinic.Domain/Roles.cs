@@ -8,6 +8,12 @@ public static class Roles
     public const string Receptionist = "Receptionist";
     public const string Patient = "Patient";
 
+    /// <summary>
+    /// The site owner, above the admin: changes the clinic's name, logo and colours. Given only from configuration
+    /// (<c>Owner:Email</c>) at start-up, never from a page, so it is deliberately not in <see cref="All"/>.
+    /// </summary>
+    public const string Owner = "Owner";
+
     public static readonly string[] All = [Admin, Doctor, Receptionist, Patient];
 
     /// <summary>Staff who may manage the appointment calendar.</summary>

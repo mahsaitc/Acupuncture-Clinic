@@ -1,10 +1,12 @@
 @page
 @model IndexModel
+@using Clinic.Web.Branding
 @{
     ViewData["Title"] = L["Home"];
     ViewData["FullWidth"] = true;
     var english = CulturePath.IsEnglish;
     var site = Model.Content;
+    var brand = Brand.From(site, english, L);
     const string BlogPostPage = "/Blog/Post";
     string[] icons = ["bi-flower1", "bi-heart-pulse", "bi-clipboard2-pulse", "bi-droplet", "bi-activity", "bi-leaf"];
 }
@@ -22,7 +24,7 @@
     }
     <div class="container">
         <div class="hero-content">
-            <span class="hero-eyebrow"><i class="bi bi-stars" aria-hidden="true"></i>@L["Acupuncture and integrative medicine clinic"]</span>
+            <span class="hero-eyebrow"><i class="bi bi-stars" aria-hidden="true"></i>@brand.Eyebrow</span>
             <h1>@site.HeroTitle(english)</h1>
             <p class="lead mb-4">@site.HeroSubtitle(english)</p>
             <div class="d-flex flex-wrap gap-3">

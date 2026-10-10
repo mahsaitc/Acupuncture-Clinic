@@ -24,6 +24,9 @@ public class PatientsModel(ClinicDbContext db, StaffScope scope, TimeProvider ti
     public List<Appointment> Upcoming { get; private set; } = [];
     public Dictionary<string, string> UpcomingPatients { get; private set; } = [];
     public HashSet<string> Openable { get; private set; } = [];
+    /// <summary>The site owner's file is edited only by the owner.</summary>
+    public bool FileLocked { get; private set; }
+
     public bool CanOpenRecords => scope.IsAdmin && User.IsInRole(Roles.Doctor);
     public bool CanSeeSummary => scope.IsAdmin;
     public List<Row> Rows { get; private set; } = [];
@@ -44,6 +47,8 @@ public class PatientsModel(ClinicDbContext db, StaffScope scope, TimeProvider ti
         Doctor = doctor;
         DoctorUser = await db.Users.AsNoTracking().FirstAsync(u => u.Id == doctor.UserId);
         DoctorName = DoctorUser.FullName;
+        FileLocked = !User.IsInRole(Roles.Owner)
+            && await db.UserRoles.AnyAsync(ur => ur.UserId == doctor.UserId && db.Roles.Any(r => r.Id == ur.RoleId && r.Name == Roles.Owner));
 
         var patientRoleId = await db.Roles.Where(r => r.Name == Roles.Patient).Select(r => r.Id).FirstOrDefaultAsync();
         var patients = db.Users.Where(u => db.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == patientRoleId));

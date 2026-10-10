@@ -2,7 +2,9 @@
 @using Clinic.Domain.Entities
 @using Clinic.Web.Clinical
 @model Clinic.Web.Pages.Admin.Records.PrintModel
+@inject Clinic.Web.Media.SiteContentProvider SiteContent
 @{
+    var brand = await SiteContent.BrandAsync();
     Layout = null;
     var english = CulturePath.IsEnglish;
     var r = Model.Record;
@@ -27,9 +29,9 @@
 
     <main class="sheet">
         <header class="form-head">
-            <img src="~/img/logo.png" alt="" class="form-logo" />
+            <img src="@brand.LogoPath" alt="" class="form-logo" />
             <div>
-                <div class="clinic-name">@L["Dr. Mahsa Hassani Acupuncture Clinic"]</div>
+                <div class="clinic-name">@brand.Name</div>
                 <h1>@L["Patient intake form: acupuncture and embedding"]</h1>
             </div>
         </header>
@@ -163,7 +165,7 @@
             <p class="notes">@r.DoctorNotes</p>
         </section>
 
-        <footer class="form-foot">@L["Dr. Mahsa Hassani Acupuncture Clinic"]@if (Model.ClinicPhone is { } phone) { <span> · @L["Phone"]: <span dir="ltr">@Fmt.Number(phone)</span></span> }</footer>
+        <footer class="form-foot">@brand.Name@if (Model.ClinicPhone is { } phone) { <span> · @L["Phone"]: <span dir="ltr">@Fmt.Number(phone)</span></span> }</footer>
     </main>
 </body>
 </html>

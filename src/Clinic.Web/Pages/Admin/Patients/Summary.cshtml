@@ -1,16 +1,18 @@
 @page
 @using Clinic.Domain.Entities
 @model Clinic.Web.Pages.Admin.Patients.SummaryModel
+@inject Clinic.Web.Media.SiteContentProvider SiteContent
 @{
+    var brand = await SiteContent.BrandAsync();
     ViewData["Title"] = L["Case summary"];
     var english = CulturePath.IsEnglish;
     var p = Model.Patient;
 }
 
 <div class="print-letterhead d-none d-print-flex">
-    <img src="~/img/logo.png" alt="" width="52" height="60" />
+    <img src="@brand.LogoPath" alt="" width="52" height="60" />
     <div>
-        <div class="fw-bold">@L["Dr. Mahsa Hassani Acupuncture Clinic"]</div>
+        <div class="fw-bold">@brand.Name</div>
         <div>@L["Case summary"]: @p.FullName</div>
         <div>@(Model.IsOwnOnly ? L["Treating doctor"] : L["Printed by"]): <strong>@Model.PrintedBy</strong></div>
     </div>

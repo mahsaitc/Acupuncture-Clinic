@@ -1,15 +1,17 @@
 @page
 @using Clinic.Web.Clinical
 @model Clinic.Web.Pages.Admin.Reports.ChartsModel
+@inject Clinic.Web.Media.SiteContentProvider SiteContent
 @{
+    var brand = await SiteContent.BrandAsync();
     ViewData["Title"] = L["Clinic charts"];
     var grainNames = new Dictionary<PeriodKind, string> { [PeriodKind.Week] = L["Weekly"], [PeriodKind.Month] = L["Monthly"], [PeriodKind.Year] = L["Yearly"] };
 }
 
 <div class="print-letterhead d-none d-print-flex">
-    <img src="~/img/logo.png" alt="" width="52" height="60" />
+    <img src="@brand.LogoPath" alt="" width="52" height="60" />
     <div>
-        <div class="fw-bold">@L["Dr. Mahsa Hassani Acupuncture Clinic"]</div>
+        <div class="fw-bold">@brand.Name</div>
         <div>@L["Clinic charts"] · @grainNames[Model.Grain] · @Model.RangeText</div>
     </div>
     <div class="ms-auto small">@L["Print date"]: @Fmt.Date(DateTime.UtcNow)</div>

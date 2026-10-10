@@ -185,6 +185,8 @@ h1, h2, h3, .h1, .h2, .h3 {
 .brand-logo {
   width: 44px;
   height: auto;
+  max-height: 56px;
+  object-fit: contain;
   flex: none;
 }
 
@@ -218,6 +220,7 @@ h1, h2, h3, .h1, .h2, .h3 {
 
 .brand-logo-chip .brand-logo {
   width: 38px;
+  max-height: 38px;
 }
 
 .site-nav .nav-link {

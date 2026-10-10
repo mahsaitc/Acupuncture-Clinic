@@ -21,6 +21,21 @@ dotnet user-secrets set "Seed:AdminName" "Dr. ..."
 
 The seed admin also gets the Doctor role. Open the management panel at `/Admin`, set working hours under "Working hours", then patients can book.
 
+### Site owner (branding)
+
+Each installation has one site owner, above the admin. Only the owner sees "Logo, name and colours" (`/Admin/Branding`):
+logo, clinic name, the lines beside the logo, the home page label and title (fa and en) and the theme colours (olive is the default).
+The owner role cannot be given from any page; the server's configuration names the account, and at every start-up that
+account becomes the owner (and an admin) and anyone else loses the role. The admin cannot change the owner's roles,
+deactivate it or edit its doctor file.
+
+```bash
+dotnet user-secrets set "Owner:Email" "owner@example.com"
+```
+
+If no account has that email yet, also set `Owner:Password` (and optionally `Owner:Name`) and it is created at start-up.
+On a server use environment variables instead (`Owner__Email`, `Owner__Password`).
+
 ## Management panel
 
 `/Admin` is open to staff. What each role sees:

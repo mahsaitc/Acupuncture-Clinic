@@ -66,6 +66,8 @@ body {
 .form-logo {
   width: 72px;
   height: auto;
+  max-height: 90px;
+  object-fit: contain;
 }
 
 .clinic-name {

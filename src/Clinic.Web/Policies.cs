@@ -3,6 +3,9 @@ namespace Clinic.Web;
 public static class Policies
 {
     public const string Admin = "Admin";
+
+    /// <summary>Only the site owner: branding (name, logo, colours).</summary>
+    public const string Owner = "Owner";
     public const string Doctor = "Doctor";
 
     /// <summary>Who may write the blog and medical articles.</summary>

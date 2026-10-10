@@ -7,7 +7,7 @@
 
     const rtl = document.documentElement.dir === 'rtl';
     const persian = document.documentElement.lang === 'fa';
-    const colors = ['#5d7139', '#c0563b', '#d4a24c', '#3f7f8c', '#8a5a9e', '#9bb06a', '#b07d62', '#4d5d8f', '#7a8a7a', '#c9c2a8', '#2f4a2a', '#e08f6a'];
+    const colors = [(getComputedStyle(document.documentElement).getPropertyValue('--olive-600').trim() || '#5d7139'), '#c0563b', '#d4a24c', '#3f7f8c', '#8a5a9e', '#9bb06a', '#b07d62', '#4d5d8f', '#7a8a7a', '#c9c2a8', '#2f4a2a', '#e08f6a'];
     const toFa = s => String(s).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
     const num = v => persian ? toFa(v) : String(v);
 
@@ -73,7 +73,7 @@
             labels: pain.periods,
             datasets: [
                 { type: 'bar', label: pain.series[0].name, data: pain.series[0].values, backgroundColor: '#c0563b', borderRadius: 4 },
-                { type: 'line', label: pain.series[1].name, data: pain.series[1].values, borderColor: '#5d7139', backgroundColor: '#5d7139', tension: .3 },
+                { type: 'line', label: pain.series[1].name, data: pain.series[1].values, borderColor: colors[0], backgroundColor: colors[0], tension: .3 },
             ],
         },
         options: {

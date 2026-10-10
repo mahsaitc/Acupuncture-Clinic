@@ -56,6 +56,7 @@ builder.Services.AddRazorPages(options =>
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy(Policies.Admin, p => p.RequireRole(Roles.Admin))
+    .AddPolicy(Policies.Owner, p => p.RequireRole(Roles.Owner))
     .AddPolicy(Policies.Doctor, p => p.RequireRole(Roles.Doctor))
     .AddPolicy(Policies.Content, p => p.RequireRole(Roles.Admin, Roles.Doctor))
     .AddPolicy(Policies.Staff, p => p.RequireRole(Roles.Admin, Roles.Doctor, Roles.Receptionist));

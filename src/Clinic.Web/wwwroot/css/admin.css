@@ -813,9 +813,13 @@ a.kpi:hover {
   .print-letterhead {
     align-items: center;
     gap: 12px;
-    border-bottom: 2px solid #4f5d2f;
+    border-bottom: 2px solid var(--olive-700);
     padding-bottom: 8px;
     margin-bottom: 12px;
+  }
+
+  .print-letterhead img {
+    object-fit: contain;
   }
 
   .print-signature {
@@ -986,3 +990,15 @@ a.kpi:hover {
   border-color: var(--olive-700);
   color: #fff;
 }
+
+/* Branding page (site owner) */
+.brand-logo-preview { width: 6rem; height: 6rem; display: inline-flex; align-items: center; justify-content: center; }
+.brand-logo-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.theme-preset { display: inline-flex; align-items: center; gap: .35rem; border: 1px solid #e3e6d8; }
+.theme-swatch { width: 1rem; height: 1rem; border-radius: 50%; display: inline-block; border: 1px solid rgba(0, 0, 0, .1); }
+.theme-preview { border-radius: .75rem; overflow: hidden; border: 1px solid #e3e6d8; background: #fff; }
+.theme-preview-bar { background: var(--p-theme); color: #fff; padding: .6rem .9rem; display: flex; justify-content: space-between; align-items: center; }
+.theme-preview-chip { background: var(--p-accent); color: #1f1f1f; border-radius: 999px; padding: .15rem .7rem; font-size: .85rem; }
+.theme-preview-body { padding: .75rem .9rem; display: flex; gap: 1rem; align-items: center; }
+.theme-preview-btn { background: var(--p-theme); color: #fff; border-radius: .5rem; padding: .3rem .9rem; }
+.theme-preview-link { color: var(--p-theme); text-decoration: underline; }

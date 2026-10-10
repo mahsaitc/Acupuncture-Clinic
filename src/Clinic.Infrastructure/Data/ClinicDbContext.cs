@@ -93,6 +93,17 @@ public class ClinicDbContext(DbContextOptions<ClinicDbContext> options, IDataPro
             e.Property(c => c.OpeningHoursEn).HasMaxLength(300);
             e.Property(c => c.MapEmbedUrl).HasMaxLength(2000);
             e.Property(c => c.MapLinkUrl).HasMaxLength(500);
+            e.Property(c => c.ClinicNameFa).HasMaxLength(150);
+            e.Property(c => c.ClinicNameEn).HasMaxLength(150);
+            e.Property(c => c.BrandTitleFa).HasMaxLength(80);
+            e.Property(c => c.BrandTitleEn).HasMaxLength(80);
+            e.Property(c => c.BrandSubtitleFa).HasMaxLength(80);
+            e.Property(c => c.BrandSubtitleEn).HasMaxLength(80);
+            e.Property(c => c.HeroEyebrowFa).HasMaxLength(100);
+            e.Property(c => c.HeroEyebrowEn).HasMaxLength(100);
+            e.Property(c => c.LogoPath).HasMaxLength(300);
+            e.Property(c => c.ThemeColor).HasMaxLength(7);
+            e.Property(c => c.AccentColor).HasMaxLength(7);
         });
 
         builder.Entity<ContactMessage>(e =>

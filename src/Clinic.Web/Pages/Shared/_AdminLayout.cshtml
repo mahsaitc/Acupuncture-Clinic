@@ -1,7 +1,10 @@
 @using Microsoft.EntityFrameworkCore
 @inject Clinic.Infrastructure.Data.ClinicDbContext Db
 @inject Clinic.Web.Clinical.StaffScope Scope
+@inject Clinic.Web.Media.SiteContentProvider SiteContent
 @{
+    var brand = await SiteContent.BrandAsync();
+    var isOwner = User.IsInRole(Roles.Owner);
     var english = CulturePath.IsEnglish;
     var path = (ViewContext.RouteData.Values["page"] as string) ?? "";
     var isAdmin = User.IsInRole(Roles.Admin);
@@ -12,7 +15,7 @@
     var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
     var userName = userId is null ? null : await Db.Users.Where(u => u.Id == userId).Select(u => u.FullName).FirstOrDefaultAsync();
     userName = string.IsNullOrWhiteSpace(userName) ? User.Identity?.Name : userName;
-    var roleNames = string.Join(english ? ", " : "، ", new[] { Roles.Admin, Roles.Doctor, Roles.Receptionist }.Where(User.IsInRole).Select(r => L[r].Value));
+    var roleNames = string.Join(english ? ", " : "، ", new[] { Roles.Owner, Roles.Admin, Roles.Doctor, Roles.Receptionist }.Where(User.IsInRole).Select(r => L[r].Value));
 
     string Active(string page) => path == page || path.StartsWith(page + "/") ? "active" : "";
 }
@@ -23,8 +26,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
     <title>@ViewData["Title"] - @L["Management panel"]</title>
-    <link rel="icon" href="~/favicon.ico" sizes="any" />
-    <link rel="icon" href="~/img/favicon-32.png" type="image/png" />
+    @if (brand.CustomLogo)
+    {
+        <link rel="icon" href="@brand.LogoPath" />
+    }
+    else
+    {
+        <link rel="icon" href="~/favicon.ico" sizes="any" />
+        <link rel="icon" href="~/img/favicon-32.png" type="image/png" />
+    }
     <link rel="stylesheet" href="~/lib/vazirmatn/vazirmatn.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     @if (english)
@@ -38,14 +48,15 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/refresh.css" media="screen" asp-append-version="true" />
+    <partial name="_BrandTheme" model="brand" />
 </head>
 <body class="admin-body">
     <div class="admin-shell">
         <aside class="admin-sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="adminSidebar" aria-label="@L["Management panel"]">
             <div class="admin-brand">
-                <span class="brand-logo-chip"><img src="~/img/logo.png" alt="" class="brand-logo" width="44" height="51" /></span>
+                <span class="brand-logo-chip"><img src="@brand.LogoPath" alt="" class="brand-logo" width="44" height="51" /></span>
                 <div>
-                    <div class="fw-bold">@L["Acupuncture Clinic"]</div>
+                    <div class="fw-bold">@brand.Title</div>
                     <div class="small opacity-75">@L["Management panel"]</div>
                 </div>
                 <button type="button" class="btn-close btn-close-white ms-auto d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#adminSidebar" aria-label="@L["Close"]"></button>
@@ -89,6 +100,11 @@
                     <a class="@Active("/Admin/DoctorRequests")" asp-page="/Admin/DoctorRequests"><i class="bi bi-person-check"></i>@L["Doctor requests"]@if (pendingDoctors > 0) { <span class="badge rounded-pill bg-warning text-dark ms-auto">@Fmt.Number(pendingDoctors)</span> }</a>
                     <a class="@Active("/Admin/Services")" asp-page="/Admin/Services"><i class="bi bi-grid"></i>@L["Services"]</a>
                     <a class="@Active("/Admin/Audit")" asp-page="/Admin/Audit"><i class="bi bi-shield-check"></i>@L["Access log"]</a>
+                }
+                @if (isOwner)
+                {
+                    <div class="admin-nav-group">@L["Site owner"]</div>
+                    <a class="@Active("/Admin/Branding")" asp-page="/Admin/Branding"><i class="bi bi-palette"></i>@L["Logo, name and colours"]</a>
                 }
             </nav>
         </aside>
