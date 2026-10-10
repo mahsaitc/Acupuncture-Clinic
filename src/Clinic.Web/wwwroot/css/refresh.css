@@ -675,3 +675,37 @@ a.kpi:hover {
     padding-block: 3.5rem;
   }
 }
+
+/* Clickable dashboard figures look clickable: the number is underlined on hover and an arrow shows the way. */
+a.kpi {
+  color: inherit;
+  text-decoration: none;
+  padding-inline-end: 2.5rem;
+}
+
+a.kpi::before {
+  content: "\F284"; /* bootstrap-icons chevron-left */
+  font-family: "bootstrap-icons";
+  position: absolute;
+  inset-inline-end: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--olive-500);
+  font-size: 1rem;
+  transition: inset-inline-end .2s var(--ease);
+}
+
+[dir="ltr"] a.kpi::before {
+  content: "\F285"; /* chevron-right */
+}
+
+a.kpi:hover::before {
+  inset-inline-end: .7rem;
+  color: var(--olive-800);
+}
+
+a.kpi:hover .kpi-value {
+  text-decoration: underline;
+  text-underline-offset: .2em;
+  text-decoration-thickness: 2px;
+}
