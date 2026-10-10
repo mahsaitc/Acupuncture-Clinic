@@ -118,6 +118,13 @@ The model is CC BY-SA 4.0 (Z-Anatomy, from BodyParts3D): credit it in the app.
 - Posts to login, sign-up, doctor sign-up, contact and booking are limited per IP address (`Security/RequestLimits.cs`).
   Sign-up and contact forms carry an invisible bot check (`_BotCheck` partial and `[BotCheckAttribute]`).
 
+- Accounts: `/Account/Manage` (change password, two-step login), `/Account/ForgotPassword` (emailed link, valid two hours).
+  Staff (owner, admin, doctor, receptionist) must turn on two-step login with an authenticator app before the panel
+  opens (`Security/TwoFactor.cs`). Staff passwords need 12 characters; well-known passwords and ones containing the
+  email or mobile are refused (`Security/PasswordPolicy.cs`, applied where people choose a password, never to the
+  passwords in the configuration). The admin can set a new password or turn off two-step login for a user on the
+  Users page. A site owner who lost both phone and recovery codes sets `Owner:ResetTwoFactor=true` once and restarts.
+
 Settings for the real server (appsettings.Production.json or environment variables):
 
 | Setting | Use |
@@ -126,6 +133,8 @@ Settings for the real server (appsettings.Production.json or environment variabl
 | `AllowedHosts` | The site's domain(s), e.g. `example.ir;www.example.ir`, instead of `*`. |
 | `ReverseProxy:Enabled` | `true` when nginx or another proxy on the same server forwards to the app (not needed under IIS). |
 | `Security:RateLimiting`, `Security:BotCheck` | Leave `true`; tests switch them off. `Security:BotCheckMinSeconds` defaults to 3. |
+| `Security:RequireStaffTwoFactor` | Leave `true` (the default): staff must use two-step login. |
+| `Email:Smtp:Host`, `Port`, `User`, `Password`, `From`, `EnableSsl` | The mail server for password reset links. Without it no email is sent (on a development machine the link is written to the console). |
 
 ## Tests
 

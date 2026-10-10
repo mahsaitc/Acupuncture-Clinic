@@ -16,6 +16,11 @@ public static class RequestLimits
     public static readonly Rule[] Rules =
     [
         new("/Account/Login", 10, TimeSpan.FromMinutes(5)),
+        new("/Account/LoginWith2fa", 10, TimeSpan.FromMinutes(5)),
+        new("/Account/ForgotPassword", 5, TimeSpan.FromHours(1)),
+        new("/Account/ResetPassword", 10, TimeSpan.FromHours(1)),
+        new("/Account/Manage", 10, TimeSpan.FromMinutes(5)),
+        new("/Account/Manage/TwoFactor", 10, TimeSpan.FromMinutes(5)),
         new("/Account/Register", 5, TimeSpan.FromHours(1)),
         new("/Account/RegisterDoctor", 3, TimeSpan.FromHours(1)),
         new("/Contact", 10, TimeSpan.FromMinutes(15)),

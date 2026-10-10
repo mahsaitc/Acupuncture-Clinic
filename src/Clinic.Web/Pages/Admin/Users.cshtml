@@ -74,6 +74,24 @@
                                 @(r.User.IsActive ? L["Deactivate"] : L["Activate"])
                             </button>
                         </form>
+                        @if (r.User.Id != Model.CurrentUser)
+                        {
+                            @if (r.User.TwoFactorEnabled)
+                            {
+                                <div class="small text-success mt-2"><i class="bi bi-shield-check me-1" aria-hidden="true"></i>@L["Two-step login is on"]</div>
+                                <form method="post" asp-page-handler="ResetTwoFactor" asp-route-id="@r.User.Id" asp-route-Q="@Model.Q"
+                                      data-confirm="@L["Turn off two-step login of {0}? Do this only if they lost their phone.", r.User.FullName]">
+                                    <button type="submit" class="btn btn-sm btn-link px-0">@L["Turn off two-step login"]</button>
+                                </form>
+                            }
+                            <details class="mt-2">
+                                <summary class="small">@L["Set a new password"]</summary>
+                                <form method="post" asp-page-handler="SetPassword" asp-route-id="@r.User.Id" asp-route-Q="@Model.Q" class="d-flex gap-1 mt-1">
+                                    <input type="text" name="newPassword" class="form-control form-control-sm" dir="ltr" autocomplete="off" required minlength="8" aria-label="@L["New password"]" />
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">@L["Save"]</button>
+                                </form>
+                            </details>
+                        }
                     </td>
                     }
                 </tr>

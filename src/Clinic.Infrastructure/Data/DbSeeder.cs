@@ -139,6 +139,15 @@ public static class DbSeeder
             await userManager.ResetAccessFailedCountAsync(owner);
         }
 
+        // Two-step login stays as the owner set it, whatever the password above does. Owner:ResetTwoFactor=true turns it
+        // off once (lost phone and recovery codes); remove the setting again after logging in.
+        if (config.GetValue("Owner:ResetTwoFactor", false) && owner.TwoFactorEnabled)
+        {
+            await userManager.SetTwoFactorEnabledAsync(owner, false);
+            await userManager.ResetAuthenticatorKeyAsync(owner);
+            logger.LogWarning("Owner:ResetTwoFactor turned off two-step login for the site owner. Remove the setting now.");
+        }
+
         foreach (var other in await userManager.GetUsersInRoleAsync(Roles.Owner))
         {
             if (other.Id != owner.Id)

@@ -71,6 +71,7 @@
                         }
                         @if (User.Identity?.IsAuthenticated == true)
                         {
+                            <li class="nav-item"><a class="nav-link" asp-page="/Account/Manage/Index" title="@L["Account security"]" aria-label="@L["Account security"]"><i class="bi bi-shield-lock" aria-hidden="true"></i><span class="d-xl-none ms-1">@L["Account security"]</span></a></li>
                             <li class="nav-item">
                                 <form method="post" asp-page="/Account/Logout" class="d-inline">
                                     <button type="submit" class="btn btn-link nav-link">@L["Log out"]</button>

@@ -122,6 +122,7 @@
                 <div class="ms-auto d-flex align-items-center gap-2">
                     <a class="btn btn-sm btn-light" asp-page="/Index" target="_blank"><i class="bi bi-box-arrow-up-right"></i><span class="d-none d-sm-inline ms-1">@L["View site"]</span></a>
                     <a class="btn btn-sm btn-light" href="@CulturePath.SwitchUrl(Context.Request)">@(english ? "فارسی" : "English")</a>
+                    <a class="btn btn-sm btn-light" asp-page="/Account/Manage/Index" title="@L["Account security"]"><i class="bi bi-shield-lock"></i><span class="d-none d-md-inline ms-1">@L["Account security"]</span></a>
                     <form method="post" asp-page="/Account/Logout" class="d-inline">
                         <button type="submit" class="btn btn-sm btn-outline-danger">@L["Log out"]</button>
                     </form>
