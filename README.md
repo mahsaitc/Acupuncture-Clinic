@@ -34,6 +34,8 @@ dotnet user-secrets set "Owner:Email" "owner@example.com"
 ```
 
 If no account has that email yet, also set `Owner:Password` (and optionally `Owner:Name`) and it is created at start-up.
+If the account exists, `Owner:Password` becomes its password at start-up and lifts a lockout (a way back in when the password
+is forgotten); remove it afterwards with `dotnet user-secrets remove "Owner:Password"` so a password changed later is kept.
 On a server use environment variables instead (`Owner__Email`, `Owner__Password`).
 
 ## Management panel

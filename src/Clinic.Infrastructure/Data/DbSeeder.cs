@@ -91,7 +91,8 @@ public static class DbSeeder
     /// <summary>
     /// Makes the account named by <c>Owner:Email</c> the one and only site owner (and an admin). The owner role cannot be
     /// given from any page; whoever controls the server's configuration decides it. If the account does not exist yet and
-    /// <c>Owner:Password</c> is set, it is created. Without <c>Owner:Email</c> nothing changes.
+    /// <c>Owner:Password</c> is set, it is created; if it exists, <c>Owner:Password</c> becomes its password. Without
+    /// <c>Owner:Email</c> nothing changes.
     /// </summary>
     private static async Task SeedOwnerAsync(UserManager<ApplicationUser> userManager, IConfiguration config, ILogger logger)
     {
@@ -101,10 +102,10 @@ public static class DbSeeder
             return;
         }
 
+        var password = config["Owner:Password"];
         var owner = await userManager.FindByEmailAsync(email);
         if (owner is null)
         {
-            var password = config["Owner:Password"];
             if (string.IsNullOrWhiteSpace(password))
             {
                 logger.LogWarning("Owner:Email {Email} has no account yet; set Owner:Password to create it.", email);
@@ -123,6 +124,19 @@ public static class DbSeeder
                 logger.LogError("Could not create the site owner: {Errors}", string.Join("; ", created.Errors.Select(e => e.Description)));
                 return;
             }
+        }
+
+        else if (!string.IsNullOrWhiteSpace(password) && !await userManager.CheckPasswordAsync(owner, password))
+        {
+            // Owner:Password on an existing account sets its password (a way back in when it is forgotten) and lifts a lockout.
+            var token = await userManager.GeneratePasswordResetTokenAsync(owner);
+            var reset = await userManager.ResetPasswordAsync(owner, token, password);
+            if (!reset.Succeeded)
+            {
+                logger.LogError("Could not set the site owner's password: {Errors}", string.Join("; ", reset.Errors.Select(e => e.Description)));
+            }
+            await userManager.SetLockoutEndDateAsync(owner, null);
+            await userManager.ResetAccessFailedCountAsync(owner);
         }
 
         foreach (var other in await userManager.GetUsersInRoleAsync(Roles.Owner))

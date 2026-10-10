@@ -109,6 +109,25 @@ public partial class BrandingTests(OwnerWebFactory factory) : IClassFixture<Owne
     }
 
     [Fact]
+    public async Task Owner_password_in_the_configuration_lets_a_locked_out_owner_back_in()
+    {
+        var owner = await OwnerAsync();
+        using (var scope = factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var user = (await userManager.FindByIdAsync(owner.Id))!;
+            Assert.True((await userManager.ChangePasswordAsync(user, OwnerWebFactory.OwnerPassword, "Forgotten123")).Succeeded);
+            await userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddMinutes(15));
+        }
+
+        await using var restarted = factory.WithWebHostBuilder(_ => { });
+        var client = restarted.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        var response = await PostFormAsync(client, "/Account/Login", "/Account/Login",
+            new() { ["Input.Email"] = OwnerWebFactory.OwnerEmail, ["Input.Password"] = OwnerWebFactory.OwnerPassword });
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+    }
+
+    [Fact]
     public async Task The_owner_changes_name_logo_title_and_colours_everywhere()
     {
         await OwnerAsync();
