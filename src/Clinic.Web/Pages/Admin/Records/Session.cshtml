@@ -46,11 +46,16 @@
                         <div class="small text-success mt-1" id="point-pending" hidden><i class="bi bi-geo-alt-fill me-1"></i>@L["Place marked on the chart. Type a name for the point and press Add."] <button type="button" class="btn btn-link btn-sm p-0 align-baseline" id="point-pending-cancel">@L["Cancel"]</button></div>
                         <div class="d-flex flex-wrap gap-2 mt-2">
                             <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="bi bi-collection me-1"></i>@L["Load a protocol"]</button>
-                                <ul class="dropdown-menu">
+                                <button class="btn btn-sm btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"><i class="bi bi-collection me-1"></i>@L["Load a protocol"]</button>
+                                <ul class="dropdown-menu protocol-menu">
+                                    <li class="dropdown-header">@L["Add the protocol's points to the current ones, or replace them."]</li>
                                     @foreach (var p in AcupointLibrary.Protocols)
                                     {
-                                        <li><button type="button" class="dropdown-item" data-protocol="@p.Key">@L[p.Name]</button></li>
+                                        <li class="protocol-row">
+                                            <span class="protocol-name">@L[p.Name]</span>
+                                            <button type="button" class="btn btn-sm btn-outline-success" data-protocol="@p.Key" data-mode="add"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>@L["Add"]</button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" data-protocol="@p.Key" data-mode="replace"><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>@L["Replace"]</button>
+                                        </li>
                                     }
                                 </ul>
                             </div>

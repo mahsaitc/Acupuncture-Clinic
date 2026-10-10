@@ -949,3 +949,40 @@ a.kpi:hover {
     border-top: 1px solid #e7e9dc;
   }
 }
+
+/* Protocol menu: each protocol can be added to the chosen points or replace them. */
+.protocol-menu {
+  min-width: min(25rem, 92vw);
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.protocol-menu .dropdown-header {
+  white-space: normal;
+}
+
+.protocol-row {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .35rem .75rem;
+}
+
+.protocol-row:hover {
+  background: var(--olive-50);
+}
+
+.protocol-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.protocol-row .btn {
+  white-space: nowrap;
+}
+
+.protocol-row .btn.done {
+  background: var(--olive-700);
+  border-color: var(--olive-700);
+  color: #fff;
+}

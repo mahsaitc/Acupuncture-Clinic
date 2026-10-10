@@ -2661,4 +2661,10 @@
   <data name="No patient with this mobile or email was found." xml:space="preserve">
     <value>بیماری با این موبایل یا ایمیل پیدا نشد.</value>
   </data>
+  <data name="Replace" xml:space="preserve">
+    <value>جایگزینی</value>
+  </data>
+  <data name="Add the protocol's points to the current ones, or replace them." xml:space="preserve">
+    <value>نقاط پروتکل را به نقاط فعلی اضافه کنید یا جایگزین آن‌ها کنید.</value>
+  </data>
 </root>

@@ -253,14 +253,18 @@
     });
     document.getElementById('point-pending-cancel').addEventListener('click', () => { pending = null; render(); });
 
+    // Each protocol can be added to the points already chosen (several protocols combine, repeats merge)
+    // or replace them. The menu stays open so more protocols can be added in a row.
     document.querySelectorAll('[data-protocol]').forEach(button => button.addEventListener('click', () => {
         const protocol = library.protocols.find(p => p.key === button.dataset.protocol);
-        if (points.length && !confirm(text.replace)) return;
-        points = [];
+        const first = button.dataset.mode === 'replace' ? 0 : points.length;
+        if (button.dataset.mode === 'replace') points = [];
         protocol.codes.forEach(code => addStandard(byCode.get(code.toUpperCase()), 'Both'));
         selected = -1;
         save(); render();
-        if (points.length) reveal(0);
+        if (points.length > first) reveal(first);
+        button.classList.add('done');
+        setTimeout(() => button.classList.remove('done'), 900);
     }));
 
     document.getElementById('copy-previous')?.addEventListener('click', () => {
